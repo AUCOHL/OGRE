@@ -17,7 +17,19 @@
 
 namespace my_lefdef
 {
-
+    
+    struct gCellGridGlobal
+    {
+        pair<int, int> startCoord;
+        pair<int, int> endCoord;
+        int congestionINV;
+        void setCongestionINV(int congestionINV_)
+        {
+            congestionINV = congestionINV_;
+        }
+        gCellGridGlobal(pair<int,int> startCoord_, pair<int, int> endCoord_): startCoord(startCoord_), endCoord(endCoord_){};
+    };
+    
 class LefDefParser
 {
 public:
@@ -38,7 +50,7 @@ public:
     // Following functions will be removed soon
     def::Def& get_def ();
     
-    void build_Gcell_grid();
+    vector<vector<vector<gCellGridGlobal>>>& build_Gcell_grid(unordered_map <string, lef::LayerPtr>& layerMap);
 
 private:
     lef::Lef&    lef_;

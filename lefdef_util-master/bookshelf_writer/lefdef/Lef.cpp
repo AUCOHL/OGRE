@@ -152,7 +152,6 @@ void Lef::report_verbose () const
         cout << "\t" << *m << endl;
     }
 }
-
 SitePtr Lef::get_site (string name)
 {
     auto& sites = pimpl_->sites_;

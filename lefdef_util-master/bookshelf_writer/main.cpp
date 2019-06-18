@@ -25,6 +25,7 @@ int omp_thread_count();
 /**
  * Main.
  */
+
 int main (int argc, char* argv[])
 {
     util::Watch watch;
@@ -57,7 +58,28 @@ int main (int argc, char* argv[])
 
     
     ldp.write_bookshelf("temp");
-    ldp.build_Gcell_grid();
+    
+    unordered_map <string, lef::LayerPtr> layerMap;
+    vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid = ldp.build_Gcell_grid(layerMap);
+
+    
+    //output for testing
+    for (int k=0; k<gcellGrid.size(); k++){
+        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
+        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::horizontal)
+            cout << "horizontal" << endl;
+        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::vertical)
+            cout << "vertical" << endl;
+        
+        for (int i=0; i<gcellGrid[k].size(); i++){
+            for (int j=0; j<gcellGrid[k][i].size(); j++){
+                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionINV << endl;
+            }
+        }
+        cout << endl;
+    }
+    
+    
     cout << endl << "Done." << endl;
     return 0;
 }

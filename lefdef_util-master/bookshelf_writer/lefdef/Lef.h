@@ -65,7 +65,7 @@ ostream& operator<< (ostream& os, const Rect& r);
  */
 struct Unit
 {
-    string db_name_;       ///< databaseName of lefiUnits
+    string db_name_;       ///< databaseName of lefUnits
     int db_number_;     ///< databaseNumber of lefiUnits
 };
 

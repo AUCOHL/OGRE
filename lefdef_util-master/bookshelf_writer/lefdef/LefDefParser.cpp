@@ -387,23 +387,16 @@ void LefDefParser::update_def (string bookshelf_pl)
         return def_;
     }
     
-    struct gCellGridGlobal
-    {
-        pair<int, int> startCoord;
-        pair<int, int> endCoord;
-        int congestion;
-        char orientation;
-        gCellGridGlobal(pair<int,int> startCoord_, pair<int, int> endCoord_, int congestion_, char orientation_): startCoord(startCoord_), endCoord(endCoord_)
-        , congestion(congestion_), orientation(orientation_) {};
-    };
-    
+//    vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
     vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
-    void LefDefParser::build_Gcell_grid()
+
+    vector<vector<vector<my_lefdef::gCellGridGlobal>>>& LefDefParser::build_Gcell_grid( unordered_map <string, lef::LayerPtr>& layerMap )
     {
-        cout << "HEYYYYYY" << endl;
         vector<def::GCellGridPtr> gCellGridVector= def_.get_gcell_grids ();
         set<int> xCoord;
         set<int> yCoord;
+        
+        //creating all points based on step and do, inserting into a set to revome duplicates
         for (auto GcellGridItem: gCellGridVector)
         {
             if (GcellGridItem->direction_ == TrackDir::x)
@@ -413,11 +406,34 @@ void LefDefParser::update_def (string bookshelf_pl)
                 for(int i = GcellGridItem->location_; i < GcellGridItem->location_ + GcellGridItem->num_ * GcellGridItem->step_; i = i + GcellGridItem->step_)
                     yCoord.insert(i);
         }
+        
+        
+        //getting number of metal tracks from def file
+        vector<def::TrackPtr> tracks= def_.get_tracks ();
+        unordered_set <string> tracks_names;
+        
+        //create a map of metal layer name and layer pointer
+        for (int i=0; i<tracks.size(); i++){
+            string layerName = tracks[i]->layer_;
+            tracks_names.insert(layerName);
+            layerMap[layerName] = lef_.get_layer(layerName);
+        }
+        
+        //get dimensions of gcell grid
         int xDimension = xCoord.size();
         int yDimension = yCoord.size();
-        cout << "Y DIMENSION" << yDimension << endl;
-        myGlobalGrid.resize(4);
-        myGlobalGrid[0] = myGlobalGrid[1] = myGlobalGrid[2] = myGlobalGrid[3] = vector<vector<gCellGridGlobal>>(xDimension-1);
+        int zDimension = tracks_names.size();
+        cout << "Y DIMENSION " << yDimension - 1 << endl;
+        cout << "X DIMENSION " << xDimension - 1 << endl;
+        cout << "Z DIMENSION " << zDimension << endl;
+        
+        //building Gcell grid
+        myGlobalGrid.resize(zDimension);
+        for (int i=0; i<zDimension; i++){
+            myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension-1);
+        }
+        
+        //creating gcells
         for (int i = 0; i < xDimension - 1; ++i)
         {
             auto it = xCoord.begin();
@@ -433,25 +449,54 @@ void LefDefParser::update_def (string bookshelf_pl)
                 ++itY;
                 int secondMinY = *itY;
 
-                myGlobalGrid[0][i].push_back({{firstMinX, firstMinY},{secondMinX, secondMinY}, 10,'x' });
-                myGlobalGrid[1][i].push_back({{firstMinX, firstMinY},{secondMinX, secondMinY}, 10,'x' });
-                myGlobalGrid[2][i].push_back({{firstMinX, firstMinY},{secondMinX, secondMinY}, 10,'x' });
-                myGlobalGrid[3][i].push_back({{firstMinX, firstMinY},{secondMinX, secondMinY}, 10,'x' });
+                for (int k=0; k < zDimension; k++){
+                    myGlobalGrid[k][i].push_back({{firstMinX, firstMinY},{secondMinX, secondMinY}});
+                }
             }
         }
-        for (int i = 0; i < xDimension - 1; ++i)
+        //creating congestion based on available metal wires
+        for (int k = 0; k < zDimension; k++)
         {
-            for(int j = 0; j < yDimension-1; ++j)
+            for (int i = 0; i < xDimension - 1; ++i)
             {
-                cout << "Start Coord: " << myGlobalGrid[0][i][j].startCoord.first << ' ' << myGlobalGrid[0][i][j].startCoord.second << endl;
-                cout << "End Coord: " << myGlobalGrid[0][i][j].endCoord.first << ' ' << myGlobalGrid[0][i][j].endCoord.second << endl;
-                cout << endl;
+                for(int j = 0; j < yDimension-1; ++j)
+                {
+                    //get units of lef and def
+                    int defDBU = def_.get_dbu ();
+                    int lefDBU = lef_.get_dbu ();
+                    
+                    //output for testing
+//                    cout << "LEF DBU " << lefDBU << endl;
+//                    cout << "DEF DBU " << defDBU << endl;
+                    
+                    //get pitch
+                    lef::LayerPtr l= layerMap["metal" + std::to_string(k+1)];
+                    double pitch = layerMap["metal" + std::to_string(k+1)] -> pitch_;
+                    double pitchX = layerMap["metal" + std::to_string(k+1)] -> pitch_x_;
+                    double pitchY = layerMap["metal" + std::to_string(k+1)] -> pitch_y_;
+                    
+                    double dimension;
+                    if (l->dir_ == LayerDir::horizontal){ //get difference in y
+                        dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
+                    }
+                    else if (l->dir_ == LayerDir::vertical){ //get difference in x
+                        dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
+                    }
+                    
+                    //get number of free wires in cell
+                    int freeWires = (dimension * defDBU) / (pitch * lefDBU);
+                    myGlobalGrid[k][i][j].setCongestionINV(freeWires);
+                    
+//                    output for testing
+//                    cout << "Layer " << k << " startCoord(x) " << myGlobalGrid[k][i][j].startCoord.first << " endCoord(x) " << myGlobalGrid[k][i][j].endCoord.first << " startCoord(y) " << myGlobalGrid[k][i][j].startCoord.second << " endCoord(y) " << myGlobalGrid[k][i][j].endCoord.second << " Pitch x " << pitchX << " Pitch y " << pitchY << " Pitch " << pitch << " Available wires " << freeWires << endl;
+//                }
+                }
             }
-            puts("");
         }
-        gCellGridGlobal temp({0,1}, {2,3}, 10, 'x');
-        cout << temp.startCoord.first << ' ' << temp.startCoord.second << endl;
+        return myGlobalGrid;
     }
+
+    
     
 }
 
