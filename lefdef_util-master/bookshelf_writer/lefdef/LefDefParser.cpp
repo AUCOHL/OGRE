@@ -11,6 +11,8 @@
 #include "Watch.h"
 #include "Logger.h"
 
+#define D(x) cout << #x " is " << x << endl
+
 namespace my_lefdef
 {
 
@@ -141,7 +143,7 @@ void LefDefParser::write_bookshelf_nodes (string filename) const
 
         ofs << "\t" << std::setw(8) << std::right << w;
         ofs << "\t" << std::setw(8) << std::right << h;
-        
+
         if (c.second->is_fixed_) {
             ofs << "\t" << "terminal";
         }
@@ -255,13 +257,13 @@ void LefDefParser::write_bookshelf_scl (string filename) const
         auto site = lef_.get_site(r->macro_);
         string sym_str;
         if (site->symmetry_ == SiteSymmetry::x) {
-            sym_str = "X"; 
+            sym_str = "X";
         }
         else if (site->symmetry_ == SiteSymmetry::y) {
-            sym_str = "Y"; 
+            sym_str = "Y";
         }
         else if (site->symmetry_ == SiteSymmetry::r90) {
-            sym_str = "R90"; 
+            sym_str = "R90";
         }
         else {
             // FIXME
@@ -305,8 +307,8 @@ void LefDefParser::write_bookshelf_pl (string filename) const
         ofs << std::setw(40) << std::left << c->name_;
 
         if (c->is_placed_ || c->is_fixed_) {
-            ofs << "\t" << c->x_ / x_pitch_dbu 
-                << "\t" << c->y_ / y_pitch_dbu 
+            ofs << "\t" << c->x_ / x_pitch_dbu
+                << "\t" << c->y_ / y_pitch_dbu
                 << "\t: " << c->orient_str_ << endl;
         }
         else {
@@ -318,7 +320,7 @@ void LefDefParser::write_bookshelf_pl (string filename) const
         auto p = it.second;
         ofs << std::setw(40) << std::left  << p->name_;
         ofs << "\t" << p->x_ / x_pitch_dbu
-            << "\t" << p->y_ / y_pitch_dbu 
+            << "\t" << p->y_ / y_pitch_dbu
             << "\t: " << p->orient_str_ << endl;
     }
 
@@ -350,7 +352,7 @@ void LefDefParser::update_def (string bookshelf_pl)
             continue;
         }
         istringstream iss(line);
-        
+
         string t1, t2, t3;
         iss >> t1 >> t2 >> t3;
         pl_umap[t1] = make_pair(stoi(t2), stoi(t3));
@@ -373,8 +375,8 @@ void LefDefParser::update_def (string bookshelf_pl)
             auto y_new = found->second.second * y_pitch_dbu;
 //            cout << it.first << " : (" << x_orig << ", " << y_orig << ")"
 //                             << " -> (" << x_new << ", " << y_new << ")" << endl;
-            it.second->x_ = x_new; 
-            it.second->y_ = y_new; 
+            it.second->x_ = x_new;
+            it.second->y_ = y_new;
 
             it.second->is_placed_ = true;
         }
@@ -386,7 +388,7 @@ void LefDefParser::update_def (string bookshelf_pl)
     {
         return def_;
     }
-    
+
 //    vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
     vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 
@@ -395,7 +397,7 @@ void LefDefParser::update_def (string bookshelf_pl)
         vector<def::GCellGridPtr> gCellGridVector= def_.get_gcell_grids ();
         set<int> xCoord;
         set<int> yCoord;
-        
+
         //creating all points based on step and do, inserting into a set to revome duplicates
         for (auto GcellGridItem: gCellGridVector)
         {
@@ -406,19 +408,19 @@ void LefDefParser::update_def (string bookshelf_pl)
                 for(int i = GcellGridItem->location_; i < GcellGridItem->location_ + GcellGridItem->num_ * GcellGridItem->step_; i = i + GcellGridItem->step_)
                     yCoord.insert(i);
         }
-        
-        
+
+
         //getting number of metal tracks from def file
         vector<def::TrackPtr> tracks= def_.get_tracks ();
         unordered_set <string> tracks_names;
-        
+
         //create a map of metal layer name and layer pointer
         for (int i=0; i<tracks.size(); i++){
             string layerName = tracks[i]->layer_;
             tracks_names.insert(layerName);
             layerMap[layerName] = lef_.get_layer(layerName);
         }
-        
+
         //get dimensions of gcell grid
         int xDimension = xCoord.size();
         int yDimension = yCoord.size();
@@ -426,13 +428,13 @@ void LefDefParser::update_def (string bookshelf_pl)
         cout << "Y DIMENSION " << yDimension - 1 << endl;
         cout << "X DIMENSION " << xDimension - 1 << endl;
         cout << "Z DIMENSION " << zDimension << endl;
-        
+
         //building Gcell grid
         myGlobalGrid.resize(zDimension);
         for (int i=0; i<zDimension; i++){
             myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension-1);
         }
-        
+
         //creating gcells
         for (int i = 0; i < xDimension - 1; ++i)
         {
@@ -464,17 +466,13 @@ void LefDefParser::update_def (string bookshelf_pl)
                     //get units of lef and def
                     int defDBU = def_.get_dbu ();
                     int lefDBU = lef_.get_dbu ();
-                    
-                    //output for testing
-//                    cout << "LEF DBU " << lefDBU << endl;
-//                    cout << "DEF DBU " << defDBU << endl;
-                    
+
                     //get pitch
                     lef::LayerPtr l= layerMap["metal" + std::to_string(k+1)];
                     double pitch = layerMap["metal" + std::to_string(k+1)] -> pitch_;
                     double pitchX = layerMap["metal" + std::to_string(k+1)] -> pitch_x_;
                     double pitchY = layerMap["metal" + std::to_string(k+1)] -> pitch_y_;
-                    
+
                     double dimension;
                     if (l->dir_ == LayerDir::horizontal){ //get difference in y
                         dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
@@ -482,22 +480,92 @@ void LefDefParser::update_def (string bookshelf_pl)
                     else if (l->dir_ == LayerDir::vertical){ //get difference in x
                         dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
                     }
-                    
+
                     //get number of free wires in cell
                     int freeWires = (dimension * defDBU) / (pitch * lefDBU);
                     myGlobalGrid[k][i][j].setCongestionINV(freeWires);
-                    
-//                    output for testing
-//                    cout << "Layer " << k << " startCoord(x) " << myGlobalGrid[k][i][j].startCoord.first << " endCoord(x) " << myGlobalGrid[k][i][j].endCoord.first << " startCoord(y) " << myGlobalGrid[k][i][j].startCoord.second << " endCoord(y) " << myGlobalGrid[k][i][j].endCoord.second << " Pitch x " << pitchX << " Pitch y " << pitchY << " Pitch " << pitch << " Available wires " << freeWires << endl;
-//                }
+
                 }
             }
         }
         return myGlobalGrid;
     }
+    void LefDefParser::get_connection_locations()
+    {
+        unordered_map<string, def::NetPtr> nets;
+        nets = def_.get_net_umap();
 
-    
-    
+        bool brk = true;
+        for (const auto &n : nets)
+        {
+            auto &connections = n.second->connections_;
+            const auto &c = connections[0];
+            for (const auto &c : connections)
+            {
+                int lx = c->lx_;
+                int ly = c->ly_;
+                int ux = c->ux_;
+                int uy = c->uy_;
+                auto name = c->name_;
+
+                D(name);
+                D(lx), D(ly), D(ux), D(uy);
+
+                auto comp = c->component_;
+                auto comp_name = comp->name_;
+                auto comp_x = comp->x_;
+                auto comp_y = comp->y_;
+
+                D(comp_name), D(comp_x), D(comp_y);
+
+                auto lefpin = c->lef_pin_;
+                auto lefpin_name = lefpin->name_;
+
+                D(lefpin_name);
+
+                // auto pin = c->pin_;
+                // auto pin_name = pin->name_;
+
+                // D(pin_name);
+
+                if(brk) break;
+            }
+            if(brk) break;
+        }
+        return;
+    }
+    int MAX_X_IND = 4;
+    int MAX_Y_IND = 1;
+    pair<int, int> LefDefParser::get_bounding_GCell(int x, int y)
+    {
+        MAX_X_IND = myGlobalGrid[0].size() - 1;
+        MAX_Y_IND = myGlobalGrid[0][0].size() - 1;
+        D(MAX_X_IND), D(MAX_Y_IND);
+        // Binary search on x
+
+        int lo = 0, midx, hi = MAX_X_IND;
+        while(lo < hi){
+            midx = lo + (hi - lo + 1)/2;
+            D(midx);
+
+            if(x >= myGlobalGrid[0][midx][0].startCoord.first)
+                lo = midx;
+            else
+                hi = midx-1;
+        }
+        int ansx = lo;
+        int midy;
+        lo = 0, hi = MAX_Y_IND;
+        while(lo < hi){
+            midy = lo + (hi - lo + 1) / 2;
+
+            if (y >= myGlobalGrid[0][0][midy].startCoord.second)
+                lo = midy;
+            else
+                hi = midy - 1;
+        }
+        int ansy = lo;
+        return {ansx, ansy};
+    }
+
 }
-
-

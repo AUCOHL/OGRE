@@ -3,23 +3,23 @@ LD    = g++
 OBJS_DIR = obj
 
 ifeq ($(DEBUG), 1)
-CXXFLAGS = -g -O0 -DDEBUG -std=c++11
+CXXFLAGS = -g -O0 -DDEBUG -std=c++11 -m32
 TARGET = bookshelf_writer
 else ifeq ($(UNIT_TEST), 1)
 CXXFLAGS = -g -O0 -DUNIT_TEST -DDEBUG -std=c++11
 TARGET = bookshelf_writer_t
 else
-CXXFLAGS = -O3 -std=c++11
+CXXFLAGS = -O3 -std=c++11 -m32
 TARGET = bookshelf_writer
 endif
 
-CXXFLAGS += 
+CXXFLAGS +=
 DEPEND_FILE = $(OBJS_DIR)/depend_file
 
 SRCS      = $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard */*/*.cpp)
 OBJS      = $(addprefix $(OBJS_DIR)/, $(notdir $(SRCS:%.cpp=%.o)))
-#LDFLAGS   = -L/usr/local/lib -L./lib/linux
-LDFLAGS   = -L/usr/local/lib -L./lib/osx 
+LDFLAGS   = -L/usr/local/lib -L./lib/linux
+#LDFLAGS   = -L/usr/local/lib -L./lib/osx
 LIBS      = -llef -ldef -lstdc++
 INCLUDES  = -I./
 INCLUDES += -I./include

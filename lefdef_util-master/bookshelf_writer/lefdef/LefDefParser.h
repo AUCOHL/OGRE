@@ -17,7 +17,7 @@
 
 namespace my_lefdef
 {
-    
+
     struct gCellGridGlobal
     {
         pair<int, int> startCoord;
@@ -29,7 +29,7 @@ namespace my_lefdef
         }
         gCellGridGlobal(pair<int,int> startCoord_, pair<int, int> endCoord_): startCoord(startCoord_), endCoord(endCoord_){};
     };
-    
+
 class LefDefParser
 {
 public:
@@ -49,8 +49,12 @@ public:
 
     // Following functions will be removed soon
     def::Def& get_def ();
-    
+
     vector<vector<vector<gCellGridGlobal>>>& build_Gcell_grid(unordered_map <string, lef::LayerPtr>& layerMap);
+
+    void get_connection_locations();
+
+    pair<int, int> get_bounding_GCell(int x, int y);
 
 private:
     lef::Lef&    lef_;

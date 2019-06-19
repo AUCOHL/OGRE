@@ -36,15 +36,15 @@ int main (int argc, char* argv[])
     ap.initialize(argc, argv);
     auto filename_lef = ap.get_argument("-lef");
     auto filename_def = ap.get_argument("-def");
-    
+
 //    auto filename_def = "/Users/habibabassem/Downloads/lefdef_util-master/test_cases/ispd19_test5/ispd19_test5.input_unplaced.def";
 //    auto filename_lef = "/Users/habibabassem/Downloads/lefdef_util-master/test_cases/ispd19_test5/ispd19_test5.input.def";
-    
+
     // Run detaile drouter
     auto& ldp = my_lefdef::LefDefParser::get_instance();
-    
+
 //    ldp.writeGcells();
-    
+
     if (filename_lef == "" or filename_def == "") {
         show_usage();
         return -1;
@@ -56,13 +56,13 @@ int main (int argc, char* argv[])
     ldp.read_lef(filename_lef);
     ldp.read_def(filename_def);
 
-    
+
     ldp.write_bookshelf("temp");
-    
+
     unordered_map <string, lef::LayerPtr> layerMap;
     vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid = ldp.build_Gcell_grid(layerMap);
 
-    
+
     //output for testing
     for (int k=0; k<gcellGrid.size(); k++){
         cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
             cout << "horizontal" << endl;
         if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::vertical)
             cout << "vertical" << endl;
-        
+
         for (int i=0; i<gcellGrid[k].size(); i++){
             for (int j=0; j<gcellGrid[k][i].size(); j++){
                 cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionINV << endl;
@@ -78,8 +78,8 @@ int main (int argc, char* argv[])
         }
         cout << endl;
     }
-    
-    
+    pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(1100, 750);
+    cout << "First: " << locationInGCellGrid.first << " Second: " << locationInGCellGrid.second << '\n';
     cout << endl << "Done." << endl;
     return 0;
 }
@@ -89,7 +89,7 @@ void show_usage ()
     cout << endl;
     cout << "Usage:" << endl;
     cout << "lefdef_parser -lef <lef> -def <def>" << endl << endl;
-    
+
 }
 
 /**
