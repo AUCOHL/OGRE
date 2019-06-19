@@ -49,6 +49,7 @@ public:
 
     // Following functions will be removed soon
     def::Def& get_def ();
+    def::Def&    def_;
 
     vector<vector<vector<gCellGridGlobal>>>& build_Gcell_grid(unordered_map <string, lef::LayerPtr>& layerMap);
 
@@ -58,7 +59,6 @@ public:
 
 private:
     lef::Lef&    lef_;
-    def::Def&    def_;
 
     // Do not allow instantiation of this class.
     LefDefParser ();

@@ -540,13 +540,13 @@ void LefDefParser::update_def (string bookshelf_pl)
     {
         MAX_X_IND = myGlobalGrid[0].size() - 1;
         MAX_Y_IND = myGlobalGrid[0][0].size() - 1;
-        D(MAX_X_IND), D(MAX_Y_IND);
+        //D(MAX_X_IND), D(MAX_Y_IND);
         // Binary search on x
 
         int lo = 0, midx, hi = MAX_X_IND;
         while(lo < hi){
             midx = lo + (hi - lo + 1)/2;
-            D(midx);
+          //  D(midx);
 
             if(x >= myGlobalGrid[0][midx][0].startCoord.first)
                 lo = midx;
