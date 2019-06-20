@@ -298,7 +298,7 @@ int main (int argc, char* argv[])
     ldp.read_def(filename_def);
 
 
-    ldp.write_bookshelf("temp");
+    // ldp.write_bookshelf("temp"); // FUNCTION DELETED
 
     unordered_map <string, lef::LayerPtr> layerMap;
     vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid = ldp.build_Gcell_grid(layerMap);
