@@ -18,57 +18,50 @@
 namespace my_lefdef
 {
 
-    struct gCellGridGlobal
+struct gCellGridGlobal
+{
+    pair<int, int> startCoord;
+    pair<int, int> endCoord;
+    int congestionINV;
+    void setCongestionINV(int congestionINV_)
     {
-        pair<int, int> startCoord;
-        pair<int, int> endCoord;
-        int congestionINV;
-        void setCongestionINV(int congestionINV_)
-        {
-            congestionINV = congestionINV_;
-        }
-        gCellGridGlobal(pair<int,int> startCoord_, pair<int, int> endCoord_): startCoord(startCoord_), endCoord(endCoord_){};
-    };
+        congestionINV = congestionINV_;
+    }
+    gCellGridGlobal(pair<int, int> startCoord_, pair<int, int> endCoord_) : startCoord(startCoord_), endCoord(endCoord_){};
+};
 
 class LefDefParser
 {
 public:
-    void read_lef (string filename);
-    void read_def (string filename);
+    void read_lef(string filename);
+    void read_def(string filename);
 
-    void write_bookshelf (string filename) const;
-    void write_bookshelf_nodes (string filename) const;
-    void write_bookshelf_nets (string filename) const;
-    void write_bookshelf_wts (string filename) const;
-    void write_bookshelf_scl (string filename) const;
-    void write_bookshelf_pl (string filename) const;
+    void update_def(string bookshelf_pl);
 
-    void update_def (string bookshelf_pl);
-
-    static LefDefParser& get_instance ();
+    static LefDefParser &get_instance();
 
     // Following functions will be removed soon
-    def::Def& get_def ();
-    def::Def&    def_;
+    def::Def &get_def();
+    def::Def &def_;
 
-    vector<vector<vector<gCellGridGlobal>>>& build_Gcell_grid(unordered_map <string, lef::LayerPtr>& layerMap);
+    vector<vector<vector<gCellGridGlobal>>> &build_Gcell_grid(unordered_map<string, lef::LayerPtr> &layerMap);
 
     void get_connection_locations();
 
     pair<int, int> get_bounding_GCell(int x, int y);
 
 private:
-    lef::Lef&    lef_;
+    lef::Lef &lef_;
 
     // Do not allow instantiation of this class.
-    LefDefParser ();
-    ~LefDefParser () = default;
-    LefDefParser (const LefDefParser&) = delete;
-    LefDefParser& operator= (const LefDefParser&) = delete;
-    LefDefParser (LefDefParser&&) = delete;
-    LefDefParser& operator= (LefDefParser&&) = delete;
+    LefDefParser();
+    ~LefDefParser() = default;
+    LefDefParser(const LefDefParser &) = delete;
+    LefDefParser &operator=(const LefDefParser &) = delete;
+    LefDefParser(LefDefParser &&) = delete;
+    LefDefParser &operator=(LefDefParser &&) = delete;
 };
 
-}
+} // namespace my_lefdef
 
 #endif /* LEFDEFPARSER_H */

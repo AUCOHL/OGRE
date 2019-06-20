@@ -4,13 +4,13 @@ OBJS_DIR = obj
 
 ifeq ($(DEBUG), 1)
 CXXFLAGS = -g -O0 -DDEBUG -std=c++11
-TARGET = bookshelf_writer
+TARGET = global_router
 else ifeq ($(UNIT_TEST), 1)
 CXXFLAGS = -g -O0 -DUNIT_TEST -DDEBUG -std=c++11
-TARGET = bookshelf_writer_t
+TARGET = global_router_t
 else
 CXXFLAGS = -O3 -std=c++11
-TARGET = bookshelf_writer
+TARGET = global_router
 endif
 
 CXXFLAGS +=
