@@ -149,7 +149,7 @@ Node* searchList(vector<Node*>& Set, triplet curr)
 	The code contains redundant code but can be optimized and 
 	implemented better but more on that later.
 */
-vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef::LayerPtr>& layerMap)
+vector<triplet> findPath(Node* source, Node* target, unordered_map <int, lef::LayerPtr>& layerMap)
 {
 	Node* currentForward = nullptr, *currentBackward = nullptr;
 
@@ -194,12 +194,12 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
             if (!isValid(&newNode) || searchListResult) continue;
             
             // DONE
-			string metalString = layerMap.begin()->first;
-			metalString = metalString.substr(0, 5);
-			if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
+			// string metalString = layerMap.begin()->first;
+			// metalString = metalString.substr(0, 5);
+			if (layerMap[currentForward->coordinates.z+1] ->dir_ == LayerDir::horizontal){
                 if (i == 0 || i == 1)
                     continue;            }
-            else if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
+            else if (layerMap[currentForward->coordinates.z+1] ->dir_ == LayerDir::vertical){
                 if (i == 2 || i == 3) continue;
             }
             else {
@@ -269,12 +269,12 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
             if (!isValid(&newNode) || searchListResult) continue;
             
             // DONE
-			string metalString = layerMap.begin()->first;
-			metalString = metalString.substr(0, 5);
-			if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
+			// string metalString = layerMap.begin()->first;
+			// metalString = metalString.substr(0, 5);
+			if (layerMap[currentForward->coordinates.z+1] ->dir_ == LayerDir::horizontal){
                 if (i == 0 || i == 1) continue;
             }
-            else if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
+            else if (layerMap[currentForward->coordinates.z+1] ->dir_ == LayerDir::vertical){
                 if (i == 2 || i == 3) continue;
             }
             else {
@@ -373,7 +373,7 @@ int main (int argc, char* argv[])
 
 
     // ldp.write_bookshelf("temp"); // FUNCTION DELETED
-    unordered_map <string, lef::LayerPtr> layerMap;
+    unordered_map <int, lef::LayerPtr> layerMap;
     vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid = ldp.build_Gcell_grid(layerMap);
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();

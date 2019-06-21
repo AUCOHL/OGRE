@@ -44,7 +44,7 @@ public:
     def::Def &get_def();
     def::Def &def_;
 
-    vector<vector<vector<gCellGridGlobal>>> &build_Gcell_grid(unordered_map<string, lef::LayerPtr> &layerMap);
+    vector<vector<vector<gCellGridGlobal>>> &build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap);
 
     void get_connection_locations();
 

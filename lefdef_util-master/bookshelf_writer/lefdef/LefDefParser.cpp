@@ -130,7 +130,7 @@ def::Def &LefDefParser::get_def()
 //    vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 
-vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_grid(unordered_map<string, lef::LayerPtr> &layerMap)
+vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap)
 {
     vector<def::GCellGridPtr> gCellGridVector = def_.get_gcell_grids();
     set<int> xCoord;
@@ -157,7 +157,8 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     {
         string layerName = tracks[i]->layer_;
         tracks_names.insert(layerName);
-        layerMap[layerName] = lef_.get_layer(layerName);
+        int l = layerName[layerName.length()-1] - '0';
+        layerMap[l] = lef_.get_layer(layerName);
     }
     //get dimensions of gcell grid
     int xDimension = xCoord.size();
@@ -214,12 +215,12 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 //get pitch
                                 
                 // DONE
-                string metalString = layerMap.begin()->first;
-                metalString = metalString.substr(0, 5);
-                lef::LayerPtr l = layerMap[metalString + std::to_string(k + 1)];
-                double pitch = layerMap[metalString + std::to_string(k + 1)]->pitch_;
-                double pitchX = layerMap[metalString + std::to_string(k + 1)]->pitch_x_;
-                double pitchY = layerMap[metalString + std::to_string(k + 1)]->pitch_y_;
+                // string metalString = layerMap.begin()->first;
+                // metalString = metalString.substr(0, 5);
+                lef::LayerPtr l = layerMap[k + 1];
+                double pitch = layerMap[k + 1]->pitch_;
+                double pitchX = layerMap[k + 1]->pitch_x_;
+                double pitchY = layerMap[k + 1]->pitch_y_;
                 // double pitch = 0, pitchX = 0, pitchY = 0;
                 double dimension;
                 if (l->dir_ == LayerDir::horizontal)
