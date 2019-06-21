@@ -137,6 +137,7 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     set<int> yCoord;
 
     //creating all points based on step and do, inserting into a set to revome duplicates
+    cout << "da5alt el func" << endl;
     for (auto GcellGridItem : gCellGridVector)
     {
         if (GcellGridItem->direction_ == TrackDir::x)
@@ -146,11 +147,11 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             for (int i = GcellGridItem->location_; i < GcellGridItem->location_ + GcellGridItem->num_ * GcellGridItem->step_; i = i + GcellGridItem->step_)
                 yCoord.insert(i);
     }
-
+    cout << "hena el seg fault" << endl;
     //getting number of metal tracks from def file
     vector<def::TrackPtr> tracks = def_.get_tracks();
     unordered_set<string> tracks_names;
-
+    
     //create a map of metal layer name and layer pointer
     for (int i = 0; i < tracks.size(); i++)
     {
@@ -158,7 +159,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         tracks_names.insert(layerName);
         layerMap[layerName] = lef_.get_layer(layerName);
     }
-
     //get dimensions of gcell grid
     int xDimension = xCoord.size();
     int yDimension = yCoord.size();
@@ -167,6 +167,8 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     cout << "X DIMENSION " << xDimension - 1 << endl;
     cout << "Z DIMENSION " << zDimension << endl;
 
+    
+    cout << "HENA TAYEB??" << endl;
     //building Gcell grid
     myGlobalGrid.resize(zDimension);
     for (int i = 0; i < zDimension; i++)
@@ -174,6 +176,7 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension - 1);
     }
 
+    cout << "LA2 MSH HENA" << endl;
     //creating gcells
     for (int i = 0; i < xDimension - 1; ++i)
     {
@@ -196,6 +199,7 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             }
         }
     }
+    cout << "what about dat" << endl;
     //creating congestion based on available metal wires
     for (int k = 0; k < zDimension; k++)
     {
@@ -208,11 +212,18 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 int lefDBU = lef_.get_dbu();
 
                 //get pitch
+                
+                //prints name of layers. Delete before submission.
+                for (auto& layer: layerMap){
+                    cout << layer.first << endl;
+                }
+                
+                // todo
                 lef::LayerPtr l = layerMap["metal" + std::to_string(k + 1)];
                 double pitch = layerMap["metal" + std::to_string(k + 1)]->pitch_;
                 double pitchX = layerMap["metal" + std::to_string(k + 1)]->pitch_x_;
                 double pitchY = layerMap["metal" + std::to_string(k + 1)]->pitch_y_;
-
+                double pitch = 0, pitchX = 0, pitchY = 0;
                 double dimension;
                 if (l->dir_ == LayerDir::horizontal)
                 { //get difference in y

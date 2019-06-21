@@ -193,23 +193,12 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
             // if it is invalid or i already expanded it, continue
             if (!isValid(&newNode) || searchListResult) continue;
             
-//            cout <<"First" << endl;
-//            cout << "metal" + std::to_string(currentForward->coordinates.z+1) << endl;
+            // todo
             if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
-                cout << "hori" << endl;
-                if (i == 0 || i == 1){
-//                    cout << "vert dir" << endl;
-                    continue;
-                }
-                cout <<  i << endl;
-            }
+                if (i == 0 || i == 1)
+                    continue;            }
             else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
-//                cout << "vert" << endl;
-                if (i == 2 || i == 3){
-//                    cout << "hori dir" << endl;
-                    continue;
-                }
-                cout <<  i << endl;
+                if (i == 2 || i == 3) continue;
             }
             else {
                 cout << "yelehwey" << endl;
@@ -248,11 +237,8 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 		*/
 		for (auto node : closedSetBackward)
 		{
-//            cout << "did I reach here?" << endl;
 			if (node->coordinates == currentForward->coordinates)
 				breaking = true;
-            
-//            cout << "did I make it to here?" << endl;
 		}
         
 		if (breaking)
@@ -265,44 +251,27 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 		for (auto node : openSetBackward)
 			if (node->fCost < currentBackward->fCost)
 				currentBackward = node, ++currentBackward_it;
-        cout << "Came here" << endl;
-		closedSetBackward.push_back(currentBackward);
-        cout << "Set size " << openSetBackward.size() << endl;
-        cout << "Iterator " << currentBackward_it << endl;
+		
+        closedSetBackward.push_back(currentBackward);
+        
         if(openSetBackward.size() > 0){
             openSetBackward.erase(openSetBackward.begin() + currentBackward_it);
             continue;
         }
 		directionsSize = directions.size();
         
-        cout << "hell yaaass" << endl;
 		for (int i = 0; i < directionsSize; ++i)
 		{
-//            cout << "came here" << endl;
             Node newNode(currentBackward->coordinates + directions[i]);
             Node* searchListResult = searchList(closedSetBackward, newNode.coordinates);
-//            cout << "wohoo" << endl;
-            if (!isValid(&newNode) || searchListResult) {
-//                cout << "reached here" << endl;
-                continue;
-            }
-//            cout <<"Second" << endl;
-//            cout << "metal" + std::to_string(currentForward->coordinates.z+1) << endl;
+            if (!isValid(&newNode) || searchListResult) continue;
+            
+            // todo
             if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
-//                cout << "hori" << endl;
-                if (i == 0 || i == 1){
-//                    cout << "vert dir" << endl;
-                    continue;
-                }
-                cout <<  i << endl;
+                if (i == 0 || i == 1) continue;
             }
             else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
-//                cout << "vert" << endl;
-                if (i == 2 || i == 3){
-//                    cout << "hori dir" << endl;
-                    continue;
-                }
-                cout <<  i << endl;
+                if (i == 2 || i == 3) continue;
             }
             else {
                 cout << "yelehwey" << endl;
@@ -373,9 +342,8 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 int main (int argc, char* argv[])
 {
     util::Watch watch;
-
     ofstream out;
-    out.open("output.txt");
+    out.open("output2.txt");
 //    if (!out.isOpen()){
 //        cout << "Error to open file" << endl;
 //    }
@@ -394,22 +362,18 @@ int main (int argc, char* argv[])
         show_usage();
         return -1;
     }
-
     show_banner();
     show_cmd_args();
-
     ldp.read_lef(filename_lef);
     ldp.read_def(filename_def);
 
 
     // ldp.write_bookshelf("temp"); // FUNCTION DELETED
-
     unordered_map <string, lef::LayerPtr> layerMap;
     vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid = ldp.build_Gcell_grid(layerMap);
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
-
     for (auto &layer: layerMap){
         cout << layer.first << endl;
     }
