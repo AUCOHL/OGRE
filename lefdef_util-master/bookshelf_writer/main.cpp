@@ -12,6 +12,7 @@
 #include "LefDefParser.h"
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <functional>
@@ -94,6 +95,44 @@ double calculateHeuristic(const Node* curr, const Node* dest)
 		abs(curr->coordinates.z - dest->coordinates.z);
 }
 
+void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
+    
+    triplet buffer(-10, -10, -10);
+    if (myPath.size() > 0)
+        buffer = myPath[0];
+    for (int i = 1; i < myPath.size(); i++){
+        if(myPath[i].z == buffer.z)
+            continue;
+        else{
+            if(myPath[i-1] == buffer){
+                cout << buffer.x << " " << buffer.y <<  " metal " << buffer.z+1 << endl;
+                int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+                int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+                int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
+                int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
+                out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+                buffer = myPath[i];
+            }
+            else{
+                cout << buffer.x << " " << buffer.y << " " << myPath[i-1].x << " " << myPath[i-1].y << " metal " << buffer.z+1 << endl;
+                int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+                int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+                int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
+                int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
+                out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+                buffer = myPath[i];
+            }
+        }
+    }
+    if (buffer == myPath[myPath.size()-1]){
+        cout << buffer.x << " " << buffer.y << " " << " metal " << buffer.z+1 << endl;
+        int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+        int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+        int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
+        int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
+        out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+    }
+}
 /*
 	This function simply takes a set, and searches it
 	for a triplet with the same coordinates
@@ -110,7 +149,7 @@ Node* searchList(vector<Node*>& Set, triplet curr)
 	The code contains redundant code but can be optimized and 
 	implemented better but more on that later.
 */
-vector<triplet> findPath(Node* source, Node* target)
+vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef::LayerPtr>& layerMap)
 {
 	Node* currentForward = nullptr, *currentBackward = nullptr;
 
@@ -149,10 +188,20 @@ vector<triplet> findPath(Node* source, Node* target)
 				so here i am validating the direction i should go to with respect to the layer number.
 				For example, if i am on layer 0 i can only go east or west.
 			*/
-			if (currentForward->coordinates.z == 0 || currentForward->coordinates.z == 2)
-				if (i == 0 || i == 1) continue;
-			if (currentForward->coordinates.z == 1 || currentForward->coordinates.z == 3)
-				if (i == 2 || i == 3) continue;
+            
+            if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
+                if (i == 0 || i == 1)
+                    continue;
+            }
+            else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
+                if (i == 2 || i == 3)
+                    continue;
+            }
+            
+//            if (currentForward->coordinates.z == 0 || currentForward->coordinates.z == 2)
+//                if (i == 0 || i == 1) continue;
+//            if (currentForward->coordinates.z == 1 || currentForward->coordinates.z == 3)
+//                if (i == 2 || i == 3) continue;
 
 			Node newNode(currentForward->coordinates + directions[i]);
 			Node* searchListResult = searchList(closedSetForward, newNode.coordinates);
@@ -205,10 +254,20 @@ vector<triplet> findPath(Node* source, Node* target)
 		directionsSize = directions.size();
 		for (int i = 0; i < directionsSize; ++i)
 		{
-			if (currentBackward->coordinates.z == 0 || currentBackward->coordinates.z == 2)
-				if (i == 0 || i == 1) continue;
-			if (currentBackward->coordinates.z == 1 || currentBackward->coordinates.z == 3)
-				if (i == 2 || i == 3) continue;
+            
+            if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
+                if (i == 0 || i == 1)
+                    continue;
+            }
+            else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
+                if (i == 2 || i == 3)
+                    continue;
+            }
+            
+//            if (currentBackward->coordinates.z == 0 || currentBackward->coordinates.z == 2)
+//                if (i == 0 || i == 1) continue;
+//            if (currentBackward->coordinates.z == 1 || currentBackward->coordinates.z == 3)
+//                if (i == 2 || i == 3) continue;
 			Node newNode(currentBackward->coordinates + directions[i]);
 			Node* searchListResult = searchList(closedSetBackward, newNode.coordinates);
 			if (!isValid(&newNode) || searchListResult) continue;
@@ -255,11 +314,13 @@ vector<triplet> findPath(Node* source, Node* target)
 		path.push_back(currentForward->coordinates);
 		currentForward = currentForward->parent;
 	}
+    std::reverse(path.begin(), path.end());
 	for (auto node : closedSetBackward)
 	{
 		if (node->coordinates == intersection->coordinates) { intersection = node; break; }
 	}
 	currentForward = intersection;
+    currentForward = currentForward -> parent;
 	while (currentForward != nullptr)
 	{
 		path.push_back(currentForward->coordinates);
@@ -273,6 +334,11 @@ int main (int argc, char* argv[])
 {
     util::Watch watch;
 
+    ofstream out;
+    out.open("output.txt");
+//    if (!out.isOpen()){
+//        cout << "Error to open file" << endl;
+//    }
     // Parsing command line arguments
     auto& ap = ArgParser::get();
 
@@ -283,8 +349,6 @@ int main (int argc, char* argv[])
 
     // Run detaile drouter
     auto& ldp = my_lefdef::LefDefParser::get_instance();
-
-//    ldp.writeGcells();
 
     if (filename_lef == "" or filename_def == "") {
         show_usage();
@@ -326,9 +390,12 @@ int main (int argc, char* argv[])
     nets = ldp.def_.get_net_umap();
 
     triplet prev(0,0,0), curr(0,0,0);
-    
+    vector <triplet> netPath;
     for (auto &net: nets)
     {
+        netPath.clear();
+        out << net.second->name_ << endl << "(" << endl;
+
         int connection_size = net.second->connections_.size();
         int xCoordPrev = net.second->connections_[0]->lx_;
         int yCoordPrev = net.second->connections_[0]->ly_;
@@ -364,18 +431,27 @@ int main (int argc, char* argv[])
             pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordCurr, yCoordCurr);  
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
-            vector<triplet> myPath = findPath(new Node(prev), new Node(curr));
+            
+            if ("ispd_clk" == net.first){
+                cout << "CAUSES SEG FAULT: ( " << prev.z << " , " << prev.x << " , " << prev.y
+                << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << ")" << endl;
+            }
+            vector<triplet> myPath = findPath(new Node(prev), new Node(curr), layerMap);
               cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
               << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
             
             prev = curr;
             for (auto loc: myPath)
             {
-                printf("Z: %d | Y: %d | Z: %d\n", loc.z, loc.x, loc.y);
+                printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
             }
+            netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
         }
+        printOutput(out, netPath, gcellGrid);
+        out << ")" << endl;
     }
     cout << endl << "Done." << endl;
+    out.close();
     return 0;
 }
 
