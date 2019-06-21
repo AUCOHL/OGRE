@@ -193,11 +193,13 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
             // if it is invalid or i already expanded it, continue
             if (!isValid(&newNode) || searchListResult) continue;
             
-            // todo
-            if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
+            // DONE
+			string metalString = layerMap.begin()->first;
+			metalString = metalString.substr(0, 5);
+			if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
                 if (i == 0 || i == 1)
                     continue;            }
-            else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
+            else if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
                 if (i == 2 || i == 3) continue;
             }
             else {
@@ -266,11 +268,13 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
             Node* searchListResult = searchList(closedSetBackward, newNode.coordinates);
             if (!isValid(&newNode) || searchListResult) continue;
             
-            // todo
-            if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
+            // DONE
+			string metalString = layerMap.begin()->first;
+			metalString = metalString.substr(0, 5);
+			if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
                 if (i == 0 || i == 1) continue;
             }
-            else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
+            else if (layerMap[metalString + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
                 if (i == 2 || i == 3) continue;
             }
             else {
@@ -439,16 +443,16 @@ int main (int argc, char* argv[])
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
             
-            cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
-            << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
+            // cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
+            // << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
             
             vector<triplet> myPath = findPath(new Node(prev), new Node(curr), layerMap);
             
             prev = curr;
-            for (auto loc: myPath)
-            {
-                printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
-            }
+            // for (auto loc: myPath)
+            // {
+            //     printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
+            // }
             netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
         }
         printOutput(out, netPath, gcellGrid);

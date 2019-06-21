@@ -212,18 +212,15 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 int lefDBU = lef_.get_dbu();
 
                 //get pitch
-                
-                //prints name of layers. Delete before submission.
-                for (auto& layer: layerMap){
-                    cout << layer.first << endl;
-                }
-                
-                // todo
-                lef::LayerPtr l = layerMap["metal" + std::to_string(k + 1)];
-                double pitch = layerMap["metal" + std::to_string(k + 1)]->pitch_;
-                double pitchX = layerMap["metal" + std::to_string(k + 1)]->pitch_x_;
-                double pitchY = layerMap["metal" + std::to_string(k + 1)]->pitch_y_;
-                double pitch = 0, pitchX = 0, pitchY = 0;
+                                
+                // DONE
+                string metalString = layerMap.begin()->first;
+                metalString = metalString.substr(0, 5);
+                lef::LayerPtr l = layerMap[metalString + std::to_string(k + 1)];
+                double pitch = layerMap[metalString + std::to_string(k + 1)]->pitch_;
+                double pitchX = layerMap[metalString + std::to_string(k + 1)]->pitch_x_;
+                double pitchY = layerMap[metalString + std::to_string(k + 1)]->pitch_y_;
+                // double pitch = 0, pitchX = 0, pitchY = 0;
                 double dimension;
                 if (l->dir_ == LayerDir::horizontal)
                 { //get difference in y
