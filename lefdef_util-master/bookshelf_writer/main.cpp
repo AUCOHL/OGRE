@@ -188,14 +188,31 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 				so here i am validating the direction i should go to with respect to the layer number.
 				For example, if i am on layer 0 i can only go east or west.
 			*/
+            Node newNode(currentForward->coordinates + directions[i]);
+            Node* searchListResult = searchList(closedSetForward, newNode.coordinates);
+            // if it is invalid or i already expanded it, continue
+            if (!isValid(&newNode) || searchListResult) continue;
             
+//            cout <<"First" << endl;
+//            cout << "metal" + std::to_string(currentForward->coordinates.z+1) << endl;
             if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
-                if (i == 0 || i == 1)
+                cout << "hori" << endl;
+                if (i == 0 || i == 1){
+//                    cout << "vert dir" << endl;
                     continue;
+                }
+                cout <<  i << endl;
             }
             else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
-                if (i == 2 || i == 3)
+//                cout << "vert" << endl;
+                if (i == 2 || i == 3){
+//                    cout << "hori dir" << endl;
                     continue;
+                }
+                cout <<  i << endl;
+            }
+            else {
+                cout << "yelehwey" << endl;
             }
             
 //            if (currentForward->coordinates.z == 0 || currentForward->coordinates.z == 2)
@@ -203,14 +220,8 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 //            if (currentForward->coordinates.z == 1 || currentForward->coordinates.z == 3)
 //                if (i == 2 || i == 3) continue;
 
-			Node newNode(currentForward->coordinates + directions[i]);
-			Node* searchListResult = searchList(closedSetForward, newNode.coordinates);
-			// if it is invalid or i already expanded it, continue
-			if (!isValid(&newNode) || searchListResult) continue;
-
 			int totalCost = currentForward->gCost + 1;
 			successor = searchList(openSetForward, newNode.coordinates);
-
 			/* if it is not in the openSet insert it, else apply relaxation*/
 			if (successor == nullptr)
 			{
@@ -227,6 +238,7 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 				successor->fCost = totalCost + successor->hCost;
 			}
 		}
+        
 		bool breaking = false;
 		/* 
 			if the node i expanded was in the expanded list of the backward propagation
@@ -236,41 +248,69 @@ vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef:
 		*/
 		for (auto node : closedSetBackward)
 		{
+//            cout << "did I reach here?" << endl;
 			if (node->coordinates == currentForward->coordinates)
 				breaking = true;
+            
+//            cout << "did I make it to here?" << endl;
 		}
+        
 		if (breaking)
 		{
 			intersection = currentForward;
 			break;
 		}
+        
 		// get the least node with function cost and expand that path
 		for (auto node : openSetBackward)
 			if (node->fCost < currentBackward->fCost)
 				currentBackward = node, ++currentBackward_it;
-
+        cout << "Came here" << endl;
 		closedSetBackward.push_back(currentBackward);
-		openSetBackward.erase(openSetBackward.begin() + currentBackward_it);
+        cout << "Set size " << openSetBackward.size() << endl;
+        cout << "Iterator " << currentBackward_it << endl;
+        if(openSetBackward.size() > 0){
+            openSetBackward.erase(openSetBackward.begin() + currentBackward_it);
+            continue;
+        }
 		directionsSize = directions.size();
+        
+        cout << "hell yaaass" << endl;
 		for (int i = 0; i < directionsSize; ++i)
 		{
-            
+//            cout << "came here" << endl;
+            Node newNode(currentBackward->coordinates + directions[i]);
+            Node* searchListResult = searchList(closedSetBackward, newNode.coordinates);
+//            cout << "wohoo" << endl;
+            if (!isValid(&newNode) || searchListResult) {
+//                cout << "reached here" << endl;
+                continue;
+            }
+//            cout <<"Second" << endl;
+//            cout << "metal" + std::to_string(currentForward->coordinates.z+1) << endl;
             if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
-                if (i == 0 || i == 1)
+//                cout << "hori" << endl;
+                if (i == 0 || i == 1){
+//                    cout << "vert dir" << endl;
                     continue;
+                }
+                cout <<  i << endl;
             }
             else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
-                if (i == 2 || i == 3)
+//                cout << "vert" << endl;
+                if (i == 2 || i == 3){
+//                    cout << "hori dir" << endl;
                     continue;
+                }
+                cout <<  i << endl;
             }
-            
+            else {
+                cout << "yelehwey" << endl;
+            }
 //            if (currentBackward->coordinates.z == 0 || currentBackward->coordinates.z == 2)
 //                if (i == 0 || i == 1) continue;
 //            if (currentBackward->coordinates.z == 1 || currentBackward->coordinates.z == 3)
 //                if (i == 2 || i == 3) continue;
-			Node newNode(currentBackward->coordinates + directions[i]);
-			Node* searchListResult = searchList(closedSetBackward, newNode.coordinates);
-			if (!isValid(&newNode) || searchListResult) continue;
 
 			int totalCost = currentBackward->gCost + 1;
 
@@ -370,21 +410,24 @@ int main (int argc, char* argv[])
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
 
-    //output for testing
-    for (int k=0; k<gcellGrid.size(); k++){
-        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
-        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::horizontal)
-            cout << "horizontal" << endl;
-        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::vertical)
-            cout << "vertical" << endl;
-
-        for (int i=0; i<gcellGrid[k].size(); i++){
-            for (int j=0; j<gcellGrid[k][i].size(); j++){
-                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionINV << endl;
-            }
-        }
-        cout << endl;
+    for (auto &layer: layerMap){
+        cout << layer.first << endl;
     }
+//    //output for testing
+//    for (int k=0; k<gcellGrid.size(); k++){
+//        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
+//        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::horizontal)
+//            cout << "horizontal" << endl;
+//        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::vertical)
+//            cout << "vertical" << endl;
+//
+//        for (int i=0; i<gcellGrid[k].size(); i++){
+//            for (int j=0; j<gcellGrid[k][i].size(); j++){
+//                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionINV << endl;
+//            }
+//        }
+//        cout << endl;
+//    }
 
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
@@ -432,13 +475,10 @@ int main (int argc, char* argv[])
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
             
-            if ("ispd_clk" == net.first){
-                cout << "CAUSES SEG FAULT: ( " << prev.z << " , " << prev.x << " , " << prev.y
-                << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << ")" << endl;
-            }
+            cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
+            << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
+            
             vector<triplet> myPath = findPath(new Node(prev), new Node(curr), layerMap);
-              cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
-              << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
             
             prev = curr;
             for (auto loc: myPath)
