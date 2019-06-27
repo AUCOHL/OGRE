@@ -137,7 +137,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     set<int> yCoord;
 
     //creating all points based on step and do, inserting into a set to revome duplicates
-    cout << "da5alt el func" << endl;
     for (auto GcellGridItem : gCellGridVector)
     {
         if (GcellGridItem->direction_ == TrackDir::x)
@@ -147,7 +146,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             for (int i = GcellGridItem->location_; i < GcellGridItem->location_ + GcellGridItem->num_ * GcellGridItem->step_; i = i + GcellGridItem->step_)
                 yCoord.insert(i);
     }
-    cout << "hena el seg fault" << endl;
     //getting number of metal tracks from def file
     vector<def::TrackPtr> tracks = def_.get_tracks();
     unordered_set<string> tracks_names;
@@ -169,7 +167,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     cout << "Z DIMENSION " << zDimension << endl;
 
     
-    cout << "HENA TAYEB??" << endl;
     //building Gcell grid
     myGlobalGrid.resize(zDimension);
     for (int i = 0; i < zDimension; i++)
@@ -177,7 +174,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension - 1);
     }
 
-    cout << "LA2 MSH HENA" << endl;
     //creating gcells
     for (int i = 0; i < xDimension - 1; ++i)
     {
@@ -200,7 +196,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             }
         }
     }
-    cout << "what about dat" << endl;
     //creating congestion based on available metal wires
     for (int k = 0; k < zDimension; k++)
     {
@@ -211,7 +206,6 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 //get units of lef and def
                 int defDBU = def_.get_dbu();
                 int lefDBU = lef_.get_dbu();
-
                 //get pitch
                                 
                 // DONE
@@ -221,19 +215,18 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 double pitch = layerMap[k + 1]->pitch_;
                 double pitchX = layerMap[k + 1]->pitch_x_;
                 double pitchY = layerMap[k + 1]->pitch_y_;
-                // double pitch = 0, pitchX = 0, pitchY = 0;
-                double dimension;
+                int dimension = 0, freeWires;
                 if (l->dir_ == LayerDir::horizontal)
                 { //get difference in y
                     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
+                    freeWires = (dimension * defDBU) / (pitchX * lefDBU);
                 }
                 else if (l->dir_ == LayerDir::vertical)
                 { //get difference in x
                     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
+                    freeWires = (dimension * defDBU) / (pitchY * lefDBU);
                 }
-
                 //get number of free wires in cell
-                int freeWires = (dimension * defDBU) / (pitch * lefDBU);
                 myGlobalGrid[k][i][j].setCongestionINV(freeWires);
             }
         }
