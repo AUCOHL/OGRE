@@ -10,6 +10,7 @@
 #include "Watch.h"
 #include "ArgParser.h"
 #include "LefDefParser.h"
+#include "stlastar.h" // See header for copyright and usage information
 
 #include <iostream>
 #include <fstream>
@@ -17,13 +18,15 @@
 #include <algorithm>
 #include <functional>
 #include <set>
+#include <math.h>
 
 using namespace std;
 
 void show_usage ();
-void show_banner ();
 void show_cmd_args ();
 int omp_thread_count();
+
+#define INVALID 1
 
 #ifndef UNIT_TEST
 
@@ -31,6 +34,8 @@ int omp_thread_count();
  * Main.
  */
 int zDimension, xDimension, yDimension;
+vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid;
+    unordered_map <int, lef::LayerPtr> layerMap;
 
 struct triplet
 {
@@ -46,54 +51,153 @@ struct triplet
 	}
     triplet(const triplet& other) : x(other.x), y(other.y), z(other.z) {};
 };
-struct Node
+
+
+int GetMap( int z, int x, int y)
 {
-	triplet coordinates;
-	Node* parent;
-	float gCost; // edge cost
-	float hCost; // heuristic cost 
-	float fCost; // combined cost
-	bool operator < (const Node& other)
+	if( x < 0 || x >= xDimension || y < 0 || y >= yDimension || z < 0 || z >= zDimension)
 	{
-		return fCost > other.fCost;
+		return INVALID;	 
 	}
-	Node(triplet coordinates_, Node *parent_ = nullptr) : coordinates(coordinates_), parent(parent_) {};
+	
+	return (gcellGrid[z][x][y].congestionINV <= 0);
+}
+
+
+
+// Definitions
+
+class MapSearchNode
+{
+public:
+	int x;	 // the (x,y,z) positions of the node
+	int y;	
+	int z;
+	MapSearchNode() { x = y = z = 0; }
+	MapSearchNode( int pz, int px, int py) {z = pz; x=px; y=py; }
+
+	float GoalDistanceEstimate( MapSearchNode &nodeGoal );
+	bool IsGoal( MapSearchNode &nodeGoal );
+	bool GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node );
+	float GetCost( MapSearchNode &successor );
+	bool IsSameState( MapSearchNode &rhs );
+
+	void PrintNodeInfo(); 
+
 };
 
+bool MapSearchNode::IsSameState( MapSearchNode &rhs )
+{
 
-vector<triplet> directions =
-{
-	{ 0,-1,0 },		//north
-	{ 0 ,1, 0 },	//south
-	{ 0 ,0, 1 },    //east
-	{ 0 ,0, -1 },   //west
-	{ 1 ,0, 0 },    //up
-	{ -1 ,0, 0 },   //down
-};
-// should add the grid invalidation too
-bool isValid(const Node* curr)
-{
-	return ((
-		curr->coordinates.x >= 0 && curr->coordinates.x < xDimension &&
-		curr->coordinates.y >= 0 && curr->coordinates.y < yDimension &&
-		curr->coordinates.z >= 0 && curr->coordinates.z < zDimension ));
+	// same state in a maze search is simply when (x,y) are the same
+	if( (x == rhs.x) && (y == rhs.y) && (z == rhs.z))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
 }
 
-bool isDestination(const Node* curr, const Node *dest)
+void MapSearchNode::PrintNodeInfo()
 {
-	return((
-		curr->coordinates.x == dest->coordinates.x &&
-		curr->coordinates.y == dest->coordinates.y &&
-		curr->coordinates.z == dest->coordinates.z ));
+	char str[100];
+	sprintf( str, "Node position : (%d,%d,%d)\n",z,x,y );
+	cout << str;
 }
 
-double calculateHeuristic(const Node* curr, const Node* dest)
+// Here's the heuristic function that estimates the distance from a Node
+// to the Goal. 
+
+float MapSearchNode::GoalDistanceEstimate( MapSearchNode &nodeGoal )
 {
-	// manhattan distance, maybe we should apply extra cost for up and down?
-	return abs(curr->coordinates.x - dest->coordinates.x) +
-		abs(curr->coordinates.y - dest->coordinates.y) +
-		abs(curr->coordinates.z - dest->coordinates.z);
+	return abs(x - nodeGoal.x) + abs(y - nodeGoal.y) + abs(z - nodeGoal.z);
 }
+
+bool MapSearchNode::IsGoal( MapSearchNode &nodeGoal )
+{
+
+	if( (x == nodeGoal.x) && (y == nodeGoal.y) && (z == nodeGoal.z))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+// This generates the successors to the given Node. It uses a helper function called
+// AddSuccessor to give the successors to the AStar class. The A* specific initialisation
+// is done for each node internally, so here you just set the state information that
+// is specific to the application
+bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node )
+{
+
+	int parent_x = -1; 
+	int parent_y = -1; 
+	int parent_z = -1; 
+
+	if( parent_node )
+	{
+		parent_x = parent_node->x;
+		parent_y = parent_node->y;
+		parent_z = parent_node->z;
+	}
+	
+
+	MapSearchNode NewNode;
+
+	// push each possible move except allowing the search to go backwards
+	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
+	{
+		NewNode = MapSearchNode(z, x-1, y );
+		astarsearch->AddSuccessor( NewNode );
+	}	
+
+	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
+	{
+		NewNode = MapSearchNode(z, x, y-1 );
+		astarsearch->AddSuccessor( NewNode );
+	}	
+
+	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
+	{
+		NewNode = MapSearchNode(z, x+1, y );
+		astarsearch->AddSuccessor( NewNode );
+	}	
+
+		
+	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
+	{
+		NewNode = MapSearchNode(z, x, y+1 );
+		astarsearch->AddSuccessor( NewNode );
+	}	
+
+	if((GetMap(z-1, x, y ) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z-1)))
+	{
+		NewNode = MapSearchNode(z-1, x, y );
+		astarsearch->AddSuccessor( NewNode );
+	}	
+	
+	if((GetMap(z+1, x, y) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z+1)))
+	{
+		NewNode = MapSearchNode(z+1, x, y );
+		astarsearch->AddSuccessor( NewNode );
+	}	
+	return true;
+}
+
+// given this node, what does it cost to move to successor. In the case
+// of our map the answer is the map terrain value at this node since that is 
+// conceptually where we're moving
+
+float MapSearchNode::GetCost( MapSearchNode &successor )
+{
+	return (float) GetMap( z,x, y );
+
+}
+
 
 void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
     
@@ -105,7 +209,7 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
             continue;
         else{
             if(myPath[i-1] == buffer){
-                cout << buffer.x << " " << buffer.y <<  " metal " << buffer.z+1 << endl;
+                //cout << buffer.x << " " << buffer.y <<  " metal " << buffer.z+1 << endl;
                 int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
                 int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
                 int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
@@ -114,7 +218,7 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
                 buffer = myPath[i];
             }
             else{
-                cout << buffer.x << " " << buffer.y << " " << myPath[i-1].x << " " << myPath[i-1].y << " metal " << buffer.z+1 << endl;
+                //cout << buffer.x << " " << buffer.y << " " << myPath[i-1].x << " " << myPath[i-1].y << " metal " << buffer.z+1 << endl;
                 int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
                 int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
                 int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
@@ -125,7 +229,7 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
         }
     }
     if (buffer == myPath[myPath.size()-1]){
-        cout << buffer.x << " " << buffer.y << " " << " metal " << buffer.z+1 << endl;
+        //cout << buffer.x << " " << buffer.y << " " << " metal " << buffer.z+1 << endl;
         int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
         int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
         int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
@@ -137,213 +241,11 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
 	This function simply takes a set, and searches it
 	for a triplet with the same coordinates
 */
-Node* searchList(vector<Node*>& Set, triplet curr)
-{
-	for (auto &node : Set)
-		if (node->coordinates == curr) return node;
-	return nullptr;
-}
-
-
-/*
-	The code contains redundant code but can be optimized and 
-	implemented better but more on that later.
-*/
-vector<triplet> findPath(Node* source, Node* target, unordered_map <string, lef::LayerPtr>& layerMap)
-{
-	Node* currentForward = nullptr, *currentBackward = nullptr;
-
-	/*
-		OpenSet is basically the set of nodes that i am considering expanding
-		and ClosedSet is the set of nodes that i expanded already.
-		We have Forward and Backward versions of both for
-		forward propagation and backward propagation
-	*/
-	vector<Node*> openSetForward, closedSetForward;
-	vector<Node*> openSetBackward, closedSetBackward;
-	openSetForward.push_back(source);
-	openSetBackward.push_back(target);
-	Node* intersection = new Node({0,0,0});
-	while (!openSetForward.empty() || !openSetBackward.empty())
-	{
-		currentForward = *openSetForward.begin();
-		currentBackward = *openSetBackward.begin();
-		int currentForward_it = 0;
-		int currentBackward_it = 0;
-
-		// get the least node with function cost and expand that path
-		for (auto node : openSetForward)
-			if (node->fCost < currentForward->fCost)
-				currentForward = node, ++currentForward_it;
-
-		// insert in the expanded set, and remove from not expanded one
-		closedSetForward.push_back(currentForward);
-		openSetForward.erase(openSetForward.begin() + currentForward_it);
-		int directionsSize = directions.size();
-		Node* successor = new Node({0,0,0});
-
-		for (int i = 0; i < directionsSize; ++i)
-		{
-			/*
-				so here i am validating the direction i should go to with respect to the layer number.
-				For example, if i am on layer 0 i can only go east or west.
-			*/
-            Node newNode(currentForward->coordinates + directions[i]);
-            Node* searchListResult = searchList(closedSetForward, newNode.coordinates);
-            // if it is invalid or i already expanded it, continue
-            if (!isValid(&newNode) || searchListResult) continue;
-            
-            // todo
-            if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
-                if (i == 0 || i == 1)
-                    continue;            }
-            else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
-                if (i == 2 || i == 3) continue;
-            }
-            else {
-                cout << "yelehwey" << endl;
-            }
-            
-//            if (currentForward->coordinates.z == 0 || currentForward->coordinates.z == 2)
-//                if (i == 0 || i == 1) continue;
-//            if (currentForward->coordinates.z == 1 || currentForward->coordinates.z == 3)
-//                if (i == 2 || i == 3) continue;
-
-			int totalCost = currentForward->gCost + 1;
-			successor = searchList(openSetForward, newNode.coordinates);
-			/* if it is not in the openSet insert it, else apply relaxation*/
-			if (successor == nullptr)
-			{
-				successor = new Node(newNode.coordinates, currentForward);
-				successor->gCost = totalCost;
-				successor->hCost = calculateHeuristic(successor, target);
-				successor->fCost = totalCost + successor->hCost;
-				openSetForward.push_back(successor);
-			}
-			else if (totalCost < successor->gCost)
-			{
-				successor->parent = currentForward;
-				successor->gCost = totalCost;
-				successor->fCost = totalCost + successor->hCost;
-			}
-		}
-        
-		bool breaking = false;
-		/* 
-			if the node i expanded was in the expanded list of the backward propagation
-			that means we intersected at a node from the two propagations.
-			Save it, and the path is from that node till the parent in
-			the closed list of the forward and the closed list of the backward!
-		*/
-		for (auto node : closedSetBackward)
-		{
-			if (node->coordinates == currentForward->coordinates)
-				breaking = true;
-		}
-        
-		if (breaking)
-		{
-			intersection = currentForward;
-			break;
-		}
-        
-		// get the least node with function cost and expand that path
-		for (auto node : openSetBackward)
-			if (node->fCost < currentBackward->fCost)
-				currentBackward = node, ++currentBackward_it;
-		
-        closedSetBackward.push_back(currentBackward);
-        
-        if(openSetBackward.size() > 0){
-            openSetBackward.erase(openSetBackward.begin() + currentBackward_it);
-            continue;
-        }
-		directionsSize = directions.size();
-        
-		for (int i = 0; i < directionsSize; ++i)
-		{
-            Node newNode(currentBackward->coordinates + directions[i]);
-            Node* searchListResult = searchList(closedSetBackward, newNode.coordinates);
-            if (!isValid(&newNode) || searchListResult) continue;
-            
-            // todo
-            if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::horizontal){
-                if (i == 0 || i == 1) continue;
-            }
-            else if (layerMap["metal" + std::to_string(currentForward->coordinates.z+1)] ->dir_ == LayerDir::vertical){
-                if (i == 2 || i == 3) continue;
-            }
-            else {
-                cout << "yelehwey" << endl;
-            }
-//            if (currentBackward->coordinates.z == 0 || currentBackward->coordinates.z == 2)
-//                if (i == 0 || i == 1) continue;
-//            if (currentBackward->coordinates.z == 1 || currentBackward->coordinates.z == 3)
-//                if (i == 2 || i == 3) continue;
-
-			int totalCost = currentBackward->gCost + 1;
-
-			Node* successor = searchList(openSetBackward, newNode.coordinates);
-			/* if it is not in the openSet insert it, else apply relaxation*/
-			if (successor == nullptr)
-			{
-				successor = new Node(newNode.coordinates, currentBackward);
-				successor->gCost = totalCost;
-				successor->hCost = calculateHeuristic(successor, source);
-				successor->fCost = totalCost + successor->hCost;
-				openSetBackward.push_back(successor);
-			}
-			else if (totalCost < successor->gCost)
-			{
-				successor->parent = currentBackward;
-				successor->gCost = totalCost;
-				successor->fCost = totalCost + successor->hCost;
-			}
-		}
-		breaking = false;
-		for (auto node : closedSetForward)
-		{
-			if (node->coordinates == currentBackward->coordinates)
-				breaking = true;
-		}
-		if (breaking) {
-			intersection = currentBackward;
-			break;
-		}
-	}
-	vector<triplet> pathBackward, path;
-
-	for (auto node : closedSetForward)
-	{
-		if (node->coordinates == intersection->coordinates) { intersection = node; break; }
-	}
-	currentForward = intersection;
-	while (currentForward != nullptr)
-	{
-		path.push_back(currentForward->coordinates);
-		currentForward = currentForward->parent;
-	}
-    std::reverse(path.begin(), path.end());
-	for (auto node : closedSetBackward)
-	{
-		if (node->coordinates == intersection->coordinates) { intersection = node; break; }
-	}
-	currentForward = intersection;
-    currentForward = currentForward -> parent;
-	while (currentForward != nullptr)
-	{
-		path.push_back(currentForward->coordinates);
-		currentForward = currentForward->parent;
-	}
-
-	return path;
-}
 
 int main (int argc, char* argv[])
 {
     util::Watch watch;
     ofstream out;
-    out.open("output2.txt");
 //    if (!out.isOpen()){
 //        cout << "Error to open file" << endl;
 //    }
@@ -353,6 +255,12 @@ int main (int argc, char* argv[])
     ap.initialize(argc, argv);
     auto filename_lef = ap.get_argument("-lef");
     auto filename_def = ap.get_argument("-def");
+	string outFileName = "";
+	int i = filename_def.size() - 1;
+	for (; i >= 0 && filename_def[i] != '.'; --i);
+	for (int j = 0; j < i; ++j) outFileName += filename_def[j];
+	outFileName += ".guide";
+    out.open(outFileName);
 
 
     // Run detaile drouter
@@ -362,15 +270,13 @@ int main (int argc, char* argv[])
         show_usage();
         return -1;
     }
-    show_banner();
+    //show_banner();
     show_cmd_args();
     ldp.read_lef(filename_lef);
     ldp.read_def(filename_def);
 
-
-    // ldp.write_bookshelf("temp"); // FUNCTION DELETED
-    unordered_map <string, lef::LayerPtr> layerMap;
-    vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid = ldp.build_Gcell_grid(layerMap);
+	AStarSearch<MapSearchNode> astarsearch(100000);
+    gcellGrid = ldp.build_Gcell_grid(layerMap);
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
@@ -380,11 +286,11 @@ int main (int argc, char* argv[])
 //    //output for testing
 //    for (int k=0; k<gcellGrid.size(); k++){
 //        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
-//        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::horizontal)
+//        if (layerMap[k+1] ->dir_ == LayerDir::horizontal)
 //            cout << "horizontal" << endl;
-//        if (layerMap["metal" + std::to_string(k+1)] ->dir_ == LayerDir::vertical)
+//        if (layerMap[k+1] ->dir_ == LayerDir::vertical)
 //            cout << "vertical" << endl;
-//
+
 //        for (int i=0; i<gcellGrid[k].size(); i++){
 //            for (int j=0; j<gcellGrid[k][i].size(); j++){
 //                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionINV << endl;
@@ -396,13 +302,14 @@ int main (int argc, char* argv[])
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
 
-    triplet prev(0,0,0), curr(0,0,0);
+    MapSearchNode prev(0,0,0), curr(0,0,0);
     vector <triplet> netPath;
+	int netCounter=0;
     for (auto &net: nets)
     {
         netPath.clear();
         out << net.second->name_ << endl << "(" << endl;
-
+		//printf("%d\n", ++netCounter);
         int connection_size = net.second->connections_.size();
         int xCoordPrev = net.second->connections_[0]->lx_;
         int yCoordPrev = net.second->connections_[0]->ly_;
@@ -419,8 +326,8 @@ int main (int argc, char* argv[])
         pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordPrev, yCoordPrev);  
         xCoordPrev = locationInGCellGrid.first; yCoordPrev = locationInGCellGrid.second;
         prev = {zCoordPrev,xCoordPrev, yCoordPrev};
-        cout << "Net Name: " << net.first << endl;
-        cout << "Number of Connections: " << connection_size << endl;
+        //cout << "Net Name: " << net.first << endl;
+        //cout << "Number of Connections: " << connection_size << endl;
         for (int i = 1; i < connection_size; ++i) 
         {
             int xCoordCurr = net.second->connections_[i]->lx_;
@@ -439,17 +346,52 @@ int main (int argc, char* argv[])
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
             
-            cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
-            << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
-            
-            vector<triplet> myPath = findPath(new Node(prev), new Node(curr), layerMap);
-            
-            prev = curr;
-            for (auto loc: myPath)
-            {
-                printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
-            }
-            netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
+            // cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
+            // << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
+			astarsearch.SetStartAndGoalStates(prev, curr);
+			unsigned int SearchState;
+			unsigned int SearchSteps = 0;
+			do
+			{
+				SearchState = astarsearch.SearchStep();
+				SearchSteps++;
+			} while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
+
+			if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) 
+			{
+				//puts("Search found goal state");
+				MapSearchNode* node = astarsearch.GetSolutionStart();
+				int steps = 0;
+				vector<triplet> myPath;
+			//	node->PrintNodeInfo();
+				myPath.push_back({node->z, node->x, node->y});
+				gcellGrid[node->z][node->x][node->y].congestionINV -= 10;
+				for (;;)
+				{
+					node = astarsearch.GetSolutionNext();
+					if (!node) break;
+					//node->PrintNodeInfo();
+					myPath.push_back({node->z, node->x, node->y});
+					gcellGrid[node->z][node->x][node->y].congestionINV -= 10;
+					if (gcellGrid[node->z][node->x][node->y].congestionINV < 0)
+						printf("blocked a gcellgrid\n");
+					steps++;
+				};
+				//printf("Solution steps %d\n", steps);
+				netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
+				astarsearch.FreeSolutionNodes();
+			} 
+			else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
+			{
+				printf("Search terminated. Did not find goal state\n");
+			}
+			//printf("SearchSteps : %d\n", SearchSteps++);
+            astarsearch.EnsureMemoryFreed();
+			prev = curr;
+            // for (auto loc: myPath)
+            // {
+            //     printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
+            // }
         }
         printOutput(out, netPath, gcellGrid);
         out << ")" << endl;
@@ -472,14 +414,14 @@ void show_usage ()
  * @author Jinwook Jung (jinwookjung@kaist.ac.kr)
  * @date   2017-12-23 22:20:22
  */
-void show_banner ()
+/*void show_banner ()
 {
     cout << endl;
     cout << string(79, '=') << endl;
     cout << "LEF/DEF Parser" << endl;
     cout << "Author: Jinwook Jung" << endl;
     cout << string(79, '=') << endl;
-}
+}*/
 
 void show_cmd_args ()
 {
