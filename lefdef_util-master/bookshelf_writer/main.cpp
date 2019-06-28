@@ -214,7 +214,7 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
             int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
             int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
             int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
-            out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+            out << startX << " " << startY << " " << endX << " " << endY << " Metal" << buffer.z+1 << endl;
             buffer = myPath[i];
         }
     }
@@ -224,7 +224,7 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
         int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
         int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
         int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
-        out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+        out << startX << " " << startY << " " << endX << " " << endY << " Metal" << buffer.z+1 << endl;
     }
     else {
     	int i = myPath.size();
@@ -232,7 +232,7 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
         int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
         int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
         int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
-        out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+        out << startX << " " << startY << " " << endX << " " << endY << " Metal" << buffer.z+1 << endl;
     }
 }
 
@@ -317,9 +317,6 @@ int main (int argc, char* argv[])
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
-    for (auto &layer: layerMap){
-        cout << layer.first << endl;
-    }
 //    //output for testing
 //    for (int k=0; k<gcellGrid.size(); k++){
 //        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
