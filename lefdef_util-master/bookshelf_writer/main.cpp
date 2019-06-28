@@ -198,34 +198,24 @@ float MapSearchNode::GetCost( MapSearchNode &successor )
 
 }
 
-
 void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
     
     triplet buffer(-10, -10, -10);
     if (myPath.size() > 0)
         buffer = myPath[0];
+    if (myPath.size() <= 0){
+    	return;
+    }
     for (int i = 1; i < myPath.size(); i++){
         if(myPath[i].z == buffer.z)
             continue;
         else{
-            if(myPath[i-1] == buffer){
-                //cout << buffer.x << " " << buffer.y <<  " metal " << buffer.z+1 << endl;
-                int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
-                int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
-                int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
-                int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
-                out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
-                buffer = myPath[i];
-            }
-            else{
-                //cout << buffer.x << " " << buffer.y << " " << myPath[i-1].x << " " << myPath[i-1].y << " metal " << buffer.z+1 << endl;
-                int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
-                int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
-                int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
-                int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
-                out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
-                buffer = myPath[i];
-            }
+            int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+            int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+            int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
+            int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
+            out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+            buffer = myPath[i];
         }
     }
     if (buffer == myPath[myPath.size()-1]){
@@ -236,7 +226,54 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
         int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
         out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
     }
+    else {
+    	int i = myPath.size();
+    	int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+        int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+        int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
+        int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
+        out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+    }
 }
+
+// void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
+    
+//     triplet buffer(-10, -10, -10);
+//     if (myPath.size() > 0)
+//         buffer = myPath[0];
+//     for (int i = 1; i < myPath.size(); i++){
+//         if(myPath[i].z == buffer.z)
+//             continue;
+//         else{
+//             if(myPath[i-1] == buffer){
+//                 //cout << buffer.x << " " << buffer.y <<  " metal " << buffer.z+1 << endl;
+//                 int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+//                 int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+//                 int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
+//                 int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
+//                 out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+//                 buffer = myPath[i];
+//             }
+//             else{
+//                 //cout << buffer.x << " " << buffer.y << " " << myPath[i-1].x << " " << myPath[i-1].y << " metal " << buffer.z+1 << endl;
+//                 int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+//                 int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+//                 int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
+//                 int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
+//                 out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+//                 buffer = myPath[i];
+//             }
+//         }
+//     }
+//     if (buffer == myPath[myPath.size()-1]){
+//         //cout << buffer.x << " " << buffer.y << " " << " metal " << buffer.z+1 << endl;
+//         int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
+//         int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
+//         int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
+//         int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
+//         out << startX << " " << startY << " " << endX << " " << endY << " metal " << buffer.z+1 << endl;
+//     }
+// }
 /*
 	This function simply takes a set, and searches it
 	for a triplet with the same coordinates
@@ -308,9 +345,12 @@ int main (int argc, char* argv[])
     for (auto &net: nets)
     {
         netPath.clear();
-        out << net.second->name_ << endl << "(" << endl;
 		//printf("%d\n", ++netCounter);
         int connection_size = net.second->connections_.size();
+        if (connection_size <= 1)
+        	continue;
+
+        out << net.second->name_ << endl << "(" << endl;
         int xCoordPrev = net.second->connections_[0]->lx_;
         int yCoordPrev = net.second->connections_[0]->ly_;
         string layer_namePrev;
@@ -328,6 +368,7 @@ int main (int argc, char* argv[])
         prev = {zCoordPrev,xCoordPrev, yCoordPrev};
         //cout << "Net Name: " << net.first << endl;
         //cout << "Number of Connections: " << connection_size << endl;
+
         for (int i = 1; i < connection_size; ++i) 
         {
             int xCoordCurr = net.second->connections_[i]->lx_;
@@ -345,7 +386,6 @@ int main (int argc, char* argv[])
             pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordCurr, yCoordCurr);  
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
-            
             // cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
             // << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
 			astarsearch.SetStartAndGoalStates(prev, curr);
