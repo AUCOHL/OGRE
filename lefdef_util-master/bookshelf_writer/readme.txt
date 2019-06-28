@@ -13,3 +13,5 @@ $ ./cad0114 -lef <lef> -def <def>
 
 -Tried test cases: 
 All the testcases in the provided benchmarks 
+
+* When observing the def files in the benchmarks we noticed that some ionets are composed of 1 iopin only with nothing connected to it. These nets were ignored. 
