@@ -1,12 +1,54 @@
-# A Lef/Def Parser
+# Global Router Built for ICCAD-Contest 2019
 
-A LEF/DEF parser implementation using Si2 lef/def library.
-Is used for generating bookshelf files from the ISPD'18/19 detailed routing benchmarks.
+This Global Router was built for ICCAD 2019 contest. VLSI circuit layout is when the physical circuit is figured out from two files: Library Exchange Format (LEF) and Design Exchange Format (DEF). Due to the size of the problem, and the increasing complexity, the problem is cut into phases, and in the global routing phase, the grid is created from a definition in the DEF file called the GCells. And then routing takes place giving a guide to the detailed router to flood in it; hence, decreasing the overall complexity.
 
-## TODO
+## Getting Started
 
-Handling *pre-routed* special nets (e.g., VDD and VSS) in ISPD'19 contest benchmarks.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-# Author
-* Jinwook Jung
+### Prerequisites
+
+What things you need to do to get the Lef Def Parser working
+```shell
+git clone https://github.com/fadymoh/Global-Router-ICCAD-Contest
+cd Global-Router-ICCAD-Contest
+cd si2
+cd def
+make clean
+make install
+cp /lib/libdef.a ../../Global%20Router/lib/linux
+cd ../lef
+make clean
+make install
+cp /lib/liblef.a ../../Global%20Router/lib/linux
+```
+
+### Installing
+
+What you need to do to get the Global Router Working.
+First navigate to the Global Router directory.
+
+```shell
+make clean
+make all
+```
+
+## Running the tests
+
+```shell
+./global_router -lef 'lef file path' -def 'def file path'
+```
+
+## Authors
+
+* **Ali El-Said** [palindali](https://github.com/palindali)
+* **Fady Mohamed** [fadymoh](https://github.com/fadymoh)
+* **Habiba Gamal** [habibagamal](https://github.com/habibagamal)
+
+## Acknowledgments
+
+* Doctor Mohamed Shalan was our advisor for the contest.
+* Lef Def parser's author is [jinwookjungs](https://github.com/jinwookjungs)
+* Fast Implementation of A star algorithm in 2D [justinhj](https://github.com/justinhj/astar-algorithm-cpp)
+
 
