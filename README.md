@@ -16,16 +16,16 @@ cd si2
 cd def
 make clean
 make install
-cp /lib/libdef.a ../../Global%20Router/lib/linux
+cp /lib/libdef.a ../../GlobalRouter/lib/linux
 cd ../lef
 make clean
 make install
-cp /lib/liblef.a ../../Global%20Router/lib/linux
+cp /lib/liblef.a ../../GlobalRouter/lib/linux
 ```
 
 ### Installing
 
-What you need to do to get the Global Router Working.
+What you need to do to get the GlobalRouter Working.
 First navigate to the Global Router directory.
 
 ```shell
