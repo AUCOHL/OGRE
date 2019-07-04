@@ -149,26 +149,26 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 	MapSearchNode NewNode;
 
 	// push each possible move except allowing the search to go backwards
-	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
+	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x-1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
-	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
+	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x, y-1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
-	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
+	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x+1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 		
-	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
+	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
 	{
 		NewNode = MapSearchNode(z, x, y+1 );
 		astarsearch->AddSuccessor( NewNode );
@@ -200,40 +200,44 @@ float MapSearchNode::GetCost( MapSearchNode &successor )
 
 void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
     
-    triplet buffer(-10, -10, -10);
-    if (myPath.size() > 0)
-        buffer = myPath[0];
+    triplet bufferMin(-10, -10, -10);
+	triplet bufferMax(-10, -10, -10);
+    if (myPath.size() > 0){
+        bufferMin = myPath[0];
+		bufferMax = myPath[0];
+	}
     if (myPath.size() <= 0){
     	return;
     }
     for (int i = 1; i < myPath.size(); i++){
-        if(myPath[i].z == buffer.z)
-            continue;
+        if(myPath[i].z == bufferMin.z){
+			if (layerMap[bufferMin.z + 1] ->dir_ == LayerDir::horizontal)
+				if (bufferMin.y > myPath[i].y)
+					bufferMin = myPath[i];
+				if (bufferMax.y < myPath[i].y)
+					bufferMax = myPath[i];
+			else 
+				if (bufferMin.x > myPath[i].x)
+					bufferMin = myPath[i];
+				if (bufferMax.x < myPath[i].x)
+					bufferMax = myPath[i];
+		}
         else{
-            int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
-            int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
-            int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
-            int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
-            out << startX << " " << startY << " " << endX << " " << endY << " Metal" << buffer.z+1 << endl;
-            buffer = myPath[i];
+            int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
+            int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
+            int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
+            int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
+            out << startX << " " << startY << " " << endX << " " << endY << " Metal" << bufferMax.z+1 << endl;
+            bufferMax = myPath[i];
+            bufferMin = myPath[i];
         }
     }
-    if (buffer == myPath[myPath.size()-1]){
-        //cout << buffer.x << " " << buffer.y << " " << " metal " << buffer.z+1 << endl;
-        int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
-        int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
-        int endX = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.first;
-        int endY = gcellGrid[buffer.z][buffer.x][buffer.y].endCoord.second;
-        out << startX << " " << startY << " " << endX << " " << endY << " Metal" << buffer.z+1 << endl;
-    }
-    else {
-    	int i = myPath.size();
-    	int startX = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.first;
-        int startY = gcellGrid[buffer.z][buffer.x][buffer.y].startCoord.second;
-        int endX = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.first;
-        int endY = gcellGrid[buffer.z][myPath[i-1].x][myPath[i-1].y].endCoord.second;
-        out << startX << " " << startY << " " << endX << " " << endY << " Metal" << buffer.z+1 << endl;
-    }
+	int i = myPath.size();
+	int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
+	int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
+	int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
+	int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
+	out << startX << " " << startY << " " << endX << " " << endY << " Metal" << bufferMax.z+1 << endl;
 }
 
 // void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
@@ -317,6 +321,9 @@ int main (int argc, char* argv[])
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
+    for (auto &layer: layerMap){
+        cout << layer.first << endl;
+    }
 //    //output for testing
 //    for (int k=0; k<gcellGrid.size(); k++){
 //        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
@@ -344,8 +351,8 @@ int main (int argc, char* argv[])
         netPath.clear();
 		//printf("%d\n", ++netCounter);
         int connection_size = net.second->connections_.size();
-        if (connection_size <= 1)
-        	continue;
+        //if (connection_size <= 1)
+       // 	continue;
 
         out << net.second->name_ << endl << "(" << endl;
         int xCoordPrev = net.second->connections_[0]->lx_;
@@ -354,7 +361,11 @@ int main (int argc, char* argv[])
         if (net.second->connections_[0]->lef_pin_ != nullptr)
             layer_namePrev = net.second->connections_[0]->lef_pin_->ports_[0]->layer_name_;
         else
-            layer_namePrev = net.second->connections_[0]->pin_->layer_;
+          {
+			layer_namePrev = net.second->connections_[0]->pin_->layer_;
+			xCoordPrev = net.second->connections_[0]->pin_->x_;
+			yCoordPrev = net.second->connections_[0]->pin_->y_;
+		  }
         
         string layer_numberPrev = "";
         for (int i = 5; i < layer_namePrev.length(); ++i)
@@ -374,7 +385,13 @@ int main (int argc, char* argv[])
             if (net.second->connections_[i]->lef_pin_ != nullptr)
             layer_nameCurr = net.second->connections_[i]->lef_pin_->ports_[0]->layer_name_;
             else
+			{
                 layer_nameCurr = net.second->connections_[i]->pin_->layer_;
+				cout << "current IO pin location : ";
+				cout << net.second->connections_[i]->pin_->lx_ << " ";
+				cout << net.second->connections_[i]->pin_->ly_ << endl;
+				cout << "prev pin location : " << prev.x << " " << prev.y << endl;
+			}
             
             string layer_numberCurr = "";
             for (int i = 5; i < layer_nameCurr.length(); ++i)
@@ -383,8 +400,9 @@ int main (int argc, char* argv[])
             pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordCurr, yCoordCurr);  
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
-            // cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
-            // << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
+			if (net.first == "net504")
+            cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
+            << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
 			astarsearch.SetStartAndGoalStates(prev, curr);
 			unsigned int SearchState;
 			unsigned int SearchSteps = 0;
@@ -430,6 +448,12 @@ int main (int argc, char* argv[])
             //     printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
             // }
         }
+		if (net.first == "net504"){
+			for (auto trip: netPath)
+			{
+				printf("z: %d | x: %d | y: %d\n", trip.z, trip.x, trip.y);
+			}
+		}
         printOutput(out, netPath, gcellGrid);
         out << ")" << endl;
     }
