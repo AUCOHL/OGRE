@@ -1,4 +1,0 @@
-Mmain.cpp	./main.cpp	/^int main (int argc, char* argv[])$/
-omp_thread_count	./main.cpp	/^int omp_thread_count() {$/
-show_cmd_args	./main.cpp	/^void show_cmd_args ()$/
-show_usage	./main.cpp	/^void show_usage ()$/
