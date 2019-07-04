@@ -30,6 +30,7 @@ First navigate to the Global Router directory.
 
 ```shell
 make clean
+make depend
 make all
 ```
 
