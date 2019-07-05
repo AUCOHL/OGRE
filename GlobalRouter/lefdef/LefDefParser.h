@@ -50,7 +50,7 @@ public:
 
     pair<int, int> get_bounding_GCell(int x, int y);
 
-private:
+// private:
     lef::Lef &lef_;
 
     // Do not allow instantiation of this class.
