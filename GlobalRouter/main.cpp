@@ -199,7 +199,7 @@ float MapSearchNode::GetCost( MapSearchNode &successor )
 
 }
 
-void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid){
+void printOutput(ostream& out, vector<triplet>& myPath){
     
     triplet bufferMin(-10, -10, -10);
 	triplet bufferMax(-10, -10, -10);
@@ -240,38 +240,6 @@ void printOutput(ostream& out, vector<triplet>& myPath, vector<vector<vector<my_
 	int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
 	out << startX << " " << startY << " " << endX << " " << endY << " Metal" << bufferMax.z+1 << endl;
 }
-
-// void occupyGcell(vector<vector<vector<my_lefdef::gCellGridGlobal>>>& gcellGrid, int lx, int ly, int ux, int uy, int layer){
-// 	//creating congestion based on available metal wires
-
-// 	//get units of lef and def
-//                 int defDBU = def_.get_dbu();
-//                 int lefDBU = lef_.get_dbu();
-// 	for (int i = 0; i < xDimension - 1; ++i)
-//     {}
-//         for (int j = 0; j < yDimension - 1; ++j)
-//         {
-//             if (gcellGrid[layer][i][j].)
-//             lef::LayerPtr l = layerMap[k + 1];
-//             double pitch = layerMap[k + 1]->pitch_;
-//             double pitchX = layerMap[k + 1]->pitch_x_;
-//             double pitchY = layerMap[k + 1]->pitch_y_;
-//             int dimension = 0, freeWires;
-//             if (l->dir_ == LayerDir::horizontal)
-//             { //get difference in y
-//                 dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-//                 obs = (dimension * defDBU) / (pitchX * lefDBU);
-//             }
-//             else if (l->dir_ == LayerDir::vertical)
-//             { //get difference in x
-//                 dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
-//                 obs = (dimension * defDBU) / (pitchY * lefDBU);
-//             }
-//             //get number of free wires in cell
-//             myGlobalGrid[k][i][j].congestion -= obs;
-//         }
-//     }
-// }
 
 void putObstructions(){
 	auto& ldp = my_lefdef::LefDefParser::get_instance();
@@ -335,13 +303,13 @@ void putObstructions(){
 						if (layerMap[k] ->dir_ == LayerDir::horizontal){
 				           	cout << "horizontal" << endl;
 				           	//get difference in y
-		                    dimension = gcellGrid[k-1][i][j].endCoord.second - startY;
+		                    dimension = endY - startY;
 		                    occupied = (dimension * defDBU) / (pitchX * lefDBU);
 						}
 				       	if (layerMap[k] ->dir_ == LayerDir::vertical){
 				           	cout << "vertical" << endl;
 				           	//get difference in x
-		                    dimension = gcellGrid[k-1][i][j].endCoord.first - startX;
+		                    dimension = endX - startX;
 		                    occupied = (dimension * defDBU) / (pitchY * lefDBU);
 				       	}
 				       	cout << "Layer: " << k << " Cell "<<i <<" "<< j <<" Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
@@ -533,7 +501,7 @@ int main (int argc, char* argv[])
 				printf("z: %d | x: %d | y: %d\n", trip.z, trip.x, trip.y);
 			}
 		}
-        printOutput(out, netPath, gcellGrid);
+        printOutput(out, netPath);
         out << ")" << endl;
     }
     cout << endl << "Done." << endl;
