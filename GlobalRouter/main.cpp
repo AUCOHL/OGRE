@@ -269,7 +269,9 @@ void putObstructions(){
 				pair<int, int> pMax;
 				pMin = ldp.get_bounding_GCell(lx, ly);
 				pMax = ldp.get_bounding_GCell(ux, uy);
-
+				pair <int, int> temp = pMin;
+				pMin = {min(pMin.first, pMax.first), min(pMin.second, pMax.second)};
+				pMax = {max(temp.first, pMax.first), max(temp.second, pMax.second)};
 				// int startX = lx;
 				// int startY = ly; 
 				int startX, startY, endX, endY; 
@@ -296,27 +298,31 @@ void putObstructions(){
 						else
 							endY = gcellGrid[k-1][i][j].endCoord.second;
 
+						// int obsArea = (endY - startY) * (endX - startX);
+						// double ratio = obsArea / (double) gcellGrid[k-1][i][j].area;
+
                 		double pitchX = layerMap[k]->pitch_x_;
                 		double pitchY = layerMap[k]->pitch_y_;
                 		int dimension = 0, occupied;
+                		double ratio; 
 
 						if (layerMap[k] ->dir_ == LayerDir::horizontal){
-				           	cout << "horizontal" << endl;
 				           	//get difference in y
 		                    dimension = endY - startY;
-		                    occupied = (dimension * defDBU) / (pitchX * lefDBU);
+		                    ratio = (endX - startX) / double(gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first);
+		                    occupied = dimension / (pitchX * defDBU);
 						}
 				       	if (layerMap[k] ->dir_ == LayerDir::vertical){
-				           	cout << "vertical" << endl;
 				           	//get difference in x
 		                    dimension = endX - startX;
-		                    occupied = (dimension * defDBU) / (pitchY * lefDBU);
+		                    ratio = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
+		                    occupied = dimension  / (pitchY * defDBU);
 				       	}
-				       	cout << "Layer: " << k << " Cell "<<i <<" "<< j <<" Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
-				       	gcellGrid[k-1][i][j].congestionINV-=occupied;
+				       	// cout << "Layer: " << k << " Cell "<<i <<" "<< j << " Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
+				       	gcellGrid[k-1][i][j].congestionINV-= (occupied * ratio);
 				       	if(gcellGrid[k-1][i][j].congestionINV < 0)
 				       		gcellGrid[k-1][i][j].congestionINV = 0; 
-				       	cout << "Layer: " << k << " Cell "<<i <<" "<< j <<" Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
+				       	// cout << "Layer: " << k << " Cell "<<i <<" "<< j << " Ratio " << ratio << " Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
 					}
 				}
 			}
@@ -447,12 +453,19 @@ int main (int argc, char* argv[])
             pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordCurr, yCoordCurr);  
             xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
             curr = {zCoordPrev,xCoordCurr,yCoordCurr};
-			if (net.first == "net504")
-            cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
-            << " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
+			//if (net.first == "net504")
+            //cout << "Route from cell: ( " << prev.z << " , " << prev.x << " , " << prev.y
+            //<< " ) to ( " << curr.z << " , " << curr.x << " , " << curr.y << " )\n took this path:\n";
 			astarsearch.SetStartAndGoalStates(prev, curr);
 			unsigned int SearchState;
 			unsigned int SearchSteps = 0;
+
+			//Supporting blocked source and target
+			if (gcellGrid[prev.z][prev.x][prev.y].congestionINV == 0)
+				gcellGrid[prev.z][prev.x][prev.y].congestionINV = 1;
+			if (gcellGrid[curr.z][curr.x][curr.y].congestionINV == 0)
+				gcellGrid[curr.z][curr.x][curr.y].congestionINV = 1;
+
 			do
 			{
 				SearchState = astarsearch.SearchStep();
@@ -467,14 +480,14 @@ int main (int argc, char* argv[])
 				vector<triplet> myPath;
 			//	node->PrintNodeInfo();
 				myPath.push_back({node->z, node->x, node->y});
-				gcellGrid[node->z][node->x][node->y].congestionINV -= 10;
+				gcellGrid[node->z][node->x][node->y].congestionINV -= 1;
 				for (;;)
 				{
 					node = astarsearch.GetSolutionNext();
 					if (!node) break;
 					//node->PrintNodeInfo();
 					myPath.push_back({node->z, node->x, node->y});
-					gcellGrid[node->z][node->x][node->y].congestionINV -= 10;
+					gcellGrid[node->z][node->x][node->y].congestionINV -= 1;
 					if (gcellGrid[node->z][node->x][node->y].congestionINV < 0)
 						printf("blocked a gcellgrid\n");
 					steps++;
@@ -495,12 +508,12 @@ int main (int argc, char* argv[])
             //     printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
             // }
         }
-		if (net.first == "net504"){
+		/*if (net.first == "net504"){
 			for (auto trip: netPath)
 			{
 				printf("z: %d | x: %d | y: %d\n", trip.z, trip.x, trip.y);
 			}
-		}
+		}*/
         printOutput(out, netPath);
         out << ")" << endl;
     }

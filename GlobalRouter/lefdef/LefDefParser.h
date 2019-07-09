@@ -23,11 +23,12 @@ struct gCellGridGlobal
     pair<int, int> startCoord;
     pair<int, int> endCoord;
     int congestionINV;
+    long long area; 
     void setCongestionINV(int congestionINV_)
     {
         congestionINV = congestionINV_;
     }
-    gCellGridGlobal(pair<int, int> startCoord_, pair<int, int> endCoord_) : startCoord(startCoord_), endCoord(endCoord_){};
+    gCellGridGlobal(pair<int, int> startCoord_, pair<int, int> endCoord_, long long area_) : startCoord(startCoord_), endCoord(endCoord_), area(area_){};
 };
 
 class LefDefParser

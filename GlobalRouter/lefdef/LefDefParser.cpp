@@ -192,10 +192,13 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
 
             for (int k = 0; k < zDimension; k++)
             {
-                myGlobalGrid[k][i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}});
+                myGlobalGrid[k][i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
             }
         }
     }
+   //get units of lef and def
+    int defDBU = def_.get_dbu();
+    
     //creating congestion based on available metal wires
     for (int k = 0; k < zDimension; k++)
     {
@@ -203,10 +206,7 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         {
             for (int j = 0; j < yDimension - 1; ++j)
             {
-                //get units of lef and def
-                int defDBU = def_.get_dbu();
-                int lefDBU = lef_.get_dbu();
-                //get pitch
+     
                                 
                 // DONE
                 // string metalString = layerMap.begin()->first;
@@ -219,12 +219,12 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 if (l->dir_ == LayerDir::horizontal)
                 { //get difference in y
                     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-                    freeWires = (dimension * defDBU) / (pitchX * lefDBU);
+                    freeWires = dimension  / (pitchX * defDBU);
                 }
                 else if (l->dir_ == LayerDir::vertical)
                 { //get difference in x
                     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
-                    freeWires = (dimension * defDBU) / (pitchY * lefDBU);
+                    freeWires = dimension / (pitchY * defDBU);
                 }
                 //get number of free wires in cell
                 myGlobalGrid[k][i][j].setCongestionINV(freeWires);
@@ -233,52 +233,8 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     }
     return myGlobalGrid;
 }
-void LefDefParser::get_connection_locations()
-{
-    unordered_map<string, def::NetPtr> nets;
-    nets = def_.get_net_umap();
 
-    bool brk = true;
-    for (const auto &n : nets)
-    {
-        auto &connections = n.second->connections_;
-        const auto &c = connections[0];
-        for (const auto &c : connections)
-        {
-            int lx = c->lx_;
-            int ly = c->ly_;
-            int ux = c->ux_;
-            int uy = c->uy_;
-            auto name = c->name_;
-
-            D(name);
-            D(lx), D(ly), D(ux), D(uy);
-
-            auto comp = c->component_;
-            auto comp_name = comp->name_;
-            auto comp_x = comp->x_;
-            auto comp_y = comp->y_;
-
-            D(comp_name), D(comp_x), D(comp_y);
-
-            auto lefpin = c->lef_pin_;
-            auto lefpin_name = lefpin->name_;
-
-            D(lefpin_name);
-
-            // auto pin = c->pin_;
-            // auto pin_name = pin->name_;
-
-            // D(pin_name);
-
-            if (brk)
-                break;
-        }
-        if (brk)
-            break;
-    }
-    return;
-}
+  
 int MAX_X_IND = 4;
 int MAX_Y_IND = 1;
 pair<int, int> LefDefParser::get_bounding_GCell(int x, int y)
