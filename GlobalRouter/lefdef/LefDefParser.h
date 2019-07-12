@@ -22,11 +22,12 @@ struct gCellGridGlobal
 {
     pair<int, int> startCoord;
     pair<int, int> endCoord;
-    int congestionINV;
+    int congestion  = 0;
+    int congestionLimit;
     long long area; 
-    void setCongestionINV(int congestionINV_)
+    void setCongestionLimit(int congestionLimit_)
     {
-        congestionINV = congestionINV_;
+        congestionLimit = congestionLimit_;
     }
     gCellGridGlobal(pair<int, int> startCoord_, pair<int, int> endCoord_, long long area_) : startCoord(startCoord_), endCoord(endCoord_), area(area_){};
 };

@@ -227,7 +227,7 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                     freeWires = dimension / (pitchY * defDBU);
                 }
                 //get number of free wires in cell
-                myGlobalGrid[k][i][j].setCongestionINV(freeWires);
+                myGlobalGrid[k][i][j].setCongestionLimit(freeWires*2.5);
             }
         }
     }
