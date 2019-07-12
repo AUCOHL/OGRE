@@ -9,7 +9,7 @@
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
-//#include "flute.h"
+#include "flute.h"
 
 #include <iostream>
 #include <fstream>
@@ -319,48 +319,56 @@ void putObstructions(){
 	}
 }
 
-// map<int, string> orderNets(unordered_map<string, def::NetPtr> &nets)
-// {
-// 	auto net = nets.begin();
-//     auto& ldp = my_lefdef::LefDefParser::get_instance();
+map<int, string> orderNets(unordered_map<string, def::NetPtr> &nets)
+{
+	auto net = nets.begin();
+    auto& ldp = my_lefdef::LefDefParser::get_instance();
 
-// 	Tree fluteTree;
-// 	int flutewl;
-// 	readLUT();
-// 	int d;
-// 	map<int, string> ordered_nets; // self ordering <int,string> net structure
-// 	while (net != nets.end())
-// 	{
-// 		d = 0;
-// 		int connectionSize = net->second->connections_.size();
-// 		int *x = new int[connectionSize+1], *y = new int[connectionSize+1];
-// 		 for (int i = 0; i < connectionSize; ++i) 
-//         {
-//             int xCoord = net->second->connections_[i]->lx_;
-//             int yCoord = net->second->connections_[i]->ly_;
-//             if (net->second->connections_[i]->lef_pin_ == nullptr)
-// 			{
-// 				xCoord = net->second->connections_[i]->pin_->x_;
-// 				yCoord = net->second->connections_[i]->pin_->y_;
-// 			}
-//             pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoord, yCoord);  
-//             xCoord = locationInGCellGrid.first; yCoord = locationInGCellGrid.second;
-// 			x[d] = xCoord;
-// 			y[d++] = yCoord;
-// 		}
-// 		if (d == 1)
-// 		{
-// 			ordered_nets.insert({10000, net->first});
-// 			goto exit;
-// 		}
-// 		fluteTree = flute(d, x, y, ACCURACY);
-// 		printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
-// 		ordered_nets.insert({fluteTree.length, net->first});
-// 		exit:
-// 			++net;
-// 	}
-// 	return ordered_nets;
-// }
+	Flute::Tree fluteTree;
+	int flutewl;
+			puts("segmenting here\n");
+
+	Flute::readLUT("POWV9.dat", "PORT9.dat");
+				puts("segmenting here2\n");
+
+	int d;
+	map<int, string> ordered_nets; // self ordering <int,string> net structure
+	while (net != nets.end())
+	{
+		d = 0;
+		int connectionSize = net->second->connections_.size();
+		
+		std::int64_t *x = new std::int64_t[connectionSize+1], *y = new std::int64_t[connectionSize+1];
+				int *mapping = new int[connectionSize + 1];
+
+		 for (int i = 0; i < connectionSize; ++i) 
+        {
+            int xCoord = net->second->connections_[i]->lx_;
+            int yCoord = net->second->connections_[i]->ly_;
+            if (net->second->connections_[i]->lef_pin_ == nullptr)
+			{
+				xCoord = net->second->connections_[i]->pin_->x_;
+				yCoord = net->second->connections_[i]->pin_->y_;
+			}
+            pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoord, yCoord);  
+            xCoord = locationInGCellGrid.first; yCoord = locationInGCellGrid.second;
+			x[d] = xCoord;
+			y[d++] = yCoord;
+		}
+		if (d == 1)
+		{
+			ordered_nets.insert({10000, net->first});
+			goto exit;
+		}
+		puts("here?");
+		fluteTree = Flute::flute(d, x, y, 3, mapping);
+		printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
+		ordered_nets.insert({fluteTree.length, net->first});
+		exit:
+			++net;
+	}
+	return ordered_nets;
+}
 
 int main (int argc, char* argv[])
 {
@@ -416,7 +424,7 @@ int main (int argc, char* argv[])
 
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
-	//auto ordered_nets = orderNets(nets);
+	auto ordered_nets = orderNets(nets);
     MapSearchNode prev(0,0,0), curr(0,0,0);
     vector <triplet> netPath;
 	int netCounter=0;
@@ -424,29 +432,29 @@ int main (int argc, char* argv[])
 	//putting obstructions on gcell grid
     putObstructions();
 	puts("Starting to Route!");
-	// for (int iterations = 1; ordered_nets.size(); ++iterations)
-	// {
-	// 	map<int, string> unrouted_nets;
-    	for (auto &net: nets)
+	for (int iterations = 1; ordered_nets.size(); ++iterations)
+	{
+		map<int, string> unrouted_nets;
+    	for (auto &netName: ordered_nets)
     	{
 			//printf("%d\n", ++netCounter);
     	    netPath.clear();
-			//auto &net = nets[netName.second];
-    	    int connection_size = net.second->connections_.size();
+			auto &net = nets[netName.second];
+    	    int connection_size = net->connections_.size();
 					//	printf("Connection Size: %d\n", connection_size);
 
 			bool netFailed = false;
 
-    	    int xCoordPrev = net.second->connections_[0]->lx_;
-    	    int yCoordPrev = net.second->connections_[0]->ly_;
+    	    int xCoordPrev = net->connections_[0]->lx_;
+    	    int yCoordPrev = net->connections_[0]->ly_;
     	    string layer_namePrev;
-    	    if (net.second->connections_[0]->lef_pin_ != nullptr)
-    	        layer_namePrev = net.second->connections_[0]->lef_pin_->ports_[0]->layer_name_;
+    	    if (net->connections_[0]->lef_pin_ != nullptr)
+    	        layer_namePrev = net->connections_[0]->lef_pin_->ports_[0]->layer_name_;
     	    else
     	    {
-				layer_namePrev = net.second->connections_[0]->pin_->layer_;
-				xCoordPrev = net.second->connections_[0]->pin_->x_;
-				yCoordPrev = net.second->connections_[0]->pin_->y_;
+				layer_namePrev = net->connections_[0]->pin_->layer_;
+				xCoordPrev = net->connections_[0]->pin_->x_;
+				yCoordPrev = net->connections_[0]->pin_->y_;
 			}
 	
     	    string layer_numberPrev = "";
@@ -460,17 +468,17 @@ int main (int argc, char* argv[])
 
     	    for (int i = 1; i < connection_size; ++i) 
     	    {
-    	        int xCoordCurr = net.second->connections_[i]->lx_;
-    	        int yCoordCurr = net.second->connections_[i]->ly_;
+    	        int xCoordCurr = net->connections_[i]->lx_;
+    	        int yCoordCurr = net->connections_[i]->ly_;
     	        string layer_nameCurr = "";
-    	        if (net.second->connections_[i]->lef_pin_ != nullptr)
-    	        layer_nameCurr = net.second->connections_[i]->lef_pin_->ports_[0]->layer_name_;
+    	        if (net->connections_[i]->lef_pin_ != nullptr)
+    	        layer_nameCurr = net->connections_[i]->lef_pin_->ports_[0]->layer_name_;
     	        else
 				{
-    	            layer_nameCurr = net.second->connections_[i]->pin_->layer_;
+    	            layer_nameCurr = net->connections_[i]->pin_->layer_;
 					// we need to check this?
-					xCoordCurr = net.second->connections_[i]->pin_->x_;
-					yCoordCurr = net.second->connections_[i]->pin_->y_;
+					xCoordCurr = net->connections_[i]->pin_->x_;
+					yCoordCurr = net->connections_[i]->pin_->y_;
 				}
 	
     	        string layer_numberCurr = "";
@@ -522,22 +530,21 @@ int main (int argc, char* argv[])
     	        astarsearch.EnsureMemoryFreed();
 				prev = curr;
     	    }
-			// if (!netFailed){
-			// 	out << net->name_ << endl << "(" << endl;
-    	    // 	printOutput(out, netPath);
-    	    // 	out << ")" << endl;
-			// }
-			// else
-			// {
-			// 	unrouted_nets.insert(netName);
-			// 	netFailed = false;
-			// 	continue;
-			// }
-    	//}
-		//printf("Did i segment here\n");
-		//ordered_nets = unrouted_nets;
-		// printf("Finished Iteration Number #%d\n", iterations);
-		// printf("We have %d failed routed. Expanding Congestion!\n", unrouted_nets.size());
+			if (!netFailed){
+				out << net->name_ << endl << "(" << endl;
+    	    	printOutput(out, netPath);
+    	    	out << ")" << endl;
+			}
+			else
+			{
+				unrouted_nets.insert(netName);
+				netFailed = false;
+				continue;
+			}
+    	}
+		ordered_nets = unrouted_nets;
+		printf("Finished Iteration Number #%d\n", iterations);
+		printf("We have %d failed routed. Expanding Congestion!\n", unrouted_nets.size());
 	}
     cout << endl << "Done." << endl;
     out.close();
