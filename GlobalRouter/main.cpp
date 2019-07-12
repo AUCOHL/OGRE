@@ -9,6 +9,7 @@
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
+//#include "flute.h"
 
 #include <iostream>
 #include <fstream>
@@ -18,9 +19,10 @@
 #include <set>
 #include <math.h>
 #include <string>
+#include <map>
 
 using namespace std;
-
+void show_banner();
 void show_usage ();
 void show_cmd_args ();
 int omp_thread_count();
@@ -55,7 +57,6 @@ int GetMap( int z, int x, int y)
 	{
 		return INVALID;	 
 	}
-	
 	return (gcellGrid[z][x][y].congestion >= gcellGrid[z][x][y].congestionLimit) ? INVALID: 0;
 }
 
@@ -236,7 +237,7 @@ void printOutput(ostream& out, vector<triplet>& myPath){
 void putObstructions(){
 	auto& ldp = my_lefdef::LefDefParser::get_instance();
 	unordered_map<string, def::ComponentPtr> compMap = ldp.def_.get_component_umap();
-	cout << "SIZE " <<compMap.size() << endl;
+	//cout << "SIZE " <<compMap.size() << endl;
 	int defDBU = ldp.def_.get_dbu();
     int lefDBU = ldp.lef_.get_dbu();
 	for (auto & comp: compMap){
@@ -264,8 +265,7 @@ void putObstructions(){
 				pair <int, int> temp = pMin;
 				pMin = {min(pMin.first, pMax.first), min(pMin.second, pMax.second)};
 				pMax = {max(temp.first, pMax.first), max(temp.second, pMax.second)};
-				// int startX = lx;
-				// int startY = ly; 
+
 				int startX, startY, endX, endY; 
 
 				for (int i = pMin.first; i<=pMax.first; i++){
@@ -289,9 +289,6 @@ void putObstructions(){
 							endY = uy;
 						else
 							endY = gcellGrid[k-1][i][j].endCoord.second;
-
-						// int obsArea = (endY - startY) * (endX - startX);
-						// double ratio = obsArea / (double) gcellGrid[k-1][i][j].area;
 
                 		double pitchX = layerMap[k]->pitch_x_;
                 		double pitchY = layerMap[k]->pitch_y_;
@@ -322,13 +319,53 @@ void putObstructions(){
 	}
 }
 
+// map<int, string> orderNets(unordered_map<string, def::NetPtr> &nets)
+// {
+// 	auto net = nets.begin();
+//     auto& ldp = my_lefdef::LefDefParser::get_instance();
+
+// 	Tree fluteTree;
+// 	int flutewl;
+// 	readLUT();
+// 	int d;
+// 	map<int, string> ordered_nets; // self ordering <int,string> net structure
+// 	while (net != nets.end())
+// 	{
+// 		d = 0;
+// 		int connectionSize = net->second->connections_.size();
+// 		int *x = new int[connectionSize+1], *y = new int[connectionSize+1];
+// 		 for (int i = 0; i < connectionSize; ++i) 
+//         {
+//             int xCoord = net->second->connections_[i]->lx_;
+//             int yCoord = net->second->connections_[i]->ly_;
+//             if (net->second->connections_[i]->lef_pin_ == nullptr)
+// 			{
+// 				xCoord = net->second->connections_[i]->pin_->x_;
+// 				yCoord = net->second->connections_[i]->pin_->y_;
+// 			}
+//             pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoord, yCoord);  
+//             xCoord = locationInGCellGrid.first; yCoord = locationInGCellGrid.second;
+// 			x[d] = xCoord;
+// 			y[d++] = yCoord;
+// 		}
+// 		if (d == 1)
+// 		{
+// 			ordered_nets.insert({10000, net->first});
+// 			goto exit;
+// 		}
+// 		fluteTree = flute(d, x, y, ACCURACY);
+// 		printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
+// 		ordered_nets.insert({fluteTree.length, net->first});
+// 		exit:
+// 			++net;
+// 	}
+// 	return ordered_nets;
+// }
+
 int main (int argc, char* argv[])
 {
     util::Watch watch;
     ofstream out;
-//    if (!out.isOpen()){
-//        cout << "Error to open file" << endl;
-//    }
     // Parsing command line arguments
     auto& ap = ArgParser::get();
 
@@ -350,21 +387,17 @@ int main (int argc, char* argv[])
         show_usage();
         return -1;
     }
-    //show_banner();
+    show_banner();
     show_cmd_args();
     ldp.read_lef(filename_lef);
     ldp.read_def(filename_def);
-
-
 
 	AStarSearch<MapSearchNode> astarsearch(100000);
     gcellGrid = ldp.build_Gcell_grid(layerMap);
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
-    for (auto &layer: layerMap){
-        cout << layer.first << endl;
-    }
+   
 //    //output for testing
 //    for (int k=0; k<gcellGrid.size(); k++){
 //        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
@@ -375,7 +408,7 @@ int main (int argc, char* argv[])
 
 //        for (int i=0; i<gcellGrid[k].size(); i++){
 //            for (int j=0; j<gcellGrid[k][i].size(); j++){
-//                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionINV << endl;
+//                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionLimit << endl;
 //            }
 //        }
 //        cout << endl;
@@ -383,126 +416,129 @@ int main (int argc, char* argv[])
 
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
-
+	//auto ordered_nets = orderNets(nets);
     MapSearchNode prev(0,0,0), curr(0,0,0);
     vector <triplet> netPath;
 	int netCounter=0;
 
 	//putting obstructions on gcell grid
     putObstructions();
+	puts("Starting to Route!");
+	// for (int iterations = 1; ordered_nets.size(); ++iterations)
+	// {
+	// 	map<int, string> unrouted_nets;
+    	for (auto &net: nets)
+    	{
+			//printf("%d\n", ++netCounter);
+    	    netPath.clear();
+			//auto &net = nets[netName.second];
+    	    int connection_size = net.second->connections_.size();
+					//	printf("Connection Size: %d\n", connection_size);
 
-    for (auto &net: nets)
-    {
-        netPath.clear();
-		//printf("%d\n", ++netCounter);
-        int connection_size = net.second->connections_.size();
-        //if (connection_size <= 1)
-       // 	continue;
+			bool netFailed = false;
 
-        out << net.second->name_ << endl << "(" << endl;
-        int xCoordPrev = net.second->connections_[0]->lx_;
-        int yCoordPrev = net.second->connections_[0]->ly_;
-        string layer_namePrev;
-        if (net.second->connections_[0]->lef_pin_ != nullptr)
-            layer_namePrev = net.second->connections_[0]->lef_pin_->ports_[0]->layer_name_;
-        else
-          {
-			layer_namePrev = net.second->connections_[0]->pin_->layer_;
-			xCoordPrev = net.second->connections_[0]->pin_->x_;
-			yCoordPrev = net.second->connections_[0]->pin_->y_;
-		  }
-        
-        string layer_numberPrev = "";
-        for (int i = 5; i < layer_namePrev.length(); ++i)
-                layer_numberPrev += layer_namePrev[i];
-        int zCoordPrev = stoi(layer_numberPrev) - 1;
-        pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordPrev, yCoordPrev);  
-        xCoordPrev = locationInGCellGrid.first; yCoordPrev = locationInGCellGrid.second;
-        prev = {zCoordPrev,xCoordPrev, yCoordPrev};
-        
-
-        for (int i = 1; i < connection_size; ++i) 
-        {
-            int xCoordCurr = net.second->connections_[i]->lx_;
-            int yCoordCurr = net.second->connections_[i]->ly_;
-            string layer_nameCurr = "";
-            if (net.second->connections_[i]->lef_pin_ != nullptr)
-            layer_nameCurr = net.second->connections_[i]->lef_pin_->ports_[0]->layer_name_;
-            else
-			{
-                layer_nameCurr = net.second->connections_[i]->pin_->layer_;
-				cout << "current IO pin location : ";
-				cout << net.second->connections_[i]->pin_->lx_ << " ";
-				cout << net.second->connections_[i]->pin_->ly_ << endl;
-				cout << "prev pin location : " << prev.x << " " << prev.y << endl;
+    	    int xCoordPrev = net.second->connections_[0]->lx_;
+    	    int yCoordPrev = net.second->connections_[0]->ly_;
+    	    string layer_namePrev;
+    	    if (net.second->connections_[0]->lef_pin_ != nullptr)
+    	        layer_namePrev = net.second->connections_[0]->lef_pin_->ports_[0]->layer_name_;
+    	    else
+    	    {
+				layer_namePrev = net.second->connections_[0]->pin_->layer_;
+				xCoordPrev = net.second->connections_[0]->pin_->x_;
+				yCoordPrev = net.second->connections_[0]->pin_->y_;
 			}
-            
-            string layer_numberCurr = "";
-            for (int i = 5; i < layer_nameCurr.length(); ++i)
-                layer_numberCurr += layer_nameCurr[i];
-            int zCoordCurr = stoi(layer_numberCurr) - 1;
-            pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordCurr, yCoordCurr);  
-            xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
-            curr = {zCoordPrev,xCoordCurr,yCoordCurr};
-			
-			astarsearch.SetStartAndGoalStates(prev, curr);
-			unsigned int SearchState;
-			unsigned int SearchSteps = 0;
+	
+    	    string layer_numberPrev = "";
+    	    for (int i = 5; i < layer_namePrev.length(); ++i)
+    	            layer_numberPrev += layer_namePrev[i];
+    	    int zCoordPrev = stoi(layer_numberPrev) - 1;
+    	    pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordPrev, yCoordPrev);  
+    	    xCoordPrev = locationInGCellGrid.first; yCoordPrev = locationInGCellGrid.second;
+    	    prev = {zCoordPrev,xCoordPrev, yCoordPrev};
+	
 
-			//Supporting blocked source and target
-			if (gcellGrid[prev.z][prev.x][prev.y].congestion >= gcellGrid[prev.z][prev.x][prev.y].congestionLimit)
-				gcellGrid[prev.z][prev.x][prev.y].congestion = gcellGrid[prev.z][prev.x][prev.y].congestionLimit/2;
-			if (gcellGrid[curr.z][curr.x][curr.y].congestion >= gcellGrid[curr.z][curr.x][curr.y].congestionLimit){
-			//	printf("%d | %d\n", gcellGrid[curr.z][curr.x][curr.y].congestion,gcellGrid[curr.z][curr.x][curr.y].congestionLimit);
-				gcellGrid[curr.z][curr.x][curr.y].congestion = gcellGrid[curr.z][curr.x][curr.y].congestionLimit/2;
-			}
-
-			do
-			{
-				SearchState = astarsearch.SearchStep();
-				SearchSteps++;
-			} while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
-
-			if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) 
-			{
-				MapSearchNode* node = astarsearch.GetSolutionStart();
-				int steps = 0;
-				vector<triplet> myPath;
-				myPath.push_back({node->z, node->x, node->y});
-				gcellGrid[node->z][node->x][node->y].congestion += 1;
-				for (;;)
+    	    for (int i = 1; i < connection_size; ++i) 
+    	    {
+    	        int xCoordCurr = net.second->connections_[i]->lx_;
+    	        int yCoordCurr = net.second->connections_[i]->ly_;
+    	        string layer_nameCurr = "";
+    	        if (net.second->connections_[i]->lef_pin_ != nullptr)
+    	        layer_nameCurr = net.second->connections_[i]->lef_pin_->ports_[0]->layer_name_;
+    	        else
 				{
-					node = astarsearch.GetSolutionNext();
-					if (!node) break;
+    	            layer_nameCurr = net.second->connections_[i]->pin_->layer_;
+					// we need to check this?
+					xCoordCurr = net.second->connections_[i]->pin_->x_;
+					yCoordCurr = net.second->connections_[i]->pin_->y_;
+				}
+	
+    	        string layer_numberCurr = "";
+    	        for (int i = 5; i < layer_nameCurr.length(); ++i)
+    	            layer_numberCurr += layer_nameCurr[i];
+    	        int zCoordCurr = stoi(layer_numberCurr) - 1;
+    	        pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoordCurr, yCoordCurr);  
+    	        xCoordCurr = locationInGCellGrid.first; yCoordCurr = locationInGCellGrid.second;
+    	        curr = {zCoordPrev,xCoordCurr,yCoordCurr};
+				//printf("Routing from (%d, %d, %d) to (%d, %d, %d)\n", prev.z, prev.x, prev.y, zCoordCurr, xCoordCurr, yCoordCurr);
+				astarsearch.SetStartAndGoalStates(prev, curr);
+				unsigned int SearchState;
+				unsigned int SearchSteps = 0;
+
+				//Supporting blocked source and target
+				if (gcellGrid[prev.z][prev.x][prev.y].congestion >= gcellGrid[prev.z][prev.x][prev.y].congestionLimit)
+					gcellGrid[prev.z][prev.x][prev.y].congestion = gcellGrid[prev.z][prev.x][prev.y].congestionLimit/2;
+				if (gcellGrid[curr.z][curr.x][curr.y].congestion >= gcellGrid[curr.z][curr.x][curr.y].congestionLimit)
+					gcellGrid[curr.z][curr.x][curr.y].congestion = gcellGrid[curr.z][curr.x][curr.y].congestionLimit/2;
+
+				do
+				{
+					SearchState = astarsearch.SearchStep();
+					SearchSteps++;
+				} while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
+				if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) 
+				{
+					MapSearchNode* node = astarsearch.GetSolutionStart();
+					int steps = 0;
+					vector<triplet> myPath;
 					myPath.push_back({node->z, node->x, node->y});
 					gcellGrid[node->z][node->x][node->y].congestion += 1;
-					// if (gcellGrid[node->z][node->x][node->y].congestion >= gcellGrid[node->z][node->x][node->y].congestionLimit)
-					// 	printf("blocked a gcellgrid\n");
-				};
-				netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
-				astarsearch.FreeSolutionNodes();
-			} 
-			else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
-			{
-				printf("Search terminated. Did not find goal state\n");
-			}
-			//printf("SearchSteps : %d\n", SearchSteps++);
-            astarsearch.EnsureMemoryFreed();
-			prev = curr;
-            // for (auto loc: myPath)
-            // {
-            //     printf("Z: %d | X: %d | Y: %d\n", loc.z, loc.x, loc.y);
-            // }
-        }
-		/*if (net.first == "net504"){
-			for (auto trip: netPath)
-			{
-				printf("z: %d | x: %d | y: %d\n", trip.z, trip.x, trip.y);
-			}
-		}*/
-        printOutput(out, netPath);
-        out << ")" << endl;
-    }
+					//if (gcellGrid[node->z][node->x][node->y] )
+					for (;;)
+					{
+						node = astarsearch.GetSolutionNext();
+						if (!node) break;
+						myPath.push_back({node->z, node->x, node->y});
+						gcellGrid[node->z][node->x][node->y].congestion += 1;
+					};
+					netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
+					astarsearch.FreeSolutionNodes();
+				} 
+				else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
+				{
+					printf("Search terminated. Did not find goal state\n");
+					netFailed = true;
+				}
+    	        astarsearch.EnsureMemoryFreed();
+				prev = curr;
+    	    }
+			// if (!netFailed){
+			// 	out << net->name_ << endl << "(" << endl;
+    	    // 	printOutput(out, netPath);
+    	    // 	out << ")" << endl;
+			// }
+			// else
+			// {
+			// 	unrouted_nets.insert(netName);
+			// 	netFailed = false;
+			// 	continue;
+			// }
+    	//}
+		//printf("Did i segment here\n");
+		//ordered_nets = unrouted_nets;
+		// printf("Finished Iteration Number #%d\n", iterations);
+		// printf("We have %d failed routed. Expanding Congestion!\n", unrouted_nets.size());
+	}
     cout << endl << "Done." << endl;
     out.close();
     return 0;
@@ -513,22 +549,22 @@ void show_usage ()
     cout << endl;
     cout << "Usage:" << endl;
     cout << "lefdef_parser -lef <lef> -def <def>" << endl << endl;
-
 }
 
 /**
  * @brief  Show banner of this binary.
- * @author Jinwook Jung (jinwookjung@kaist.ac.kr)
- * @date   2017-12-23 22:20:22
+ * @authors Ali El-Said, Fady Mohamed, Habiba Gamal
+ * @date   2019-6-1
  */
-/*void show_banner ()
+void show_banner ()
 {
     cout << endl;
     cout << string(79, '=') << endl;
-    cout << "LEF/DEF Parser" << endl;
-    cout << "Author: Jinwook Jung" << endl;
+    cout << "\t\t\tISPD - Global Routing Contest" << endl;
+    cout << "\t\tAuthors: Ali El-Said, Fady Mohamed, Habiba Gamal" << endl;
+	cout << "\t\tAffiliation: The American University in Cairo" << endl;
     cout << string(79, '=') << endl;
-}*/
+}
 
 void show_cmd_args ()
 {

@@ -168,10 +168,10 @@ void Def::read_def (string filename)
 
     defrSetPinCbk(DefParser::set_pin);
 
-    cout << "SPECIAL NETS..." << endl;
+   // cout << "SPECIAL NETS..." << endl;
     defrSetSNetStartCbk(DefParser::set_special_net_start);
     defrSetSNetCbk(DefParser::set_special_net);
-    cout << "SPECIAL NETS..." << endl;
+   // cout << "SPECIAL NETS..." << endl;
 
 	defrSetNetStartCbk(DefParser::set_net_start);
 	defrSetNetCbk(DefParser::set_net);

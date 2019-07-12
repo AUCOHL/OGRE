@@ -40,7 +40,7 @@ LefDefParser &LefDefParser::get_instance()
 void LefDefParser::read_lef(string filename)
 {
     lef_.read_lef(filename);
-    lef_.report();
+   // lef_.report();
 }
 
 /**
@@ -49,7 +49,7 @@ void LefDefParser::read_lef(string filename)
 void LefDefParser::read_def(string filename)
 {
     def_.read_def(filename);
-    def_.report();
+    //def_.report();
 }
 
 static string get_current_time_stamp()
@@ -68,7 +68,7 @@ void LefDefParser::update_def(string bookshelf_pl)
     unordered_map<string, pair<int, int>> pl_umap;
 
     // Read bookshelf placement file.
-    cout << "Reading bookshelf pl file..." << endl;
+    //cout << "Reading bookshelf pl file..." << endl;
     ifstream ifs(bookshelf_pl);
     if (!ifs.is_open())
     {
@@ -94,7 +94,7 @@ void LefDefParser::update_def(string bookshelf_pl)
         pl_umap[t1] = make_pair(stoi(t2), stoi(t3));
     }
 
-    cout << "Updating DEF file..." << endl;
+    //cout << "Updating DEF file..." << endl;
     auto &component_umap = def_.get_component_umap();
     auto x_pitch_dbu = lef_.get_min_x_pitch_dbu();
     auto y_pitch_dbu = lef_.get_min_y_pitch_dbu();
@@ -162,9 +162,9 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     int xDimension = xCoord.size();
     int yDimension = yCoord.size();
     int zDimension = tracks_names.size();
-    cout << "Y DIMENSION " << yDimension - 1 << endl;
-    cout << "X DIMENSION " << xDimension - 1 << endl;
-    cout << "Z DIMENSION " << zDimension << endl;
+    // cout << "Y DIMENSION " << yDimension - 1 << endl;
+    // cout << "X DIMENSION " << xDimension - 1 << endl;
+    // cout << "Z DIMENSION " << zDimension << endl;
 
     
     //building Gcell grid
