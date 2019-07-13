@@ -9,7 +9,8 @@
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
-#include "flute.h"
+#include "fady_flute.h"
+#include "salt/salt.h"
 
 #include <iostream>
 #include <fstream>
@@ -406,21 +407,21 @@ int main (int argc, char* argv[])
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
    
-//    //output for testing
-//    for (int k=0; k<gcellGrid.size(); k++){
-//        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
-//        if (layerMap[k+1] ->dir_ == LayerDir::horizontal)
-//            cout << "horizontal" << endl;
-//        if (layerMap[k+1] ->dir_ == LayerDir::vertical)
-//            cout << "vertical" << endl;
+	//    //output for testing
+	//    for (int k=0; k<gcellGrid.size(); k++){
+	//        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
+	//        if (layerMap[k+1] ->dir_ == LayerDir::horizontal)
+	//            cout << "horizontal" << endl;
+	//        if (layerMap[k+1] ->dir_ == LayerDir::vertical)
+	//            cout << "vertical" << endl;
 
-//        for (int i=0; i<gcellGrid[k].size(); i++){
-//            for (int j=0; j<gcellGrid[k][i].size(); j++){
-//                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionLimit << endl;
-//            }
-//        }
-//        cout << endl;
-//    }
+	//        for (int i=0; i<gcellGrid[k].size(); i++){
+	//            for (int j=0; j<gcellGrid[k][i].size(); j++){
+	//                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionLimit << endl;
+	//            }
+	//        }
+	//        cout << endl;
+	//    }
 
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
@@ -432,6 +433,7 @@ int main (int argc, char* argv[])
 	//putting obstructions on gcell grid
     putObstructions();
 	puts("Starting to Route!");
+	int net_id = 0;
 	for (int iterations = 1; ordered_nets.size(); ++iterations)
 	{
 		map<int, string> unrouted_nets;
@@ -440,6 +442,24 @@ int main (int argc, char* argv[])
 			//printf("%d\n", ++netCounter);
     	    netPath.clear();
 			auto &net = nets[netName.second];
+			
+			puts("RUNNING STEINER");
+			// STEINER TREE INTEGRATION CODE
+			double eps = 0.0;	// setting for shallowness vs. lightness
+			salt::Net salt_net;
+			salt_net.read_net(net, net_id++);
+			printlog("Run SALT algorithm on net", salt_net.name, "with", salt_net.pins.size(), "pins using epsilon =", eps);
+
+			// Run SALT
+			salt::Tree salt_tree;
+			salt::SaltBuilder saltB;
+			saltB.Run(salt_net, salt_tree, eps);
+			cout << salt_tree;
+
+			// END STEINER
+			
+			return 0;
+
     	    int connection_size = net->connections_.size();
 					//	printf("Connection Size: %d\n", connection_size);
 
