@@ -9,8 +9,8 @@
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
-#include "fady_flute.h"
-#include "salt/salt.h"
+#include "salt.h"
+#include "flute.h"
 
 #include <iostream>
 #include <fstream>
@@ -21,6 +21,8 @@
 #include <math.h>
 #include <string>
 #include <map>
+
+#include <queue>
 
 using namespace std;
 void show_banner();
@@ -320,26 +322,24 @@ void putObstructions(){
 	}
 }
 
-map<int, string> orderNets(unordered_map<string, def::NetPtr> &nets)
+priority_queue<pair<int, string>> orderNets(unordered_map<string, def::NetPtr> &nets)
 {
 	auto net = nets.begin();
     auto& ldp = my_lefdef::LefDefParser::get_instance();
 
-	Flute::Tree fluteTree;
+	flute::Tree fluteTree;
 	int flutewl;
-			puts("segmenting here\n");
 
-	Flute::readLUT("POWV9.dat", "PORT9.dat");
-				puts("segmenting here2\n");
+	flute::readLUT();
 
 	int d;
-	map<int, string> ordered_nets; // self ordering <int,string> net structure
+	priority_queue<pair<int, string>> ordered_nets; // self ordering <int,string> net structure
 	while (net != nets.end())
 	{
 		d = 0;
 		int connectionSize = net->second->connections_.size();
 		
-		std::int64_t *x = new std::int64_t[connectionSize+1], *y = new std::int64_t[connectionSize+1];
+		int *x = new int[connectionSize+10], *y = new int[connectionSize+10];
 				int *mapping = new int[connectionSize + 1];
 
 		 for (int i = 0; i < connectionSize; ++i) 
@@ -358,13 +358,13 @@ map<int, string> orderNets(unordered_map<string, def::NetPtr> &nets)
 		}
 		if (d == 1)
 		{
-			ordered_nets.insert({10000, net->first});
+			ordered_nets.push({10000, net->first});
 			goto exit;
 		}
 		puts("here?");
-		fluteTree = Flute::flute(d, x, y, 3, mapping);
+		fluteTree = flute::flute(d, x, y, 3);
 		printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
-		ordered_nets.insert({fluteTree.length, net->first});
+		ordered_nets.push({fluteTree.length, net->first});
 		exit:
 			++net;
 	}
@@ -436,16 +436,17 @@ int main (int argc, char* argv[])
 	int net_id = 0;
 	for (int iterations = 1; ordered_nets.size(); ++iterations)
 	{
-		map<int, string> unrouted_nets;
-    	for (auto &netName: ordered_nets)
+		priority_queue<pair<int, string>> unrouted_nets;
+		while(ordered_nets.size())
     	{
 			//printf("%d\n", ++netCounter);
     	    netPath.clear();
+			auto netName = ordered_nets.top(); ordered_nets.pop();
 			auto &net = nets[netName.second];
 			
 			puts("RUNNING STEINER");
 			// STEINER TREE INTEGRATION CODE
-			double eps = 0.0;	// setting for shallowness vs. lightness
+			double eps = 0.5;	// setting for shallowness vs. lightness
 			salt::Net salt_net;
 			salt_net.read_net(net, net_id++);
 			printlog("Run SALT algorithm on net", salt_net.name, "with", salt_net.pins.size(), "pins using epsilon =", eps);
@@ -453,12 +454,16 @@ int main (int argc, char* argv[])
 			// Run SALT
 			salt::Tree salt_tree;
 			salt::SaltBuilder saltB;
-			saltB.Run(salt_net, salt_tree, eps);
-			cout << salt_tree;
+			puts("hi");
+			printf("%d\n", net_id);
+			if(net->connections_.size() > 2){
+				saltB.Run(salt_net, salt_tree, eps);
+				cout << salt_tree;
+			}
 
 			// END STEINER
 			
-			return 0;
+			// return 0;
 
     	    int connection_size = net->connections_.size();
 					//	printf("Connection Size: %d\n", connection_size);
@@ -557,7 +562,7 @@ int main (int argc, char* argv[])
 			}
 			else
 			{
-				unrouted_nets.insert(netName);
+				unrouted_nets.push(netName);
 				netFailed = false;
 				continue;
 			}
