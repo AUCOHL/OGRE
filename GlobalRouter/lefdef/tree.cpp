@@ -208,15 +208,15 @@ void Tree::Print(ostream& os) const {
 
 int Tree::UpdateId() {
     int numNode = net->pins.size();
-    printf("pins.size(): %d\n", numNode);
+    //printf("pins.size(): %d\n", numNode);
     PreOrder([&](const shared_ptr<TreeNode>& node) {
         if (node->pin) {
             assert(node->pin->id < net->pins.size());
             node->id = node->pin->id;
-            printf("node->id1: %d\n", node->id);
+          //  printf("node->id1: %d\n", node->id);
         } else
             { 
-                printf("node->id2: %d\n", numNode);
+           //     printf("node->id2: %d\n", numNode);
                node->id = numNode++;
             }
     });

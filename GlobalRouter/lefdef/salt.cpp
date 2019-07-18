@@ -9,22 +9,19 @@ namespace salt {
 void SaltBase::Init(Tree& minTree, shared_ptr<Pin> srcP) {
 // ofstream mytxt ("out.txt");
    // minTree.Print(mytxt);
-minTree.UpdateId();
+    minTree.UpdateId();
 
-auto mtNodes = minTree.ObtainNodes();
+    auto mtNodes = minTree.ObtainNodes();
 
-slNodes.resize(mtNodes.size());
-shortestDists.resize(mtNodes.size());
-curDists.resize(mtNodes.size());
-for (auto mtN : mtNodes)
-{
-    printf("mtN->id: %d mtNodes.size(): %d\n", mtN->id, mtNodes.size());
+    slNodes.resize(mtNodes.size());
+    shortestDists.resize(mtNodes.size());
+    curDists.resize(mtNodes.size());
+    for (auto mtN : mtNodes)
+    {
+    //printf("mtN->id: %d mtNodes.size(): %d\n", mtN->id, mtNodes.size());
     slNodes[mtN->id] = make_shared<TreeNode>(mtN->loc, mtN->pin, mtN->id);
-    // puts("here21");
     shortestDists[mtN->id] = Dist(mtN->loc, srcP->loc);
-    // puts("here22");
     curDists[mtN->id] = numeric_limits<int>::max();
-    //    puts("here23");
     }
     curDists[srcP->id] = 0;
     slSrc = slNodes[srcP->id];
@@ -48,7 +45,6 @@ void SaltBuilder::Run(const Net & net, Tree& tree, double eps, int refineLevel) 
     Tree smt;
     FluteBuilder fluteB;
     fluteB.Run(net, smt);
-    puts("here1");
     // Refine SMT
     if (refineLevel >= 1) {
         Refine::Flip(smt);
@@ -57,33 +53,25 @@ void SaltBuilder::Run(const Net & net, Tree& tree, double eps, int refineLevel) 
 
     // Init
     Init(smt, net.source());
-    puts("here2");
 
     // DFS
     DFS(smt.source, slSrc, eps);
-    puts("here5");
     Finalize(net, tree);
-    puts("here6");
 
     tree.RemoveTopoRedundantSteiner();
     // Connect breakpoints to source by RSA
     salt::RsaBuilder rsaB;
     rsaB.ReplaceRootChildren(tree);
-    puts("here3");
 
     // Refine SALT
     if (refineLevel >= 1) {
-    puts("here7");
         Refine::CancelIntersect(tree);
         Refine::Flip(tree);
         Refine::UShift(tree);
-    puts("here8");
         if (refineLevel >= 2) {
-    puts("here9");
             Refine::Substitute(tree, eps, refineLevel == 3);
         }
     }
-    puts("here4");
 }
 
 bool SaltBuilder::Relax(const shared_ptr<TreeNode>& u, const shared_ptr<TreeNode>& v) {

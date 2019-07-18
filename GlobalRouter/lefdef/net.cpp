@@ -35,9 +35,10 @@ bool Net::read_net(const def::NetPtr &parser_net, int id_) {
     name = parser_net->name_;
     withCap = false;
 
-    map<pair<int, int>, int> pin_mp; // from x, y to id
+    unordered_map<pair<int, int>, int, boost::hash<pair<int, int>>> pin_mp; // from x, y to id
 
     int numPin = parser_net->connections_.size();
+    int dec = 0;
     // unordered_set<pair<int, int>> pin_set;
     pair<int, int> p;
     for(int i = 0; i < numPin; ++i){
@@ -47,11 +48,13 @@ bool Net::read_net(const def::NetPtr &parser_net, int id_) {
             p = ldp.get_bounding_GCell(parser_net->connections_[i]->pin_->x_, parser_net->connections_[i]->pin_->y_);
         if (pin_mp.find(p) != pin_mp.end())
         {
-            numPin--;
+            dec++;
             continue;
-        }
+        } 
         pin_mp[p] = i;
     }
+    numPin -= dec;
+    if (numPin <= 1) return false;
     pins.resize(numPin);
     int x, y, ind = 0;
     double c = 0.0;
@@ -64,11 +67,12 @@ bool Net::read_net(const def::NetPtr &parser_net, int id_) {
         p = elm.first;
         x = p.first;
         y = p.second;
-        printf("x: %d, y: %d, ind: %d\n", x, y, ind);
+       // printf("x: %d, y: %d, ind: %d\n", x, y, ind);
         pin = make_shared<Pin>(x, y, ind, c);
         ind++;
         advance(it, 1);
     }
+    return true;
     // pins.resize(numPin);
     // printf("%d\n", elm.second);
 }

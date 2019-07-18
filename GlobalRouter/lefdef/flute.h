@@ -1,7 +1,7 @@
 /*****************************/
 /*  User-Defined Parameters  */
 /*****************************/
-#define MAXD 150    // max. degree that can be handled
+#define MAXD 1000    // max. degree that can be handled
 #define ACCURACY 3  // Default accuracy
 #define ROUTING 1   // 1 to construct routing, 0 to estimate WL only
 #define LOCAL_REFINEMENT 0      // Suggestion: Set to 1 if ACCURACY >= 5

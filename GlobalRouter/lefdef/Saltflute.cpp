@@ -12,19 +12,17 @@ void salt::FluteBuilder::Run(const salt::Net& net, salt::Tree& saltTree) {
         flute::readLUT();
         once = true;
     }
-    puts("here11");
     // Obtain flute tree
     flute::Tree fluteTree;
     fluteTree.branch = nullptr;
     int d = net.pins.size();
     assert(d <= MAXD);
     int x[MAXD], y[MAXD];
-    printf("%d\n", d);
+    //printf("%d\n", d);
     for (size_t i = 0; i < d; ++i) {
-    puts("here12");
         x[i] = net.pins[i]->loc.x;
         y[i] = net.pins[i]->loc.y;
-        printf("this is x,y (%d, %d)", x[i], y[i]);
+   //     printf("this is x,y (%d, %d)", x[i], y[i]);
     }
     if (fluteTree.branch) free(fluteTree.branch);  // is it complete for mem leak?
     fluteTree = flute::flute(d, x, y, ACCURACY);

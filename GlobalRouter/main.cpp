@@ -4,25 +4,12 @@
  * @date    2019-6-1
 */
 
-#include "Logger.h"
+#include "common/common_header.h"
 #include "Watch.h"
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
-#include "salt.h"
-#include "flute.h"
-
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <algorithm>
-#include <functional>
-#include <set>
-#include <math.h>
-#include <string>
-#include <map>
-
-#include <queue>
+//#include "salt.h"
 
 using namespace std;
 void show_banner();
@@ -79,10 +66,14 @@ public:
 	bool GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node );
 	float GetCost( MapSearchNode &successor );
 	bool IsSameState( MapSearchNode &rhs );
-
 	void PrintNodeInfo(); 
+	inline bool operator ==(const MapSearchNode& other)
+	{
+		return z == other.z && x == other.x && y == other.y;
+	}
 
 };
+
 
 bool MapSearchNode::IsSameState( MapSearchNode &rhs )
 {
@@ -145,22 +136,27 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 	
 
 	MapSearchNode NewNode;
-
+	int count = 0;
 	// push each possible move except allowing the search to go backwards
 	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
 	{
+		++count;
 		NewNode = MapSearchNode(z, x-1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
 	{
+				++count;
+
 		NewNode = MapSearchNode(z, x, y-1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
 	{
+				++count;
+
 		NewNode = MapSearchNode(z, x+1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
@@ -168,21 +164,28 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 		
 	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
 	{
+				++count;
+
 		NewNode = MapSearchNode(z, x, y+1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 	if((GetMap(z-1, x, y ) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z-1)))
 	{
+				++count;
+
 		NewNode = MapSearchNode(z-1, x, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 	
 	if((GetMap(z+1, x, y) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z+1)))
 	{
+				++count;
+
 		NewNode = MapSearchNode(z+1, x, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
+//	printf("Count: %d\n", count);
 	return true;
 }
 
@@ -193,6 +196,7 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
 	return (float) ((gcellGrid[z][x][y].congestion) /(1.f * gcellGrid[z][x][y].congestionLimit)) * 10.0; // so we need to apply dynamic cost function here
+	//return 1.f;
 }
 
 void printOutput(ostream& out, vector<triplet>& myPath){
@@ -321,19 +325,19 @@ void putObstructions(){
 		}
 	}
 }
-
-priority_queue<pair<int, string>> orderNets(unordered_map<string, def::NetPtr> &nets)
+typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::greater<pair<int,string>>> pq;
+pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
 	auto net = nets.begin();
     auto& ldp = my_lefdef::LefDefParser::get_instance();
 
-	flute::Tree fluteTree;
+	//salt::Tree fluteTree;
 	int flutewl;
-
-	flute::readLUT();
+	
+	//flute::readLUT();
 
 	int d;
-	priority_queue<pair<int, string>> ordered_nets; // self ordering <int,string> net structure
+	pq ordered_nets; // self ordering <int,string> net structure
 	while (net != nets.end())
 	{
 		d = 0;
@@ -361,10 +365,9 @@ priority_queue<pair<int, string>> orderNets(unordered_map<string, def::NetPtr> &
 			ordered_nets.push({10000, net->first});
 			goto exit;
 		}
-		puts("here?");
-		fluteTree = flute::flute(d, x, y, 3);
-		printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
-		ordered_nets.push({fluteTree.length, net->first});
+	//	fluteTree = flute::flute(d, x, y, 3);
+	//	printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
+	//	ordered_nets.push({fluteTree.length, net->first});
 		exit:
 			++net;
 	}
@@ -401,7 +404,6 @@ int main (int argc, char* argv[])
     ldp.read_lef(filename_lef);
     ldp.read_def(filename_def);
 
-	AStarSearch<MapSearchNode> astarsearch(100000);
     gcellGrid = ldp.build_Gcell_grid(layerMap);
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
@@ -425,42 +427,42 @@ int main (int argc, char* argv[])
 
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
-	auto ordered_nets = orderNets(nets);
+	//auto ordered_nets = orderNets(nets);
     MapSearchNode prev(0,0,0), curr(0,0,0);
     vector <triplet> netPath;
 	int netCounter=0;
+			AStarSearch<MapSearchNode> astarsearch(100000);
 
 	//putting obstructions on gcell grid
     putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
-	for (int iterations = 1; ordered_nets.size(); ++iterations)
-	{
-		priority_queue<pair<int, string>> unrouted_nets;
-		while(ordered_nets.size())
+	// for (int iterations = 1; ordered_nets.size(); ++iterations)
+	// {
+
+	// 	pq unrouted_nets;
+		//while(ordered_nets.size())
+
+		for (auto &netx: nets)
     	{
-			//printf("%d\n", ++netCounter);
+		//	printf("Net: %d\n", ++netCounter);
     	    netPath.clear();
-			auto netName = ordered_nets.top(); ordered_nets.pop();
-			auto &net = nets[netName.second];
-			
-			puts("RUNNING STEINER");
-			// STEINER TREE INTEGRATION CODE
-			double eps = 0.5;	// setting for shallowness vs. lightness
-			salt::Net salt_net;
-			salt_net.read_net(net, net_id++);
-			printlog("Run SALT algorithm on net", salt_net.name, "with", salt_net.pins.size(), "pins using epsilon =", eps);
+			//auto netName = ordered_nets.top(); ordered_nets.pop();
+			//auto &net = nets[netName.second];
+			auto net = netx.second;
+			// //STEINER TREE INTEGRATION CODE
+			// double eps = 0.0;	// setting for shallowness vs. lightness
+			// salt::Net salt_net;
+			// bool canRun = salt_net.read_net(net, net_id++);
 
-			// Run SALT
-			salt::Tree salt_tree;
-			salt::SaltBuilder saltB;
-			puts("hi");
-			printf("%d\n", net_id);
-			if(net->connections_.size() > 2){
-				saltB.Run(salt_net, salt_tree, eps);
-				cout << salt_tree;
-			}
+			// printlog("Run SALT algorithm on net", salt_net.name, "with", salt_net.pins.size(), "pins using epsilon =", eps);
 
+			// // Run SALT
+			// salt::Tree salt_tree;
+			// salt::SaltBuilder saltB;
+			// if (canRun)
+			// 	saltB.Run(salt_net, salt_tree, eps);
+				
 			// END STEINER
 			
 			// return 0;
@@ -519,10 +521,10 @@ int main (int argc, char* argv[])
 				unsigned int SearchSteps = 0;
 
 				//Supporting blocked source and target
-				if (gcellGrid[prev.z][prev.x][prev.y].congestion >= gcellGrid[prev.z][prev.x][prev.y].congestionLimit)
-					gcellGrid[prev.z][prev.x][prev.y].congestion = gcellGrid[prev.z][prev.x][prev.y].congestionLimit/2;
-				if (gcellGrid[curr.z][curr.x][curr.y].congestion >= gcellGrid[curr.z][curr.x][curr.y].congestionLimit)
-					gcellGrid[curr.z][curr.x][curr.y].congestion = gcellGrid[curr.z][curr.x][curr.y].congestionLimit/2;
+				// if (gcellGrid[prev.z][prev.x][prev.y].congestion >= gcellGrid[prev.z][prev.x][prev.y].congestionLimit)
+				// 	gcellGrid[prev.z][prev.x][prev.y].congestion = gcellGrid[prev.z][prev.x][prev.y].congestionLimit/2;
+				// if (gcellGrid[curr.z][curr.x][curr.y].congestion >= gcellGrid[curr.z][curr.x][curr.y].congestionLimit)
+				// 	gcellGrid[curr.z][curr.x][curr.y].congestion = gcellGrid[curr.z][curr.x][curr.y].congestionLimit/2;
 
 				do
 				{
@@ -545,6 +547,7 @@ int main (int argc, char* argv[])
 						gcellGrid[node->z][node->x][node->y].congestion += 1;
 					};
 					netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
+					//printf("searchSteps: %d\n", SearchSteps);
 					astarsearch.FreeSolutionNodes();
 				} 
 				else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
@@ -552,24 +555,24 @@ int main (int argc, char* argv[])
 					printf("Search terminated. Did not find goal state\n");
 					netFailed = true;
 				}
-    	        astarsearch.EnsureMemoryFreed();
+    	      //  astarsearch.EnsureMemoryFreed();
 				prev = curr;
     	    }
-			if (!netFailed){
-				out << net->name_ << endl << "(" << endl;
-    	    	printOutput(out, netPath);
-    	    	out << ")" << endl;
-			}
-			else
-			{
-				unrouted_nets.push(netName);
-				netFailed = false;
-				continue;
-			}
-    	}
-		ordered_nets = unrouted_nets;
-		printf("Finished Iteration Number #%d\n", iterations);
-		printf("We have %d failed routed. Expanding Congestion!\n", unrouted_nets.size());
+			// if (!netFailed){
+			 	out << net->name_ << endl << "(" << endl;
+    	     	printOutput(out, netPath);
+    	     	out << ")" << endl;
+			// }
+			// else
+			// {
+			// 	unrouted_nets.push(netName);
+			// 	netFailed = false;
+			// 	continue;
+			// }
+    	
+		//ordered_nets = unrouted_nets;
+		//printf("Finished Iteration Number #%d\n", iterations);
+		//printf("We have %d failed routed. Expanding Congestion!\n", unrouted_nets.size());
 	}
     cout << endl << "Done." << endl;
     out.close();
