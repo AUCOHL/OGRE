@@ -29,8 +29,14 @@ void Net::RanInit(int i, int numPin, DTYPE width, DTYPE height) {
     }
     // log() << "specify " << numPin << ", get " << k << endl;
 }
-
-bool Net::read_net(const def::NetPtr &parser_net, int id_) {
+int layerStringtoNumber(const string layerName)
+{
+    string result;
+    for (int i = 5; i < layerName.length(); ++i)
+    	result += layerName[i];
+    return stoi(result) - 1;
+}
+bool Net::read_net(const def::NetPtr &parser_net, int id_, unordered_map<int, pair<int,int>> &idMap) {
     id = id_;
     name = parser_net->name_;
     withCap = false;
@@ -39,22 +45,35 @@ bool Net::read_net(const def::NetPtr &parser_net, int id_) {
 
     int numPin = parser_net->connections_.size();
     int dec = 0;
+    int tree_id = 0;
     // unordered_set<pair<int, int>> pin_set;
     pair<int, int> p;
-    for(int i = 0; i < numPin; ++i){
-        if (parser_net->connections_[i]->lef_pin_ != nullptr)
-            p = ldp.get_bounding_GCell(parser_net->connections_[i]->lx_, parser_net->connections_[i]->ly_);
+    int layerNo;
+    for(int id = 0; id < numPin; ++id){
+        if (parser_net->connections_[id]->lef_pin_ != nullptr)
+        {
+            p = ldp.get_bounding_GCell(parser_net->connections_[id]->lx_, parser_net->connections_[id]->ly_);
+            layerNo = layerStringtoNumber(parser_net->connections_[id]->lef_pin_->ports_[0]->layer_name_);
+        }
         else
-            p = ldp.get_bounding_GCell(parser_net->connections_[i]->pin_->x_, parser_net->connections_[i]->pin_->y_);
+        {
+            p = ldp.get_bounding_GCell(parser_net->connections_[id]->pin_->x_, parser_net->connections_[id]->pin_->y_);
+            layerNo = layerStringtoNumber(parser_net->connections_[id]->pin_->layer_);
+        }
         if (pin_mp.find(p) != pin_mp.end())
         {
             dec++;
             continue;
-        } 
-        pin_mp[p] = i;
+        }
+        else{
+            idMap[tree_id] = {id, layerNo};
+            tree_id++;
+        }
+        pin_mp[p] = id;
     }
     numPin -= dec;
     if (numPin <= 1) return false;
+    assert(tree_id == numPin);
     pins.resize(numPin);
     int x, y, ind = 0;
     double c = 0.0;

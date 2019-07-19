@@ -44,7 +44,7 @@ public:
 
 
     my_lefdef::LefDefParser  &ldp = my_lefdef::LefDefParser::get_instance();
-    bool read_net(const def::NetPtr &parser_net, int id_); // to read from parser's net
+    bool read_net(const def::NetPtr &parser_net, int id_, unordered_map<int, pair<int, int>>&); // to read from parser's net
 
     // File read/write
     // ------
