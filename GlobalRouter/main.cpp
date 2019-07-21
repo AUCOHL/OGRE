@@ -13,6 +13,7 @@
 #include "stlastar.h" // See header for copyright and usage information
 #include "salt.h"
 #include "fady_flute.h"
+#include "ThreadPool.h"
 
 using namespace std;
 void show_banner();
@@ -40,8 +41,14 @@ struct triplet
 	{
 		return z == other.z && x == other.x && y == other.y;
 	}
+	// bool operator < (const triplet& other)
+	// {
+	// 	return z < other.z;
+	// }
     triplet(const triplet& other) : x(other.x), y(other.y), z(other.z) {};
 };
+
+unordered_map <string, vector<triplet>> allNetsPath;
 
 
 int GetMap( int z, int x, int y)
@@ -209,6 +216,10 @@ typedef struct pathCoord
 		return lx == other.lx && ly == other.ly && ux == other.ux &&
 				uy == other.uy && z == other.z;
 	}
+	bool operator < (const pathCoord& other) const
+	{
+		return z < other.z;
+	}
 } pathCoord_t;
 
 class MyHashFunction { 
@@ -220,56 +231,71 @@ class MyHashFunction {
 				hash<int>()(p.ux) ^ hash<int>()(p.uy) ^
 				hash<int>()(p.z)); 
     } 
-}; 
-void printOutput(ostream& out, vector<triplet>& myPath){
-    
-    triplet bufferMin(-10, -10, -10);
-	triplet bufferMax(-10, -10, -10);
-	unordered_set<pathCoord_t, MyHashFunction> finalPath;
-    if (myPath.size() > 0){
-        bufferMin = myPath[0];
-		bufferMax = myPath[0];
-	}
-    if (myPath.size() <= 0){
-    	return;
-    }
-    for (int i = 1; i < myPath.size(); i++){
-        if(myPath[i].z == bufferMin.z){
-			if (layerMap[bufferMin.z + 1] ->dir_ == LayerDir::horizontal)
-				if (bufferMin.y > myPath[i].y)
-					bufferMin = myPath[i];
-				if (bufferMax.y < myPath[i].y)
-					bufferMax = myPath[i];
-			else 
-				if (bufferMin.x > myPath[i].x)
-					bufferMin = myPath[i];
-				if (bufferMax.x < myPath[i].x)
-					bufferMax = myPath[i];
+};
+
+void printOutput(ostream& out)
+{   
+	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
+	{
+		cout << it->first << endl;
+		out << it->first << endl << "(" << endl;
+		cout << it->second.size() << endl;
+		triplet bufferMin(-10, -10, -10);
+		triplet bufferMax(-10, -10, -10);
+		std::set<pathCoord_t> finalPath;
+		auto myPath = it->second;
+		sort(myPath.begin(), myPath.end(),
+		[](const triplet& first, const triplet& second)-> bool
+		{
+			return first.z < second.z;
+		});
+		if (myPath.size() > 0){
+			bufferMin = myPath[0];
+			bufferMax = myPath[0];
 		}
-        else{
-            int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
-            int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
-            int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
-            int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
-			finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
-            bufferMax = myPath[i];
-            bufferMin = myPath[i];
-        }
-    }
-	int i = myPath.size();
-	int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
-	int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
-	int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
-	int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
-	finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
-	for (auto guide: finalPath)
-    	out << guide.lx << " " << guide.ly << " " << guide.ux << " " << guide.uy << " Metal" << guide.z << endl;
+		if (myPath.size() <= 0){
+			out << ")" << endl;
+			continue;
+		}
+		for (int i = 1; i < myPath.size(); i++){
+			if(myPath[i].z == bufferMin.z){
+				if (layerMap[bufferMin.z + 1] ->dir_ == LayerDir::horizontal)
+					if (bufferMin.y > myPath[i].y)
+						bufferMin = myPath[i];
+					if (bufferMax.y < myPath[i].y)
+						bufferMax = myPath[i];
+				else 
+					if (bufferMin.x > myPath[i].x)
+						bufferMin = myPath[i];
+					if (bufferMax.x < myPath[i].x)
+						bufferMax = myPath[i];
+			}
+			else{
+				int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
+				int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
+				int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
+				int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
+				finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
+				bufferMax = myPath[i];
+				bufferMin = myPath[i];
+			}
+		}
+		int i = myPath.size();
+		int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
+		int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
+		int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
+		int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
+		finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
+		for (auto guide: finalPath)
+			out << guide.lx << " " << guide.ly << " " << guide.ux << " " << guide.uy << " Metal" << guide.z << endl;
+		
+		out << ")" << endl;	
+	}
 }
 
 void putObstructions(){
 	auto& ldp = my_lefdef::LefDefParser::get_instance();
 	unordered_map<string, def::ComponentPtr> compMap = ldp.def_.get_component_umap();
-	//cout << "SIZE " <<compMap.size() << endl;
 	int defDBU = ldp.def_.get_dbu();
     int lefDBU = ldp.lef_.get_dbu();
 	for (auto & comp: compMap){
@@ -282,7 +308,6 @@ void putObstructions(){
 				int ly = port->bbox_.ly_* defDBU;
 				int ux = port->bbox_.ux_ * defDBU;
 				int uy = port->bbox_.uy_ * defDBU;
-
 
 				lx += posX;
 				ly += posY;
@@ -339,18 +364,14 @@ void putObstructions(){
 		                    ratio = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
 		                    occupied = dimension  / (pitchY * defDBU);
 				       	}
-				       	// cout << "Layer: " << k << " Cell "<<i <<" "<< j << " Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
 				       	gcellGrid[k-1][i][j].congestion += (occupied * ratio);
-				       	//if(gcellGrid[k-1][i][j].congestion >= 0)
-				       	//	gcellGrid[k-1][i][j].congestionINV = 0; 
-				       	// cout << "Layer: " << k << " Cell "<<i <<" "<< j << " Ratio " << ratio << " Congestion " << gcellGrid[k-1][i][j].congestionINV << endl;
 					}
 				}
 			}
 		}
 	}
 }
-typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::greater<pair<int,string>>> pq;
+typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::less<pair<int,string>>> pq;
 pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
 	auto net = nets.begin();
@@ -387,14 +408,10 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
 		}
 		if (d == 1)
 		{
-			//cout << "net: " << net->first << endl;
-
 			ordered_nets.push({10000, net->first});
 			goto exit;
 		}
 		fluteTree = Flutee::flute(d, x, y, 3, mapping);
-				//	cout << "net: " << net->first << endl;
-
 		//printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
 		ordered_nets.push({fluteTree.length, net->first});
 		exit:
@@ -438,6 +455,93 @@ void dfs(shared_ptr<salt::TreeNode> node, int p_layer)
 	}
 } 
 
+
+struct params
+{
+	MapSearchNode source;
+	MapSearchNode target;
+	int threadId;
+	string netName;
+	params(MapSearchNode source_, MapSearchNode target_,int threadId_,string netName_):
+	 source(source_), target(target_), threadId(threadId_), netName(netName_){};
+	 params(){};
+};
+// every thread will route a whole net!
+volatile int x = 0;
+#include <mutex>          // std::mutex
+std::mutex mtx;           // mutex for critical section
+void routeTwoPoints(void* myparams)	
+{
+	params in = *(params*)myparams;
+	MapSearchNode source = in.source;
+	MapSearchNode target = in.target;
+	int id = in.threadId;
+	string name = in.netName;
+	AStarSearch<MapSearchNode> astarsearch(100000);
+	astarsearch.SetStartAndGoalStates(source, target);
+	// cout << endl << id << endl;
+
+	vector <triplet> threadResult;
+	unsigned int SearchState;
+	unsigned int SearchSteps = 0;
+	int count;
+				//Supporting blocked source and target
+	if (gcellGrid[source.z][source.x][source.y].congestion >=
+		gcellGrid[source.z][source.x][source.y].congestionLimit)
+		gcellGrid[source.z][source.x][source.y].congestion =
+		gcellGrid[source.z][source.x][source.y].congestionLimit/2;
+	if (gcellGrid[target.z][target.x][target.y].congestion >=
+		gcellGrid[target.z][target.x][target.y].congestionLimit)
+		gcellGrid[target.z][target.x][target.y].congestion = 
+		gcellGrid[target.z][target.x][target.y].congestionLimit/2;
+	do
+	{
+		SearchState = astarsearch.SearchStep();
+		SearchSteps++;
+	} while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
+		if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) 
+		{
+			MapSearchNode* node = astarsearch.GetSolutionStart();
+			int steps = 0;
+			count = 0;
+			for (int addition = node->z-1; addition <= node->z+1; ++addition)
+			{
+				if (addition < 0 || addition >= zDimension || count ==2)
+					continue;
+
+				threadResult.push_back({addition, node->x, node->y});
+
+				++count;
+			}
+			gcellGrid[node->z][node->x][node->y].congestion += 1;
+			for (;;)
+			{
+				node = astarsearch.GetSolutionNext();
+				if (!node) break;
+				count = 0;
+				for (int addition = node->z-1; addition <= node->z+1; ++addition)
+				{
+					if (addition < 0 || addition >= zDimension || count == 2) 
+						continue;
+					threadResult.push_back({addition, node->x, node->y});
+
+					++count;
+				}
+				gcellGrid[node->z][node->x][node->y].congestion += 1;
+			};
+			mtx.lock();
+			allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
+			mtx.unlock();
+			astarsearch.FreeSolutionNodes();
+		} 
+		else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
+		{
+			printf("Search terminated. Did not find goal state\n");
+		}
+    	astarsearch.EnsureMemoryFreed();
+		++x;
+}
+
 int main (int argc, char* argv[])
 {
     util::Watch watch;
@@ -448,18 +552,16 @@ int main (int argc, char* argv[])
     ap.initialize(argc, argv);
     auto filename_lef = ap.get_argument("-lef");
     auto filename_def = ap.get_argument("-def");
-	string outFileName = "";
-	int i = filename_def.size() - 1;
-	for (; i >= 0 && filename_def[i] != '.'; --i);
-	for (int j = 0; j < i; ++j) outFileName += filename_def[j];
-	outFileName += ".guide";
-    out.open(outFileName);
-
-
+	auto outfile_guide = ap.get_argument("-output");
+	auto thread_count = ap.get_argument("-thread");
+    out.open(outfile_guide);
+	int threadsCounter = stoi(thread_count);
+	ThreadPool tp(threadsCounter);
+	
     // Run detaile drouter
     auto& ldp = my_lefdef::LefDefParser::get_instance();
 
-    if (filename_lef == "" or filename_def == "") {
+    if (filename_lef == "" or filename_def == "" or outfile_guide == "" or thread_count == "") {
         show_usage();
         return -1;
     }
@@ -472,54 +574,35 @@ int main (int argc, char* argv[])
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
-   
-	//    //output for testing
-	//    for (int k=0; k<gcellGrid.size(); k++){
-	//        cout << "Metal Layer: " << k + 1 << ", Direction is : " ;
-	//        if (layerMap[k+1] ->dir_ == LayerDir::horizontal)
-	//            cout << "horizontal" << endl;
-	//        if (layerMap[k+1] ->dir_ == LayerDir::vertical)
-	//            cout << "vertical" << endl;
-
-	//        for (int i=0; i<gcellGrid[k].size(); i++){
-	//            for (int j=0; j<gcellGrid[k][i].size(); j++){
-	//                cout << "Start Coord X: " << gcellGrid[k][i][j].startCoord.first << " End Coord X: " << gcellGrid[k][i][j].endCoord.first << " Start Coord Y: " << gcellGrid[k][i][j].startCoord.second << " End Coord Y: " << gcellGrid[k][i][j].endCoord.second << " Free Wires " << gcellGrid[k][i][j].congestionLimit << endl;
-	//            }
-	//        }
-	//        cout << endl;
-	//    }
-
+	
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
 	auto ordered_nets = orderNets(nets);
-    vector <triplet> netPath;
 	int netCounter=0;
-			AStarSearch<MapSearchNode> astarsearch(100000);
-
+	for (auto net: nets)
+	{
+		allNetsPath[net.first] = vector<triplet>();
+	}
 	//putting obstructions on gcell grid
     putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
+	int bufferId = 0;
+	params memoryAllocation[8];
+	int paramsBuffering = 0;
+	printf("nets size: %d\n", ordered_nets.size());
+	int connectionAmount = 0;
+
 	while(ordered_nets.size())
     {
-    	netPath.clear();
 		auto netName = ordered_nets.top(); ordered_nets.pop();
 		auto &net = nets[netName.second];
-		if (netName.second == "ionet1006")
-			{
-				cout << "ah\n";
-				cout << net->connections_.size();
-			}
-		//auto net = netx.second;
-		// //STEINER TREE INTEGRATION CODE
+
 		double eps = 0.0;	// setting for shallowness vs. lightness
 		salt::Net salt_net;
 		idMap.clear();
 		bool canRun = salt_net.read_net(net, net_id++, idMap);
-	//	printlog("Run SALT algorithm on net", salt_net.name, "with", salt_net.pins.size(), "pins using epsilon =", eps);
-			// Run SALT
 		salt::Tree salt_tree;
-							int count = 0;
 		salt::SaltBuilder saltB;
 		if (canRun)
 		{
@@ -534,114 +617,70 @@ int main (int argc, char* argv[])
 				puts("SOURCE IS STEINER WTF :?"); 
 			}
 			dfs(salt_tree.source, source_layer);
+		
 			bool netFailed = false;
+			connectionAmount += route_nodes.size();
 			for (auto route: route_nodes)
 			{
-				MapSearchNode start({route.first.z, route.first.x, route.first.y});
-				MapSearchNode goal({route.second.z, route.second.x, route.second.y});
-				astarsearch.SetStartAndGoalStates(start, goal);
-				unsigned int SearchState;
-				unsigned int SearchSteps = 0;
-				//printf("Routing from (%d, %d, %d) to (%d, %d, %d)\n", route.first.z, route.first.x, 
-				//route.first.y, route.second.z, route.second.x, route.second.y);	
-				//Supporting blocked source and target
-				if (gcellGrid[route.first.z][route.first.x][route.first.y].congestion >=
-					gcellGrid[route.first.z][route.first.x][route.first.y].congestionLimit)
-					gcellGrid[route.first.z][route.first.x][route.first.y].congestion =
-					gcellGrid[route.first.z][route.first.x][route.first.y].congestionLimit/2;
-				if (gcellGrid[route.second.z][route.second.x][route.second.y].congestion >=
-					gcellGrid[route.second.z][route.second.x][route.second.y].congestionLimit)
-					gcellGrid[route.second.z][route.second.x][route.second.y].congestion = 
-					gcellGrid[route.second.z][route.second.x][route.second.y].congestionLimit/2;
-
-				do
-				{
-					SearchState = astarsearch.SearchStep();
-					SearchSteps++;
-				} while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
-				if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) 
-				{
-					MapSearchNode* node = astarsearch.GetSolutionStart();
-					int steps = 0;
-					vector<triplet> myPath;
-					count = 0;
-					for (int addition = node->z-1; addition <= node->z+1; ++addition)
-					{
-						if (addition < 0 || addition >= zDimension || count ==2) continue;
-						myPath.push_back({addition, node->x, node->y});
-						++count;
-					}
-					gcellGrid[node->z][node->x][node->y].congestion += 1;
-					//if (gcellGrid[node->z][node->x][node->y] )
-					for (;;)
-					{
-						node = astarsearch.GetSolutionNext();
-						if (!node) break;
-						count = 0;
-						for (int addition = node->z-1; addition <= node->z+1; ++addition)
-						{
-							if (addition < 0 || addition >= zDimension || count == 2) continue;
-							myPath.push_back({addition, node->x, node->y});
-							++count;
-						}
-						gcellGrid[node->z][node->x][node->y].congestion += 1;
-					};
-					netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
-					//printf("searchSteps: %d\n", SearchSteps);
-					astarsearch.FreeSolutionNodes();
-				} 
-				else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
-				{
-					printf("Search terminated. Did not find goal state\n");
-					netFailed = true;
-				}
-    	        astarsearch.EnsureMemoryFreed();
+				MapSearchNode start;
+				start.z = route.first.z; start.x = route.first.x; start.y = route.first.y;
+				MapSearchNode goal;
+				goal.z = route.second.z; goal.x = route.second.x; goal.y = route.second.y;
+				string name = netName.second;
+				memoryAllocation[bufferId] = {start, goal, bufferId, name};
+				
+				tp.enqueue(routeTwoPoints, (&memoryAllocation[bufferId]));
+				
+				++bufferId;
+				bufferId %= threadsCounter;
+				if (netName.second == "ionet1006")
+				{	
+					cout << "ah\n";
+					printf("Routing from (%d, %d, %d) to (%d, %d, %d)\n", route.first.z, route.first.x, 
+					route.first.y, route.second.z, route.second.x, route.second.y);	
+				}	
 			}
-		
 		}
 		else
 		{
+			allNetsPath[netName.second];
 			if (net->connections_.size() != 1)
 			{
-				vector<triplet> myPath;
-				//if (net->name_ == "net1003")
+				int i = 0, count = 0;
+				//for (int i = 0; i < net->connections_.size(); ++i)
 				{
-					int i = 0;
-					//for (int i = 0; i < net->connections_.size(); ++i)
+					pair<int, int> p;
+					int layerNo;
+					if (net->connections_[0]->lef_pin_ != nullptr)
+					{	
+						p = ldp.get_bounding_GCell(net->connections_[i]->lx_, net->connections_[i]->ly_);
+						layerNo = layerStringtoNumber(net->connections_[i]->lef_pin_->ports_[0]->layer_name_);
+					}
+					else
 					{
-						pair<int, int> p;
-						int layerNo;
-						if (net->connections_[0]->lef_pin_ != nullptr)
-						{	
-							p = ldp.get_bounding_GCell(net->connections_[i]->lx_, net->connections_[i]->ly_);
-							layerNo = layerStringtoNumber(net->connections_[i]->lef_pin_->ports_[0]->layer_name_);
-						}
-						else
-						{
-							 p = ldp.get_bounding_GCell(net->connections_[i]->pin_->x_,net->connections_[i]->pin_->y_ );
-							layerNo = layerStringtoNumber(net->connections_[i]->pin_->layer_);
-							
-						}
-						count = 0;
-						for (int addition = layerNo-1; addition <= layerNo+1; ++addition)
-							{	
-								if (addition < 0 || addition >= zDimension || count==2) continue;
-									myPath.push_back({addition, p.first, p.second});
-								++count;
-							}
+						 p = ldp.get_bounding_GCell(net->connections_[i]->pin_->x_,net->connections_[i]->pin_->y_ );
+						layerNo = layerStringtoNumber(net->connections_[i]->pin_->layer_);
+						
+					}
+					for (int addition = layerNo-1; addition <= layerNo+1; ++addition)
+					{	
+						if (addition < 0 || addition >= zDimension || count==2) continue;
+							allNetsPath[netName.second].push_back({addition, p.first, p.second});
+						++count;
 					}
 				}
-				netPath.insert(std::end(netPath), std::begin(myPath), std::end(myPath));
 			}
-			//cout << netName.second << endl;
-			// handle 7aga hena kda
-		}			
-		out << netName.second << endl << "(" << endl;
-		printOutput(out, netPath);
-		out << ")" << endl;		
-		
+		}				
 	}
+	// while(true)
+	// {
+	// 	cout << x << endl;
+	// 	sleep(1);
+	// }
+	cout << allNetsPath.size() << endl;
+
     cout << endl << "Done." << endl;
+	printOutput(out);
     out.close();
     return 0;
 }

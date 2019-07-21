@@ -1,15 +1,15 @@
-CXX   = g++
+CXX   = g++ -lpthread
 LD    = g++
 OBJS_DIR = obj
 
 ifeq ($(DEBUG), 1)
-CXXFLAGS = -g -O0 -DDEBUG -std=c++11
+CXXFLAGS = -g -O0 -DDEBUG -std=c++11 -lpthread
 TARGET = global_router
 else ifeq ($(UNIT_TEST), 1)
-CXXFLAGS = -g -O0 -DUNIT_TEST -DDEBUG -std=c++11
+CXXFLAGS = -g -O0 -DUNIT_TEST -DDEBUG -std=c++11 -lpthread
 TARGET = global_router_t
 else
-CXXFLAGS = -O3 -std=c++11
+CXXFLAGS = -O3 -std=c++11 -lpthread
 TARGET = global_router
 endif
 
@@ -20,7 +20,7 @@ SRCS      = $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard */*/*.cpp)
 OBJS      = $(addprefix $(OBJS_DIR)/, $(notdir $(SRCS:%.cpp=%.o)))
 LDFLAGS   = -L/usr/local/lib -L./lib/linux
 #LDFLAGS   = -L/usr/local/lib -L./lib/osx
-LIBS      = -llef -ldef -lstdc++
+LIBS      = -llef -ldef -lstdc++ -lpthread
 INCLUDES  = -I./
 INCLUDES += -I./include
 INCLUDES += -I./lefdef
