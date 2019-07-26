@@ -6,6 +6,15 @@
 
 #include "common/common_header.h"
 #include <boost/functional/hash.hpp>
+#include <vector>
+#include <queue>
+#include <memory>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <future>
+#include <functional>
+#include <stdexcept>
 
 #include "Watch.h"
 #include "ArgParser.h"
@@ -13,7 +22,6 @@
 #include "stlastar.h" // See header for copyright and usage information
 #include "salt.h"
 #include "fady_flute.h"
-#include "ThreadPool.h"
 
 using namespace std;
 void show_banner();
@@ -28,6 +36,7 @@ int omp_thread_count();
 int zDimension, xDimension, yDimension;
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid;
 unordered_map <int, lef::LayerPtr> layerMap;
+ofstream out;
 
 struct triplet
 {
@@ -213,13 +222,9 @@ typedef struct pathCoord
 	int lx, ly, ux, uy, z;
 	bool operator ==(const pathCoord &other) const
 	{
-		return lx == other.lx && ly == other.ly && ux == other.ux &&
-				uy == other.uy && z == other.z;
+		return lx == other.lx && ly == other.ly && ux == other.ux && uy == other.uy && z == other.z;
 	}
-	bool operator < (const pathCoord& other) const
-	{
-		return z < other.z;
-	}
+
 } pathCoord_t;
 
 class MyHashFunction { 
@@ -232,23 +237,133 @@ class MyHashFunction {
 				hash<int>()(p.z)); 
     } 
 };
+bool verbose = 1;
+void write_seg(int lx, int ly, int ux, int uy, int z){
+    int startX = gcellGrid[z][lx][ly].startCoord.first;
+    int startY = gcellGrid[z][lx][ly].startCoord.second;
+    int endX = gcellGrid[z][ux][uy].endCoord.first;
+    int endY = gcellGrid[z][ux][uy].endCoord.second;
+    out << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
+   // cout << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
+}
 
-void printOutput(ostream& out)
+void printOutput2()
+{
+	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
+	{
+		out << it->first << endl << "(" << endl;
+		auto myPath = it->second;
+		printf("myPath size: %d\n",(int)myPath.size());
+		if(myPath.size() <= 0)
+		{	
+			out << ")" << endl;
+			continue;
+		}
+
+		int layerMax = layerMap.size();
+		vector<vector<pair<int, int>>> routes(layerMax+1);
+		printf("homa kam layer: %d\n", layerMax);
+		for(int i = 0; i < myPath.size(); i++){
+			int l = myPath[i].z;
+			routes[l+1].push_back({myPath[i].x, myPath[i].y});
+		}
+		verbose = 0;
+		for(int l = 1; l <= layerMax; l++)
+		{
+			printf("baboz f layer: %d\n size l layer: %d\n", l, (int)routes[l].size());
+			if (layerMap[l]->dir_ == LayerDir::horizontal)
+			{
+				sort(routes[l].begin(), routes[l].end(),
+					[](const pair<int, int> &a, const pair<int, int> &b)
+					{
+						if(a.second != b.second)
+							return a.second < b.second; // sort according to y first
+						else
+							return a.first < b.first;
+					});
+				int x_ = -2, y_ = -2, x, y, xdiff, ydiff, xmax = x_, xmin = x_;
+				routes[l].push_back({-2, -2});  // push dummy values to print last segment
+				for(int i = 0; i < routes[l].size(); i++){
+					x = routes[l][i].first;
+					y = routes[l][i].second;
+					xdiff = x - x_;
+					ydiff = y - y_;
+					if(abs(ydiff) > 0){
+						if(xmax != -2)
+							write_seg( xmin, y_, xmax, y_, l);
+						xmin = xmax = x;
+					}
+					else{
+						if(abs(xdiff) > 1){
+							if(xmax != -2)
+								write_seg( xmin, y_, xmax, y_, l);
+							xmin = xmax = x;
+						}
+						else{
+							xmax = x;
+						}
+					}
+					x_ = x;
+					y_ = y;
+				}
+			}
+			else if (layerMap[l]->dir_ == LayerDir::vertical)
+			{
+				sort(routes[l].begin(), routes[l].end(),
+					[](const pair<int, int> &a, const pair<int, int> &b)
+					{
+						if(a.first != b.first)
+							return a.first < b.first;   // sort according to x first
+						else
+							return a.second < b.second;
+					});
+				int x_ = -2, y_ = -2, x, y, xdiff, ydiff, ymax = y_, ymin = y_;
+				routes[l].push_back({-2, -2});  // push dummy values to print last segment
+				for(int i = 0; i < routes[l].size(); i++){
+					x = routes[l][i].first;
+					y = routes[l][i].second;
+					xdiff = x - x_;
+					ydiff = y - y_;
+					if(abs(xdiff) > 0){
+						if(ymax != -2)
+							write_seg( x_, ymin, x_, ymax, l);
+						ymin = ymax = y;
+					}
+					else{
+						if(abs(ydiff) > 1){
+							if(ymax != -2)
+								write_seg( x_, ymin, x_, ymax, l);
+							ymin = ymax = y;
+						}
+						else{
+							ymax = y;
+						}
+					}
+					x_ = x;
+					y_ = y;
+				}
+			}
+		}
+		out << ")" << endl;
+	}
+}
+void printOutput()
 {   
 	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
 	{
-		cout << it->first << endl;
+		//cout << it->first << endl;
 		out << it->first << endl << "(" << endl;
-		cout << it->second.size() << endl;
+		//cout << it->second.size() << endl;
 		triplet bufferMin(-10, -10, -10);
 		triplet bufferMax(-10, -10, -10);
-		std::set<pathCoord_t> finalPath;
+		unordered_set<pathCoord_t,MyHashFunction> finalPath;
 		auto myPath = it->second;
-		sort(myPath.begin(), myPath.end(),
-		[](const triplet& first, const triplet& second)-> bool
+		
+		if (it->first == "net1")
 		{
-			return first.z < second.z;
-		});
+
+			cout << "hello " << myPath.size() << endl;;
+		}
 		if (myPath.size() > 0){
 			bufferMin = myPath[0];
 			bufferMax = myPath[0];
@@ -286,12 +401,109 @@ void printOutput(ostream& out)
 		int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
 		int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
 		finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
+		sort(myPath.begin(), myPath.end(),
+		[](const triplet& first, const triplet& second)-> bool
+		{
+			return first.z < second.z;
+		});
+		if(it->first == "net1")
+		{
+			cout << finalPath.size();
+		}
 		for (auto guide: finalPath)
 			out << guide.lx << " " << guide.ly << " " << guide.ux << " " << guide.uy << " Metal" << guide.z << endl;
 		
 		out << ")" << endl;	
 	}
 }
+
+class ThreadPool {
+public:
+    ThreadPool(size_t);
+    template<class F, class... Args>
+    auto enqueue(F&& f, Args&&... args) 
+        -> std::future<typename std::result_of<F(Args...)>::type>;
+    ~ThreadPool();
+private:
+    // need to keep track of threads so we can join them
+    std::vector< std::thread > workers;
+    // the task queue
+    std::queue< std::function<void()> > tasks;
+    
+    // synchronization
+    std::mutex queue_mutex;
+    std::condition_variable condition;
+    bool stop;
+};
+ 
+// the constructor just launches some amount of workers
+inline ThreadPool::ThreadPool(size_t threads)
+    :   stop(false)
+{
+    for(size_t i = 0;i<threads;++i)
+        workers.emplace_back(
+            [this]
+            {
+                for(;;)
+                {
+                    std::function<void()> task;
+
+                    {
+                        std::unique_lock<std::mutex> lock(this->queue_mutex);
+                        this->condition.wait(lock,
+                            [this]{ return this->stop || !this->tasks.empty(); });
+                        if(this->stop && this->tasks.empty())
+                            return;
+                        task = std::move(this->tasks.front());
+                        this->tasks.pop();
+                    }
+
+                    task();
+                }
+            }
+        );
+}
+
+// add new work item to the pool
+template<class F, class... Args>
+auto ThreadPool::enqueue(F&& f, Args&&... args) 
+    -> std::future<typename std::result_of<F(Args...)>::type>
+{
+    using return_type = typename std::result_of<F(Args...)>::type;
+
+    auto task = std::make_shared< std::packaged_task<return_type()> >(
+            std::bind(std::forward<F>(f), std::forward<Args>(args)...)
+        );
+        
+    std::future<return_type> res = task->get_future();
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+
+        // don't allow enqueueing after stopping the pool
+        if(stop)
+            throw std::runtime_error("enqueue on stopped ThreadPool");
+
+        tasks.emplace([task](){ (*task)(); });
+    }
+    condition.notify_one();
+    return res;
+}
+
+// the destructor joins all threads
+inline ThreadPool::~ThreadPool()
+{
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex);
+        stop = true;
+    }
+    condition.notify_all();
+    for(std::thread &worker: workers)
+        worker.join();
+	printf("Done!\n");
+	printOutput2();
+	out.close();
+}
+
 
 void putObstructions(){
 	auto& ldp = my_lefdef::LefDefParser::get_instance();
@@ -470,14 +682,10 @@ struct params
 volatile int x = 0;
 #include <mutex>          // std::mutex
 std::mutex mtx;           // mutex for critical section
-void routeTwoPoints(void* myparams)	
+void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name)	
 {
-	params in = *(params*)myparams;
-	MapSearchNode source = in.source;
-	MapSearchNode target = in.target;
-	int id = in.threadId;
-	string name = in.netName;
-	AStarSearch<MapSearchNode> astarsearch(100000);
+
+	AStarSearch<MapSearchNode> astarsearch(1000000);
 	astarsearch.SetStartAndGoalStates(source, target);
 	// cout << endl << id << endl;
 
@@ -545,7 +753,6 @@ void routeTwoPoints(void* myparams)
 int main (int argc, char* argv[])
 {
     util::Watch watch;
-    ofstream out;
     // Parsing command line arguments
     auto& ap = ArgParser::get();
 
@@ -629,7 +836,7 @@ int main (int argc, char* argv[])
 				string name = netName.second;
 				memoryAllocation[bufferId] = {start, goal, bufferId, name};
 				
-				tp.enqueue(routeTwoPoints, (&memoryAllocation[bufferId]));
+				tp.enqueue(routeTwoPoints, start, goal, bufferId, name );
 				
 				++bufferId;
 				bufferId %= threadsCounter;
@@ -672,16 +879,6 @@ int main (int argc, char* argv[])
 			}
 		}				
 	}
-	// while(true)
-	// {
-	// 	cout << x << endl;
-	// 	sleep(1);
-	// }
-	cout << allNetsPath.size() << endl;
-
-    cout << endl << "Done." << endl;
-	printOutput(out);
-    out.close();
     return 0;
 }
 

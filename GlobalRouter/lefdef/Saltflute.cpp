@@ -16,7 +16,7 @@ void salt::FluteBuilder::Run(const salt::Net& net, salt::Tree& saltTree) {
     flute::Tree fluteTree;
     fluteTree.branch = nullptr;
     int d = net.pins.size();
-    assert(d <= MAXD);
+    //assert(d <= MAXD);
     int x[MAXD], y[MAXD];
     //printf("%d\n", d);
     for (size_t i = 0; i < d; ++i) {

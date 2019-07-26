@@ -3,13 +3,13 @@ LD    = g++
 OBJS_DIR = obj
 
 ifeq ($(DEBUG), 1)
-CXXFLAGS = -g -O0 -DDEBUG -std=c++11 -lpthread
+CXXFLAGS = -g -O0 -DDEBUG -std=c++11
 TARGET = global_router
 else ifeq ($(UNIT_TEST), 1)
-CXXFLAGS = -g -O0 -DUNIT_TEST -DDEBUG -std=c++11 -lpthread
+CXXFLAGS = -g -O0 -DUNIT_TEST -DDEBUG -std=c++11
 TARGET = global_router_t
 else
-CXXFLAGS = -O3 -std=c++11 -lpthread
+CXXFLAGS = -O3 -std=c++11
 TARGET = global_router
 endif
 
