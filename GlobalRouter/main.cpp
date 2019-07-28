@@ -88,16 +88,15 @@ public:
 	void PrintNodeInfo(); 
 	inline bool operator ==(const MapSearchNode& other)
 	{
-		return z == other.z && x == other.x && y == other.y;
+		return x == other.x && y == other.y && z == other.z;
 	}
 
 };
 
-
 bool MapSearchNode::IsSameState( MapSearchNode &rhs )
 {
 
-	// same state in a maze search is simply when (x,y) are the same
+	// same state in a maze search is simply when (z, x,y) are the same
 	if( (x == rhs.x) && (y == rhs.y) && (z == rhs.z))
 	{
 		return true;
@@ -106,7 +105,6 @@ bool MapSearchNode::IsSameState( MapSearchNode &rhs )
 	{
 		return false;
 	}
-
 }
 
 void MapSearchNode::PrintNodeInfo()
@@ -119,19 +117,20 @@ void MapSearchNode::PrintNodeInfo()
 // Here's the heuristic function that estimates the distance from a Node
 // to the Goal. 
 
+//changed
 float MapSearchNode::GoalDistanceEstimate( MapSearchNode &nodeGoal )
 {
-	return abs(x - nodeGoal.x) + abs(y - nodeGoal.y) + abs(z - nodeGoal.z);
+	return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y) + abs(z - nodeGoal.z));
 }
 
+
+//changed
 bool MapSearchNode::IsGoal( MapSearchNode &nodeGoal )
 {
-
 	if( (x == nodeGoal.x) && (y == nodeGoal.y) && (z == nodeGoal.z))
 	{
 		return true;
 	}
-
 	return false;
 }
 
@@ -139,6 +138,8 @@ bool MapSearchNode::IsGoal( MapSearchNode &nodeGoal )
 // AddSuccessor to give the successors to the AStar class. The A* specific initialisation
 // is done for each node internally, so here you just set the state information that
 // is specific to the application
+
+//changed
 bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node )
 {
 
@@ -155,27 +156,21 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 	
 
 	MapSearchNode NewNode;
-	int count = 0;
 	// push each possible move except allowing the search to go backwards
 	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
 	{
-		++count;
 		NewNode = MapSearchNode(z, x-1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
 	{
-				++count;
-
 		NewNode = MapSearchNode(z, x, y-1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
 	{
-				++count;
-
 		NewNode = MapSearchNode(z, x+1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
@@ -183,28 +178,21 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 		
 	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
 	{
-				++count;
-
 		NewNode = MapSearchNode(z, x, y+1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 	if((GetMap(z-1, x, y ) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z-1)))
 	{
-				++count;
-
 		NewNode = MapSearchNode(z-1, x, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 	
 	if((GetMap(z+1, x, y) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z+1)))
 	{
-				++count;
-
 		NewNode = MapSearchNode(z+1, x, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
-//	printf("Count: %d\n", count);
 	return true;
 }
 
@@ -214,8 +202,9 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
-	return (float) ((gcellGrid[z][x][y].congestion) /(1.f * gcellGrid[z][x][y].congestionLimit)) * 10.0; // so we need to apply dynamic cost function here
-	//return 1.f;
+	float cost = (gcellGrid[z][x][y].congestion) /(1.f * gcellGrid[z][x][y].congestionLimit) * 10.0;
+	return (z == successor.z) ? cost: cost*2; // so we need to apply dynamic cost function here
+	return (z != successor.z) ? 1.f: 10.f;
 }
 typedef struct pathCoord 
 {
@@ -239,10 +228,10 @@ class MyHashFunction {
 };
 bool verbose = 1;
 void write_seg(int lx, int ly, int ux, int uy, int z){
-    int startX = gcellGrid[z][lx][ly].startCoord.first;
-    int startY = gcellGrid[z][lx][ly].startCoord.second;
-    int endX = gcellGrid[z][ux][uy].endCoord.first;
-    int endY = gcellGrid[z][ux][uy].endCoord.second;
+    int startX = gcellGrid[z-1][lx][ly].startCoord.first;
+    int startY = gcellGrid[z-1][lx][ly].startCoord.second;
+    int endX = gcellGrid[z-1][ux][uy].endCoord.first;
+    int endY = gcellGrid[z-1][ux][uy].endCoord.second;
     out << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
    // cout << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
 }
@@ -253,16 +242,14 @@ void printOutput2()
 	{
 		out << it->first << endl << "(" << endl;
 		auto myPath = it->second;
-		printf("myPath size: %d\n",(int)myPath.size());
 		if(myPath.size() <= 0)
 		{	
 			out << ")" << endl;
 			continue;
 		}
-
+	
 		int layerMax = layerMap.size();
 		vector<vector<pair<int, int>>> routes(layerMax+1);
-		printf("homa kam layer: %d\n", layerMax);
 		for(int i = 0; i < myPath.size(); i++){
 			int l = myPath[i].z;
 			routes[l+1].push_back({myPath[i].x, myPath[i].y});
@@ -270,7 +257,6 @@ void printOutput2()
 		verbose = 0;
 		for(int l = 1; l <= layerMax; l++)
 		{
-			printf("baboz f layer: %d\n size l layer: %d\n", l, (int)routes[l].size());
 			if (layerMap[l]->dir_ == LayerDir::horizontal)
 			{
 				sort(routes[l].begin(), routes[l].end(),
@@ -345,75 +331,6 @@ void printOutput2()
 			}
 		}
 		out << ")" << endl;
-	}
-}
-void printOutput()
-{   
-	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
-	{
-		//cout << it->first << endl;
-		out << it->first << endl << "(" << endl;
-		//cout << it->second.size() << endl;
-		triplet bufferMin(-10, -10, -10);
-		triplet bufferMax(-10, -10, -10);
-		unordered_set<pathCoord_t,MyHashFunction> finalPath;
-		auto myPath = it->second;
-		
-		if (it->first == "net1")
-		{
-
-			cout << "hello " << myPath.size() << endl;;
-		}
-		if (myPath.size() > 0){
-			bufferMin = myPath[0];
-			bufferMax = myPath[0];
-		}
-		if (myPath.size() <= 0){
-			out << ")" << endl;
-			continue;
-		}
-		for (int i = 1; i < myPath.size(); i++){
-			if(myPath[i].z == bufferMin.z){
-				if (layerMap[bufferMin.z + 1] ->dir_ == LayerDir::horizontal)
-					if (bufferMin.y > myPath[i].y)
-						bufferMin = myPath[i];
-					if (bufferMax.y < myPath[i].y)
-						bufferMax = myPath[i];
-				else 
-					if (bufferMin.x > myPath[i].x)
-						bufferMin = myPath[i];
-					if (bufferMax.x < myPath[i].x)
-						bufferMax = myPath[i];
-			}
-			else{
-				int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
-				int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
-				int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
-				int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
-				finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
-				bufferMax = myPath[i];
-				bufferMin = myPath[i];
-			}
-		}
-		int i = myPath.size();
-		int startX = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.first;
-		int startY = gcellGrid[bufferMin.z][bufferMin.x][bufferMin.y].startCoord.second;
-		int endX = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.first;
-		int endY = gcellGrid[bufferMax.z][bufferMax.x][bufferMax.y].endCoord.second;
-		finalPath.insert({startX, startY, endX, endY, bufferMax.z+1});
-		sort(myPath.begin(), myPath.end(),
-		[](const triplet& first, const triplet& second)-> bool
-		{
-			return first.z < second.z;
-		});
-		if(it->first == "net1")
-		{
-			cout << finalPath.size();
-		}
-		for (auto guide: finalPath)
-			out << guide.lx << " " << guide.ly << " " << guide.ux << " " << guide.uy << " Metal" << guide.z << endl;
-		
-		out << ")" << endl;	
 	}
 }
 
@@ -712,9 +629,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 			MapSearchNode* node = astarsearch.GetSolutionStart();
 			int steps = 0;
 			count = 0;
-			for (int addition = node->z-1; addition <= node->z+1; ++addition)
+			for (int addition = node->z+1; addition >= node->z-1; --addition)
 			{
-				if (addition < 0 || addition >= zDimension || count ==2)
+				if (addition < 0 || addition >= zDimension || count >=2)
 					continue;
 
 				threadResult.push_back({addition, node->x, node->y});
@@ -727,9 +644,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				node = astarsearch.GetSolutionNext();
 				if (!node) break;
 				count = 0;
-				for (int addition = node->z-1; addition <= node->z+1; ++addition)
+				for (int addition = node->z+1; addition >= node->z-1; --addition)
 				{
-					if (addition < 0 || addition >= zDimension || count == 2) 
+					if (addition < 0 || addition >= zDimension || count >= 2) 
 						continue;
 					threadResult.push_back({addition, node->x, node->y});
 
@@ -744,7 +661,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 		} 
 		else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
 		{
-			printf("Search terminated. Did not find goal state\n");
+		//	printf("Search terminated. Did not find goal state\n");
 		}
     	astarsearch.EnsureMemoryFreed();
 		++x;
@@ -797,7 +714,7 @@ int main (int argc, char* argv[])
 	int bufferId = 0;
 	params memoryAllocation[8];
 	int paramsBuffering = 0;
-	printf("nets size: %d\n", ordered_nets.size());
+	printf("nets size: %d\n", (int)ordered_nets.size());
 	int connectionAmount = 0;
 
 	while(ordered_nets.size())
@@ -821,7 +738,7 @@ int main (int argc, char* argv[])
 			}
 			else{
 				source_layer = 0;
-				puts("SOURCE IS STEINER WTF :?"); 
+				puts("SOURCE IS STEINER :?"); 
 			}
 			dfs(salt_tree.source, source_layer);
 		
@@ -834,18 +751,11 @@ int main (int argc, char* argv[])
 				MapSearchNode goal;
 				goal.z = route.second.z; goal.x = route.second.x; goal.y = route.second.y;
 				string name = netName.second;
-				memoryAllocation[bufferId] = {start, goal, bufferId, name};
 				
 				tp.enqueue(routeTwoPoints, start, goal, bufferId, name );
 				
 				++bufferId;
 				bufferId %= threadsCounter;
-				if (netName.second == "ionet1006")
-				{	
-					cout << "ah\n";
-					printf("Routing from (%d, %d, %d) to (%d, %d, %d)\n", route.first.z, route.first.x, 
-					route.first.y, route.second.z, route.second.x, route.second.y);	
-				}	
 			}
 		}
 		else
