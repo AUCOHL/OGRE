@@ -52,7 +52,9 @@ bool Net::read_net(const def::NetPtr &parser_net, int id_, unordered_map<int, pa
     for(int id = 0; id < numPin; ++id){
         if (parser_net->connections_[id]->lef_pin_ != nullptr)
         {
-            p = ldp.get_bounding_GCell(parser_net->connections_[id]->lx_, parser_net->connections_[id]->ly_);
+            pair<int, int> leftBottomCorner = {parser_net->connections_[id]->lx_, parser_net->connections_[id]->ly_};
+            pair<int, int> topRightCorner = {parser_net->connections_[id]->ux_, parser_net->connections_[id]->uy_} ;
+            p = ldp.get_bounding_GCell((leftBottomCorner.first + topRightCorner.first)/2, (leftBottomCorner.second + topRightCorner.second)/2);
             layerNo = layerStringtoNumber(parser_net->connections_[id]->lef_pin_->ports_[0]->layer_name_);
         }
         else

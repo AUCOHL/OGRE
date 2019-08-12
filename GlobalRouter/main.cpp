@@ -120,7 +120,7 @@ void MapSearchNode::PrintNodeInfo()
 //changed
 float MapSearchNode::GoalDistanceEstimate( MapSearchNode &nodeGoal )
 {
-	return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y) + abs(z - nodeGoal.z));
+	return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y) );
 }
 
 
@@ -157,26 +157,26 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 	MapSearchNode NewNode;
 	// push each possible move except allowing the search to go backwards
-	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
+	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x-1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
-	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
+	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x, y-1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
-	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
+	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x+1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 		
-	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
+	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
 	{
 		NewNode = MapSearchNode(z, x, y+1 );
 		astarsearch->AddSuccessor( NewNode );
@@ -202,8 +202,9 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
-	float cost = (gcellGrid[z][x][y].congestion) /(1.f * gcellGrid[z][x][y].congestionLimit) * 10.0;
+	float cost = 1 + 0.8 / (1 + exp((-1) * 2 * (gcellGrid[z][x][y].congestion + 1 - 1.f * gcellGrid[z][x][y].congestionLimit)));
 	return (z == successor.z) ? cost: cost*2; // so we need to apply dynamic cost function here
+	return cost;
 	return (z != successor.z) ? 1.f: 10.f;
 }
 typedef struct pathCoord 
@@ -232,7 +233,12 @@ void write_seg(int lx, int ly, int ux, int uy, int z){
     int startY = gcellGrid[z-1][lx][ly].startCoord.second;
     int endX = gcellGrid[z-1][ux][uy].endCoord.first;
     int endY = gcellGrid[z-1][ux][uy].endCoord.second;
-    out << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
+	int count = 0;
+	for (int i = z; i == z; ++i){
+	//if (i <= 0 || i > zDimension || count >= 3) continue;
+    out << startX << " " << startY << " " << endX << " " << endY << " Metal" << i << endl;
+	//++count;
+	}
    // cout << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
 }
 
@@ -247,7 +253,13 @@ void printOutput2()
 			out << ")" << endl;
 			continue;
 		}
-	
+		if (it->first == "net1797")
+		{
+			for (auto trip: myPath)
+			{
+				printf("(%d %d %d)\n", trip.z, trip.x, trip.y);
+			}
+		}
 		int layerMax = layerMap.size();
 		vector<vector<pair<int, int>>> routes(layerMax+1);
 		for(int i = 0; i < myPath.size(); i++){
@@ -500,7 +512,7 @@ void putObstructions(){
 		}
 	}
 }
-typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::less<pair<int,string>>> pq;
+typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::greater<pair<int,string>>> pq;
 pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
 	auto net = nets.begin();
@@ -605,7 +617,10 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	AStarSearch<MapSearchNode> astarsearch(1000000);
 	astarsearch.SetStartAndGoalStates(source, target);
 	// cout << endl << id << endl;
-
+	if (name == "net1797")
+	{
+		printf("Routing From: (%d %d %d) to (%d %d %d)", source.z, source.x, source.y, target.z, target.x, target.y);
+	}
 	vector <triplet> threadResult;
 	unsigned int SearchState;
 	unsigned int SearchSteps = 0;
@@ -629,31 +644,43 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 			MapSearchNode* node = astarsearch.GetSolutionStart();
 			int steps = 0;
 			count = 0;
+			//printf("Routing From: (%d %d %d) to (%d %d %d)\nSearchSteps: %d\n", source.z, source.x, source.y, target.z, target.x, target.y, SearchSteps);
 			for (int addition = node->z+1; addition >= node->z-1; --addition)
 			{
-				if (addition < 0 || addition >= zDimension || count >=2)
-					continue;
-
+				if (addition < 0 || addition >= zDimension || count >=2) continue;
 				threadResult.push_back({addition, node->x, node->y});
-
 				++count;
 			}
 			gcellGrid[node->z][node->x][node->y].congestion += 1;
+			/*
+			ispd18-1
+			net1797
+			(
+			24000 370500 30000 376200 Metal1 (0, 4, 65)
+			18000 376200 24000 383040 Metal1 (0, 3, 66)
+			18000 376200 24000 383040 Metal2 (1, 3, 66)
+			24000 370500 30000 383040 Metal2 (1, 4, 66)
+			)
+ 			;
+			 */
 			for (;;)
 			{
 				node = astarsearch.GetSolutionNext();
+
 				if (!node) break;
 				count = 0;
 				for (int addition = node->z+1; addition >= node->z-1; --addition)
 				{
-					if (addition < 0 || addition >= zDimension || count >= 2) 
-						continue;
+					if (addition < 0 || addition >= zDimension || count >= 2)	continue;
 					threadResult.push_back({addition, node->x, node->y});
 
 					++count;
 				}
 				gcellGrid[node->z][node->x][node->y].congestion += 1;
 			};
+			// if (threadResult.size())
+			// 	threadResult.pop_back();
+
 			mtx.lock();
 			allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
 			mtx.unlock();
@@ -661,7 +688,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 		} 
 		else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
 		{
-		//	printf("Search terminated. Did not find goal state\n");
+			printf("Search terminated. Did not find goal state\n");
 		}
     	astarsearch.EnsureMemoryFreed();
 		++x;
@@ -707,6 +734,15 @@ int main (int argc, char* argv[])
 	{
 		allNetsPath[net.first] = vector<triplet>();
 	}
+	// for (int i = 0; i < gcellGrid[0].size(); ++i)
+	// {
+	// 	for (int j = 0; j < gcellGrid[0][i].size(); ++j)
+	// 	{
+	// 		out << "( " << i << ", " << j << ") " <<gcellGrid[0][i][j].startCoord.first << ' ' << gcellGrid[0][i][j].startCoord.second
+	// 		<< "\t\t" << gcellGrid[0][i][j].endCoord.first << ' ' << gcellGrid[0][i][j].endCoord.second << endl;
+	// 	}
+	// }
+	// return 0;
 	//putting obstructions on gcell grid
     putObstructions();
 	puts("Starting to Route!");
@@ -722,7 +758,7 @@ int main (int argc, char* argv[])
 		auto netName = ordered_nets.top(); ordered_nets.pop();
 		auto &net = nets[netName.second];
 
-		double eps = 0.0;	// setting for shallowness vs. lightness
+		double eps = 0.5;	// setting for shallowness vs. lightness
 		salt::Net salt_net;
 		idMap.clear();
 		bool canRun = salt_net.read_net(net, net_id++, idMap);
@@ -764,13 +800,16 @@ int main (int argc, char* argv[])
 			if (net->connections_.size() != 1)
 			{
 				int i = 0, count = 0;
+			//	cout << "howa ana bagy hena\n";
 				//for (int i = 0; i < net->connections_.size(); ++i)
 				{
 					pair<int, int> p;
 					int layerNo;
 					if (net->connections_[0]->lef_pin_ != nullptr)
 					{	
-						p = ldp.get_bounding_GCell(net->connections_[i]->lx_, net->connections_[i]->ly_);
+						pair<int, int> leftBottomCorner = {net->connections_[i]->lx_, net->connections_[i]->ly_};
+						pair<int, int> topRightCorner = {net->connections_[i]->ux_, net->connections_[i]->uy_} ;
+						p = ldp.get_bounding_GCell((leftBottomCorner.first + topRightCorner.first)/2, (leftBottomCorner.second + topRightCorner.second)/2);
 						layerNo = layerStringtoNumber(net->connections_[i]->lef_pin_->ports_[0]->layer_name_);
 					}
 					else
@@ -779,9 +818,9 @@ int main (int argc, char* argv[])
 						layerNo = layerStringtoNumber(net->connections_[i]->pin_->layer_);
 						
 					}
-					for (int addition = layerNo-1; addition <= layerNo+1; ++addition)
+					for (int addition = layerNo + 1; addition >= layerNo - 1; --addition)
 					{	
-						if (addition < 0 || addition >= zDimension || count==2) continue;
+						if (addition < 0 || addition >= zDimension || count >= 2) continue;
 							allNetsPath[netName.second].push_back({addition, p.first, p.second});
 						++count;
 					}
