@@ -5,7 +5,7 @@
 */
 
 #include "common/common_header.h"
-#include <boost/functional/hash.hpp>
+//#include <boost/functional/hash.hpp>
 #include <vector>
 #include <queue>
 #include <memory>
@@ -15,14 +15,15 @@
 #include <future>
 #include <functional>
 #include <stdexcept>
+#include <mutex>          // std::mutex
 
 #include "Watch.h"
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
-#include "salt.h"
-#include "fady_flute.h"
-
+#include "flute_wrapper.h"
+#include "flute-function.h"
+#include "coordinates.h"
 using namespace std;
 void show_banner();
 void show_usage ();
@@ -34,30 +35,19 @@ int omp_thread_count();
 #ifndef UNIT_TEST
 
 int zDimension, xDimension, yDimension;
+
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid;
+
 unordered_map <int, lef::LayerPtr> layerMap;
+unordered_map <string, vector<CoordinateThreeDim>> allNetsPath;
+
 ofstream out;
 
-struct triplet
-{
-	int x, y, z;
-	triplet(int z_, int x_, int y_) : x(x_), y(y_), z(z_) {};
-	triplet operator + (const triplet& other)
-	{
-		return { z + other.z, x + other.x, y + other.y };
-	}
-	bool operator == (const triplet& other)
-	{
-		return z == other.z && x == other.x && y == other.y;
-	}
-	// bool operator < (const triplet& other)
-	// {
-	// 	return z < other.z;
-	// }
-    triplet(const triplet& other) : x(other.x), y(other.y), z(other.z) {};
-};
+typedef CoordinateThreeDim Pin;
+typedef priority_queue<pair<int, TwoPinTwoDim>, vector<pair<int, TwoPinTwoDim>>, std::less<pair<int,TwoPinTwoDim>>> pq;
+typedef std::vector<TwoPinTwoDim> Two_pin_list_2d;
 
-unordered_map <string, vector<triplet>> allNetsPath;
+std::mutex mtx;           // mutex for critical section
 
 
 int GetMap( int z, int x, int y)
@@ -434,7 +424,8 @@ inline ThreadPool::~ThreadPool()
 }
 
 
-void putObstructions(){
+void putObstructions()
+{
 	auto& ldp = my_lefdef::LefDefParser::get_instance();
 	unordered_map<string, def::ComponentPtr> compMap = ldp.def_.get_component_umap();
 	int defDBU = ldp.def_.get_dbu();
@@ -512,57 +503,6 @@ void putObstructions(){
 		}
 	}
 }
-typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::greater<pair<int,string>>> pq;
-pq orderNets(unordered_map<string, def::NetPtr> &nets)
-{
-	auto net = nets.begin();
-    auto& ldp = my_lefdef::LefDefParser::get_instance();
-
-	Flutee::Tree fluteTree;
-	int flutewl;
-	
-	Flutee::readLUT("POWV9.dat","PORT9.dat");
-
-	int d;
-	pq ordered_nets; // self ordering <int,string> net structure
-	while (net != nets.end())
-	{
-		d = 0;
-		int connectionSize = net->second->connections_.size();
-		
-		int64_t *x = new int64_t[connectionSize+10], *y = new int64_t[connectionSize+10];
-				int *mapping = new int[connectionSize + 1];
-
-		 for (int i = 0; i < connectionSize; ++i) 
-        {
-            int xCoord = net->second->connections_[i]->lx_;
-            int yCoord = net->second->connections_[i]->ly_;
-            if (net->second->connections_[i]->lef_pin_ == nullptr)
-			{
-				xCoord = net->second->connections_[i]->pin_->x_;
-				yCoord = net->second->connections_[i]->pin_->y_;
-			}
-            pair<int, int> locationInGCellGrid = ldp.get_bounding_GCell(xCoord, yCoord);  
-            xCoord = locationInGCellGrid.first; yCoord = locationInGCellGrid.second;
-			x[d] = xCoord;
-			y[d++] = yCoord;
-		}
-		if (d == 1)
-		{
-			ordered_nets.push({10000, net->first});
-			goto exit;
-		}
-		fluteTree = Flutee::flute(d, x, y, 3, mapping);
-		//printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
-		ordered_nets.push({fluteTree.length, net->first});
-		exit:
-			++net;
-	}
-	return ordered_nets;
-}
-
-unordered_map<int, pair<int, int>> idMap;
-vector<pair<triplet, triplet>> route_nodes;
 
 int layerStringtoNumber(const string layerName)
 {
@@ -572,45 +512,73 @@ int layerStringtoNumber(const string layerName)
     return stoi(result) - 1;
 }
 
-void dfs(shared_ptr<salt::TreeNode> node, int p_layer)
+pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
-	int p_x = node->loc.x, c_x;
-	int p_y = node->loc.y, c_y;
-	int p_z, c_z;
+	auto net = nets.begin();
+    auto& ldp = my_lefdef::LefDefParser::get_instance();
 
-	if(idMap.find(node->id) != idMap.end())
-		p_z = idMap[node->id].second;	
-	else
-		p_z = p_layer; // node is a steiner node
-	
-	for (auto child: node->children)
+	pq myOrderedNets;
+
+	Flute netRoutingTreeRouter;
+
+	unordered_map<string,TreeFlute> flutetree; // a tree for every net
+	unordered_map<string,Two_pin_list_2d> TwoPinList; 
+
+	while (net != nets.end())
 	{
-		c_x = child->loc.x;
-		c_y = child->loc.y;
-		if(idMap.find(child->id) != idMap.end())
-			c_z = idMap[child->id].second;	
-		else
-			c_z = p_z;
-		route_nodes.push_back({{p_z, p_x, p_y}, {c_z, c_x, c_y}});
-		dfs(child, p_z);
+		string netName = net->first;
+		int connectionSize = net->second->connections_.size();
+		int d = 0;
+		vector<Pin> netPinList(connectionSize);
+		pair<int, int> p;
+		int layerNo;
+		for (int i = 0; i < connectionSize; ++i) 
+        {
+			if (net->second->connections_[i]->lef_pin_ != nullptr)
+			{
+				pair<int, int> leftBottomCorner = {net->second->connections_[i]->lx_, net->second->connections_[i]->ly_};
+            	pair<int, int> topRightCorner = {net->second->connections_[i]->ux_, net->second->connections_[i]->uy_} ;
+            	p = ldp.get_bounding_GCell((leftBottomCorner.first + topRightCorner.first)/2, (leftBottomCorner.second + topRightCorner.second)/2);
+				layerNo = layerStringtoNumber(net->second->connections_[i]->lef_pin_->ports_[0]->layer_name_);
+			}
+			else
+			{
+				p = ldp.get_bounding_GCell(net->second->connections_[i]->pin_->x_, net->second->connections_[i]->pin_->y_);
+			    layerNo = layerStringtoNumber(net->second->connections_[i]->pin_->layer_);
+			}
+			netPinList[i] = {layerNo, p.first, p.second};
+		}
+// 
+		TreeFlute& tree = flutetree[netName];
+		netRoutingTreeRouter.routeNet(netPinList,tree);
+		tree.number =  2 * tree.deg - 2;
+ 		for (int j = 0; j < tree.number; ++j) 
+		{
+            Branch& branch = tree.branch[j];
+
+            // //for all pins and steiner pointsz
+
+            TwoPinTwoDim two_pin;
+
+            two_pin.pin1.x = (int) branch.x;
+            two_pin.pin1.y = (int) branch.y;
+            two_pin.pin2.x = (int) tree.branch[branch.n].x;
+            two_pin.pin2.y = (int) tree.branch[branch.n].y;
+            two_pin.net_id = netName;
+
+           if (two_pin.pin1 != two_pin.pin2) 
+		    {
+			   myOrderedNets.push({two_pin.getEuclideanDistance(), two_pin});
+			 //  TwoPinList[netName].push_back(std::move(two_pin));
+		    }
+        }
+		printf("FLUTE wirelength of Net: %s | %.1f\n", net->first.c_str(), tree.length);
+		++net;
 	}
-} 
+	cout << "returning\n";
+	return myOrderedNets;
+}
 
-
-struct params
-{
-	MapSearchNode source;
-	MapSearchNode target;
-	int threadId;
-	string netName;
-	params(MapSearchNode source_, MapSearchNode target_,int threadId_,string netName_):
-	 source(source_), target(target_), threadId(threadId_), netName(netName_){};
-	 params(){};
-};
-// every thread will route a whole net!
-volatile int x = 0;
-#include <mutex>          // std::mutex
-std::mutex mtx;           // mutex for critical section
 void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name)	
 {
 
@@ -621,7 +589,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	{
 		printf("Routing From: (%d %d %d) to (%d %d %d)", source.z, source.x, source.y, target.z, target.x, target.y);
 	}
-	vector <triplet> threadResult;
+	vector <CoordinateThreeDim> threadResult;
 	unsigned int SearchState;
 	unsigned int SearchSteps = 0;
 	int count;
@@ -644,7 +612,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 			MapSearchNode* node = astarsearch.GetSolutionStart();
 			int steps = 0;
 			count = 0;
-			//printf("Routing From: (%d %d %d) to (%d %d %d)\nSearchSteps: %d\n", source.z, source.x, source.y, target.z, target.x, target.y, SearchSteps);
 			for (int addition = node->z+1; addition >= node->z-1; --addition)
 			{
 				if (addition < 0 || addition >= zDimension || count >=2) continue;
@@ -678,8 +645,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				}
 				gcellGrid[node->z][node->x][node->y].congestion += 1;
 			};
-			// if (threadResult.size())
-			// 	threadResult.pop_back();
 
 			mtx.lock();
 			allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
@@ -691,7 +656,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 			printf("Search terminated. Did not find goal state\n");
 		}
     	astarsearch.EnsureMemoryFreed();
-		++x;
 }
 
 int main (int argc, char* argv[])
@@ -729,105 +693,47 @@ int main (int argc, char* argv[])
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
 	auto ordered_nets = orderNets(nets);
+
+	// debugging purposes 
+	return 0;
+
+
 	int netCounter=0;
 	for (auto net: nets)
 	{
-		allNetsPath[net.first] = vector<triplet>();
+		allNetsPath[net.first] = vector<CoordinateThreeDim>();
 	}
-	// for (int i = 0; i < gcellGrid[0].size(); ++i)
-	// {
-	// 	for (int j = 0; j < gcellGrid[0][i].size(); ++j)
-	// 	{
-	// 		out << "( " << i << ", " << j << ") " <<gcellGrid[0][i][j].startCoord.first << ' ' << gcellGrid[0][i][j].startCoord.second
-	// 		<< "\t\t" << gcellGrid[0][i][j].endCoord.first << ' ' << gcellGrid[0][i][j].endCoord.second << endl;
-	// 	}
-	// }
-	// return 0;
+
 	//putting obstructions on gcell grid
     putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
 	int bufferId = 0;
-	params memoryAllocation[8];
 	int paramsBuffering = 0;
 	printf("nets size: %d\n", (int)ordered_nets.size());
 	int connectionAmount = 0;
 
-	while(ordered_nets.size())
-    {
-		auto netName = ordered_nets.top(); ordered_nets.pop();
-		auto &net = nets[netName.second];
-
-		double eps = 0.5;	// setting for shallowness vs. lightness
-		salt::Net salt_net;
-		idMap.clear();
-		bool canRun = salt_net.read_net(net, net_id++, idMap);
-		salt::Tree salt_tree;
-		salt::SaltBuilder saltB;
-		if (canRun)
-		{
-			saltB.Run(salt_net, salt_tree, eps);
-			route_nodes.clear();
-			int source_layer;
-			if(idMap.find(salt_tree.source->id) != idMap.end()){
-				source_layer = idMap[salt_tree.source->id].second;
-			}
-			else{
-				source_layer = 0;
-				puts("SOURCE IS STEINER :?"); 
-			}
-			dfs(salt_tree.source, source_layer);
-		
-			bool netFailed = false;
-			connectionAmount += route_nodes.size();
-			for (auto route: route_nodes)
-			{
-				MapSearchNode start;
-				start.z = route.first.z; start.x = route.first.x; start.y = route.first.y;
-				MapSearchNode goal;
-				goal.z = route.second.z; goal.x = route.second.x; goal.y = route.second.y;
-				string name = netName.second;
-				
-				tp.enqueue(routeTwoPoints, start, goal, bufferId, name );
-				
-				++bufferId;
-				bufferId %= threadsCounter;
-			}
-		}
-		else
-		{
-			allNetsPath[netName.second];
-			if (net->connections_.size() != 1)
-			{
-				int i = 0, count = 0;
-			//	cout << "howa ana bagy hena\n";
-				//for (int i = 0; i < net->connections_.size(); ++i)
-				{
-					pair<int, int> p;
-					int layerNo;
-					if (net->connections_[0]->lef_pin_ != nullptr)
-					{	
-						pair<int, int> leftBottomCorner = {net->connections_[i]->lx_, net->connections_[i]->ly_};
-						pair<int, int> topRightCorner = {net->connections_[i]->ux_, net->connections_[i]->uy_} ;
-						p = ldp.get_bounding_GCell((leftBottomCorner.first + topRightCorner.first)/2, (leftBottomCorner.second + topRightCorner.second)/2);
-						layerNo = layerStringtoNumber(net->connections_[i]->lef_pin_->ports_[0]->layer_name_);
-					}
-					else
-					{
-						 p = ldp.get_bounding_GCell(net->connections_[i]->pin_->x_,net->connections_[i]->pin_->y_ );
-						layerNo = layerStringtoNumber(net->connections_[i]->pin_->layer_);
-						
-					}
-					for (int addition = layerNo + 1; addition >= layerNo - 1; --addition)
-					{	
-						if (addition < 0 || addition >= zDimension || count >= 2) continue;
-							allNetsPath[netName.second].push_back({addition, p.first, p.second});
-						++count;
-					}
-				}
-			}
-		}				
-	}
+	// while(ordered_nets.size())
+    // {
+	// 	auto netName = ordered_nets.top(); ordered_nets.pop();
+	// 	auto &net = nets[netName.second];
+			
+	// 	bool netFailed = false;
+	// 	connectionAmount += route_nodes.size();
+	// 	for (auto route: route_nodes)
+	// 	{
+	// 		MapSearchNode start;
+	// 		start.z = route.first.z; start.x = route.first.x; start.y = route.first.y;
+	// 		MapSearchNode goal;
+	// 		goal.z = route.second.z; goal.x = route.second.x; goal.y = route.second.y;
+	// 		string name = netName.second;
+			
+	// 		tp.enqueue(routeTwoPoints, start, goal, bufferId, name );
+			
+	// 		++bufferId;
+	// 		bufferId %= threadsCounter;
+	// 	}			
+	// }
     return 0;
 }
 
