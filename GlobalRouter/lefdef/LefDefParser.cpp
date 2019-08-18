@@ -128,8 +128,10 @@ def::Def &LefDefParser::get_def()
 }
 
 //    vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
+// MODIFIED
 vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 
+// MODIFIED
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap)
 {
     vector<def::GCellGridPtr> gCellGridVector = def_.get_gcell_grids();
@@ -158,18 +160,22 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         int l = layerName[layerName.length()-1] - '0';
         layerMap[l] = lef_.get_layer(layerName);
     }
+
     //get dimensions of gcell grid
     int xDimension = xCoord.size();
     int yDimension = yCoord.size();
     int zDimension = tracks_names.size();
+
+    // DELETE
     // cout << "Y DIMENSION " << yDimension - 1 << endl;
     // cout << "X DIMENSION " << xDimension - 1 << endl;
     // cout << "Z DIMENSION " << zDimension << endl;
 
     
+    // MODIFIED
     //building Gcell grid
-    myGlobalGrid.resize(zDimension);
-    for (int i = 0; i < zDimension; i++)
+    myGlobalGrid.resize(2);
+    for (int i = 0; i < 2; i++)
     {
         myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension - 1);
     }
@@ -190,9 +196,17 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             ++itY;
             int secondMinY = *itY;
 
+            //  NEW ( 2D )
+            // myGlobalGrid[i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
+
+            // MODIFIED   
             for (int k = 0; k < zDimension; k++)
             {
-                myGlobalGrid[k][i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
+                lef::LayerPtr l = layerMap[k + 1];
+                if (l->dir_ == LayerDir::horizontal)
+                    myGlobalGrid[0][i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
+                else if (l->dir_ == LayerDir::vertical)
+                    myGlobalGrid[1][i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
             }
         }
     }
@@ -220,14 +234,20 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 { //get difference in y
                     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
                     freeWires = dimension  / (pitchX * defDBU);
+
+                    // NEW ( 2D )
+                    // myGlobalGrid[i][j].setCongestionLimit(freeWires*2.5 + myGlobalGrid[i][j].getCongestionLimit('H'), 'H');
                 }
                 else if (l->dir_ == LayerDir::vertical)
                 { //get difference in x
                     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
                     freeWires = dimension / (pitchY * defDBU);
+
+                    // NEW ( 2D )
+                    // myGlobalGrid[i][j].setCongestionLimit(freeWires*2.5 + myGlobalGrid[i][j].getCongestionLimit('V'), 'V');
                 }
                 //get number of free wires in cell
-                myGlobalGrid[k][i][j].setCongestionLimit(freeWires*2.5);
+                // myGlobalGrid[k][i][j].setCongestionLimit(freeWires*2.5);
             }
         }
     }

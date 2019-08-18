@@ -18,8 +18,8 @@ DEPEND_FILE = $(OBJS_DIR)/depend_file
 
 SRCS      = $(wildcard *.cpp) $(wildcard **/*.cpp) $(wildcard */*/*.cpp)
 OBJS      = $(addprefix $(OBJS_DIR)/, $(notdir $(SRCS:%.cpp=%.o)))
-LDFLAGS   = -L/usr/local/lib -L./lib/linux
-#LDFLAGS   = -L/usr/local/lib -L./lib/osx
+# LDFLAGS   = -L/usr/local/lib -L./lib/linux
+LDFLAGS   = -L/usr/local/lib -L./lib/osx
 LIBS      = -llef -ldef -lstdc++ -lpthread
 INCLUDES  = -I./
 INCLUDES += -I./include
@@ -67,4 +67,3 @@ ifneq ($(SRCS),)
 endif
 endif
 endif
-

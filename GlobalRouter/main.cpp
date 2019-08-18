@@ -686,10 +686,13 @@ int main (int argc, char* argv[])
     ldp.read_def(filename_def);
 
     gcellGrid = ldp.build_Gcell_grid(layerMap);
-    zDimension = gcellGrid.size();
-    xDimension = gcellGrid[0].size();
-    yDimension = gcellGrid[0][0].size();
-	
+    // zDimension = gcellGrid.size();
+
+    // MODIFIED
+    xDimension = gcellGrid.size();
+    yDimension = gcellGrid[0].size();
+	zDimension = 2; //0 horizontal, 1 vertical
+
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
 	auto ordered_nets = orderNets(nets);
@@ -705,7 +708,7 @@ int main (int argc, char* argv[])
 	}
 
 	//putting obstructions on gcell grid
-    putObstructions();
+    // putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
 	int bufferId = 0;
