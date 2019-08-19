@@ -36,10 +36,10 @@ int omp_thread_count();
 
 int zDimension, xDimension, yDimension;
 
-vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid;
+vector<vector<my_lefdef::gCellGridGlobal>> gcellGrid;
 
 unordered_map <int, lef::LayerPtr> layerMap;
-unordered_map <string, vector<CoordinateThreeDim>> allNetsPath;
+unordered_map <string, vector<CoordinateTwoDim>> allNetsPath;
 
 ofstream out;
 
@@ -50,13 +50,14 @@ typedef std::vector<TwoPinTwoDim> Two_pin_list_2d;
 std::mutex mtx;           // mutex for critical section
 
 
-int GetMap( int z, int x, int y)
+int GetMap(int x, int y)
 {
-	if( x < 0 || x >= xDimension || y < 0 || y >= yDimension || z < 0 || z >= zDimension)
+	if( x < 0 || x >= xDimension || y < 0 || y >= yDimension)
 	{
 		return INVALID;	 
 	}
-	return (gcellGrid[z][x][y].congestion >= gcellGrid[z][x][y].congestionLimit) ? INVALID: 0;
+	//wrong
+	return (gcellGrid[x][y].getCongestionLimit('V') >= gcellGrid[x][y].getCongestionLimit('V')) ? INVALID: 0;
 }
 
 // Definitions
@@ -66,9 +67,8 @@ class MapSearchNode
 public:
 	int x;	 // the (x,y,z) positions of the node
 	int y;	
-	int z;
-	MapSearchNode() { x = y = z = 0; }
-	MapSearchNode( int pz, int px, int py) {z = pz; x=px; y=py; }
+	MapSearchNode() { x = y = 0; }
+	MapSearchNode( int px, int py) {x=px; y=py; }
 
 	float GoalDistanceEstimate( MapSearchNode &nodeGoal );
 	bool IsGoal( MapSearchNode &nodeGoal );
@@ -78,7 +78,7 @@ public:
 	void PrintNodeInfo(); 
 	inline bool operator ==(const MapSearchNode& other)
 	{
-		return x == other.x && y == other.y && z == other.z;
+		return x == other.x && y == other.y;
 	}
 
 };
@@ -86,8 +86,8 @@ public:
 bool MapSearchNode::IsSameState( MapSearchNode &rhs )
 {
 
-	// same state in a maze search is simply when (z, x,y) are the same
-	if( (x == rhs.x) && (y == rhs.y) && (z == rhs.z))
+	// same state in a maze search is simply when (x, y) are the same
+	if( (x == rhs.x) && (y == rhs.y))
 	{
 		return true;
 	}
@@ -100,7 +100,7 @@ bool MapSearchNode::IsSameState( MapSearchNode &rhs )
 void MapSearchNode::PrintNodeInfo()
 {
 	char str[100];
-	sprintf( str, "Node position : (%d,%d,%d)\n",z,x,y );
+	sprintf( str, "Node position : (%d,%d)\n",x,y );
 	cout << str;
 }
 
@@ -110,14 +110,14 @@ void MapSearchNode::PrintNodeInfo()
 //changed
 float MapSearchNode::GoalDistanceEstimate( MapSearchNode &nodeGoal )
 {
-	return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y) );
+	return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y));
 }
 
 
 //changed
 bool MapSearchNode::IsGoal( MapSearchNode &nodeGoal )
 {
-	if( (x == nodeGoal.x) && (y == nodeGoal.y) && (z == nodeGoal.z))
+	if( (x == nodeGoal.x) && (y == nodeGoal.y))
 	{
 		return true;
 	}
@@ -135,52 +135,38 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 	int parent_x = -1; 
 	int parent_y = -1; 
-	int parent_z = -1; 
 
 	if( parent_node )
 	{
 		parent_x = parent_node->x;
 		parent_y = parent_node->y;
-		parent_z = parent_node->z;
 	}
 	
 
 	MapSearchNode NewNode;
 	// push each possible move except allowing the search to go backwards
-	if( (GetMap( z,x-1, y) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
+	if( (GetMap(x-1, y) != INVALID) && !((parent_x == x-1) && (parent_y == y))) 
 	{
-		NewNode = MapSearchNode(z, x-1, y );
+		NewNode = MapSearchNode(x-1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
-	if((GetMap(z, x, y-1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y-1) && (parent_z == z))) 
+	if((GetMap(x, y-1 ) != INVALID) && !((parent_x == x) && (parent_y == y-1) )) 
 	{
-		NewNode = MapSearchNode(z, x, y-1 );
+		NewNode = MapSearchNode(x, y-1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
-	if((GetMap(z, x+1, y ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::vertical && !((parent_x == x+1) && (parent_y == y)&& (parent_z == z))) 
+	if((GetMap(x+1, y ) != INVALID) && !((parent_x == x+1) && (parent_y == y))) 
 	{
-		NewNode = MapSearchNode(z, x+1, y );
+		NewNode = MapSearchNode(x+1, y );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 
 		
-	if((GetMap(z, x, y+1 ) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x) && (parent_y == y+1)&& (parent_z == z)))
+	if((GetMap(x, y+1 ) != INVALID) && !((parent_x == x) && (parent_y == y+1)))
 	{
-		NewNode = MapSearchNode(z, x, y+1 );
-		astarsearch->AddSuccessor( NewNode );
-	}	
-
-	if((GetMap(z-1, x, y ) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z-1)))
-	{
-		NewNode = MapSearchNode(z-1, x, y );
-		astarsearch->AddSuccessor( NewNode );
-	}	
-	
-	if((GetMap(z+1, x, y) != INVALID) && !((parent_x == x) && (parent_y == y)&& (parent_z == z+1)))
-	{
-		NewNode = MapSearchNode(z+1, x, y );
+		NewNode = MapSearchNode(x, y+1 );
 		astarsearch->AddSuccessor( NewNode );
 	}	
 	return true;
@@ -192,10 +178,10 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
-	float cost = 1 + 0.8 / (1 + exp((-1) * 2 * (gcellGrid[z][x][y].congestion + 1 - 1.f * gcellGrid[z][x][y].congestionLimit)));
-	return (z == successor.z) ? cost: cost*2; // so we need to apply dynamic cost function here
-	return cost;
-	return (z != successor.z) ? 1.f: 10.f;
+	//wrong
+	//float cost = 1 + 0.8 / (1 + exp((-1) * 2 * (gcellGrid[x][y].congestion + 1 - 1.f * gcellGrid[x][y].congestionLimit)));
+	return 1;
+	//return cost;
 }
 typedef struct pathCoord 
 {
@@ -218,122 +204,122 @@ class MyHashFunction {
     } 
 };
 bool verbose = 1;
-void write_seg(int lx, int ly, int ux, int uy, int z){
-    int startX = gcellGrid[z-1][lx][ly].startCoord.first;
-    int startY = gcellGrid[z-1][lx][ly].startCoord.second;
-    int endX = gcellGrid[z-1][ux][uy].endCoord.first;
-    int endY = gcellGrid[z-1][ux][uy].endCoord.second;
-	int count = 0;
-	for (int i = z; i == z; ++i){
-	//if (i <= 0 || i > zDimension || count >= 3) continue;
-    out << startX << " " << startY << " " << endX << " " << endY << " Metal" << i << endl;
-	//++count;
-	}
-   // cout << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
-}
+//void write_seg(int lx, int ly, int ux, int uy, int z){
+//    int startX = gcellGrid[z-1][lx][ly].startCoord.first;
+//    int startY = gcellGrid[z-1][lx][ly].startCoord.second;
+//    int endX = gcellGrid[z-1][ux][uy].endCoord.first;
+//    int endY = gcellGrid[z-1][ux][uy].endCoord.second;
+//	int count = 0;
+//	for (int i = z; i == z; ++i){
+//	//if (i <= 0 || i > zDimension || count >= 3) continue;
+//    out << startX << " " << startY << " " << endX << " " << endY << " Metal" << i << endl;
+//	//++count;
+//	}
+//   // cout << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
+//}
 
 void printOutput2()
 {
-	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
-	{
-		out << it->first << endl << "(" << endl;
-		auto myPath = it->second;
-		if(myPath.size() <= 0)
-		{	
-			out << ")" << endl;
-			continue;
-		}
-		if (it->first == "net1797")
-		{
-			for (auto trip: myPath)
-			{
-				printf("(%d %d %d)\n", trip.z, trip.x, trip.y);
-			}
-		}
-		int layerMax = layerMap.size();
-		vector<vector<pair<int, int>>> routes(layerMax+1);
-		for(int i = 0; i < myPath.size(); i++){
-			int l = myPath[i].z;
-			routes[l+1].push_back({myPath[i].x, myPath[i].y});
-		}
-		verbose = 0;
-		for(int l = 1; l <= layerMax; l++)
-		{
-			if (layerMap[l]->dir_ == LayerDir::horizontal)
-			{
-				sort(routes[l].begin(), routes[l].end(),
-					[](const pair<int, int> &a, const pair<int, int> &b)
-					{
-						if(a.second != b.second)
-							return a.second < b.second; // sort according to y first
-						else
-							return a.first < b.first;
-					});
-				int x_ = -2, y_ = -2, x, y, xdiff, ydiff, xmax = x_, xmin = x_;
-				routes[l].push_back({-2, -2});  // push dummy values to print last segment
-				for(int i = 0; i < routes[l].size(); i++){
-					x = routes[l][i].first;
-					y = routes[l][i].second;
-					xdiff = x - x_;
-					ydiff = y - y_;
-					if(abs(ydiff) > 0){
-						if(xmax != -2)
-							write_seg( xmin, y_, xmax, y_, l);
-						xmin = xmax = x;
-					}
-					else{
-						if(abs(xdiff) > 1){
-							if(xmax != -2)
-								write_seg( xmin, y_, xmax, y_, l);
-							xmin = xmax = x;
-						}
-						else{
-							xmax = x;
-						}
-					}
-					x_ = x;
-					y_ = y;
-				}
-			}
-			else if (layerMap[l]->dir_ == LayerDir::vertical)
-			{
-				sort(routes[l].begin(), routes[l].end(),
-					[](const pair<int, int> &a, const pair<int, int> &b)
-					{
-						if(a.first != b.first)
-							return a.first < b.first;   // sort according to x first
-						else
-							return a.second < b.second;
-					});
-				int x_ = -2, y_ = -2, x, y, xdiff, ydiff, ymax = y_, ymin = y_;
-				routes[l].push_back({-2, -2});  // push dummy values to print last segment
-				for(int i = 0; i < routes[l].size(); i++){
-					x = routes[l][i].first;
-					y = routes[l][i].second;
-					xdiff = x - x_;
-					ydiff = y - y_;
-					if(abs(xdiff) > 0){
-						if(ymax != -2)
-							write_seg( x_, ymin, x_, ymax, l);
-						ymin = ymax = y;
-					}
-					else{
-						if(abs(ydiff) > 1){
-							if(ymax != -2)
-								write_seg( x_, ymin, x_, ymax, l);
-							ymin = ymax = y;
-						}
-						else{
-							ymax = y;
-						}
-					}
-					x_ = x;
-					y_ = y;
-				}
-			}
-		}
-		out << ")" << endl;
-	}
+//	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
+//	{
+//		out << it->first << endl << "(" << endl;
+//		auto myPath = it->second;
+//		if(myPath.size() <= 0)
+//		{	
+//			out << ")" << endl;
+//			continue;
+//		}
+//		if (it->first == "net1797")
+//		{
+//			for (auto trip: myPath)
+//			{
+//				printf("(%d %d %d)\n", trip.z, trip.x, trip.y);
+//			}
+//		}
+//		int layerMax = layerMap.size();
+//		vector<vector<pair<int, int>>> routes(layerMax+1);
+//		for(int i = 0; i < myPath.size(); i++){
+//			int l = myPath[i].z;
+//			routes[l+1].push_back({myPath[i].x, myPath[i].y});
+//		}
+//		verbose = 0;
+//		for(int l = 1; l <= layerMax; l++)
+//		{
+//			if (layerMap[l]->dir_ == LayerDir::horizontal)
+//			{
+//				sort(routes[l].begin(), routes[l].end(),
+//					[](const pair<int, int> &a, const pair<int, int> &b)
+//					{
+//						if(a.second != b.second)
+//							return a.second < b.second; // sort according to y first
+//						else
+//							return a.first < b.first;
+//					});
+//				int x_ = -2, y_ = -2, x, y, xdiff, ydiff, xmax = x_, xmin = x_;
+//				routes[l].push_back({-2, -2});  // push dummy values to print last segment
+//				for(int i = 0; i < routes[l].size(); i++){
+//					x = routes[l][i].first;
+//					y = routes[l][i].second;
+//					xdiff = x - x_;
+//					ydiff = y - y_;
+//					if(abs(ydiff) > 0){
+//						if(xmax != -2)
+//							write_seg( xmin, y_, xmax, y_, l);
+//						xmin = xmax = x;
+//					}
+//					else{
+//						if(abs(xdiff) > 1){
+//							if(xmax != -2)
+//								write_seg( xmin, y_, xmax, y_, l);
+//							xmin = xmax = x;
+//						}
+//						else{
+//							xmax = x;
+//						}
+//					}
+//					x_ = x;
+//					y_ = y;
+//				}
+//			}
+//			else if (layerMap[l]->dir_ == LayerDir::vertical)
+//			{
+//				sort(routes[l].begin(), routes[l].end(),
+//					[](const pair<int, int> &a, const pair<int, int> &b)
+//					{
+//						if(a.first != b.first)
+//							return a.first < b.first;   // sort according to x first
+//						else
+//							return a.second < b.second;
+//					});
+//				int x_ = -2, y_ = -2, x, y, xdiff, ydiff, ymax = y_, ymin = y_;
+//				routes[l].push_back({-2, -2});  // push dummy values to print last segment
+//				for(int i = 0; i < routes[l].size(); i++){
+//					x = routes[l][i].first;
+//					y = routes[l][i].second;
+//					xdiff = x - x_;
+//					ydiff = y - y_;
+//					if(abs(xdiff) > 0){
+//						if(ymax != -2)
+//							write_seg( x_, ymin, x_, ymax, l);
+//						ymin = ymax = y;
+//					}
+//					else{
+//						if(abs(ydiff) > 1){
+//							if(ymax != -2)
+//								write_seg( x_, ymin, x_, ymax, l);
+//							ymin = ymax = y;
+//						}
+//						else{
+//							ymax = y;
+//						}
+//					}
+//					x_ = x;
+//					y_ = y;
+//				}
+//			}
+//		}
+//		out << ")" << endl;
+//	}
 }
 
 class ThreadPool {
@@ -464,20 +450,20 @@ void putObstructions()
 						if (i == pMin.first)
 							startX = lx;
 						else
-							startX = gcellGrid[k-1][i][j].startCoord.first;
+							startX = gcellGrid[i][j].startCoord.first;
 						if (j == pMin.second)
 							startY = ly;
 						else
-							startY = gcellGrid[k-1][i][j].startCoord.second;
+							startY = gcellGrid[i][j].startCoord.second;
 
 						if (i == pMax.first)
 							endX = ux;
 						else
-							endX = gcellGrid[k-1][i][j].endCoord.first;
+							endX = gcellGrid[i][j].endCoord.first;
 						if (j == pMax.second)
 							endY = uy;
 						else
-							endY = gcellGrid[k-1][i][j].endCoord.second;
+							endY = gcellGrid[i][j].endCoord.second;
 
                 		double pitchX = layerMap[k]->pitch_x_;
                 		double pitchY = layerMap[k]->pitch_y_;
@@ -487,16 +473,19 @@ void putObstructions()
 						if (layerMap[k] ->dir_ == LayerDir::horizontal){
 				           	//get difference in y
 		                    dimension = endY - startY;
-		                    ratio = (endX - startX) / double(gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first);
+							//wrong
+		                    ratio = (endX - startX) / double(gcellGrid[i][j].endCoord.first - gcellGrid[i][j].startCoord.first);
 		                    occupied = dimension / (pitchX * defDBU);
 						}
 				       	if (layerMap[k] ->dir_ == LayerDir::vertical){
 				           	//get difference in x
 		                    dimension = endX - startX;
-		                    ratio = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
+							//wrong
+		                    ratio = (endY - startY) / double(gcellGrid[i][j].endCoord.second - gcellGrid[i][j].startCoord.second);
 		                    occupied = dimension  / (pitchY * defDBU);
 				       	}
-				       	gcellGrid[k-1][i][j].congestion += (occupied * ratio);
+						   //wrong
+				       	//gcellGrid[i][j].congestion += (occupied * ratio);
 					}
 				}
 			}
@@ -587,21 +576,22 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	// cout << endl << id << endl;
 	if (name == "net1797")
 	{
-		printf("Routing From: (%d %d %d) to (%d %d %d)", source.z, source.x, source.y, target.z, target.x, target.y);
+		printf("Routing From: (%d %d) to (%d %d)",source.x, source.y, target.x, target.y);
 	}
-	vector <CoordinateThreeDim> threadResult;
+	vector <CoordinateTwoDim> threadResult;
 	unsigned int SearchState;
 	unsigned int SearchSteps = 0;
 	int count;
+	// wrong shouldnt be here now!
 				//Supporting blocked source and target
-	if (gcellGrid[source.z][source.x][source.y].congestion >=
-		gcellGrid[source.z][source.x][source.y].congestionLimit)
-		gcellGrid[source.z][source.x][source.y].congestion =
-		gcellGrid[source.z][source.x][source.y].congestionLimit/2;
-	if (gcellGrid[target.z][target.x][target.y].congestion >=
-		gcellGrid[target.z][target.x][target.y].congestionLimit)
-		gcellGrid[target.z][target.x][target.y].congestion = 
-		gcellGrid[target.z][target.x][target.y].congestionLimit/2;
+	//if (gcellGrid[source.x][source.y].congestion >=
+	//	gcellGrid[source.x][source.y].congestionLimit)
+	//	gcellGrid[source.x][source.y].congestion =
+	//	gcellGrid[source.x][source.y].congestionLimit/2;
+	//if (gcellGrid[target.x][target.y].congestion >=
+	//	gcellGrid[target.x][target.y].congestionLimit)
+	//	gcellGrid[target.x][target.y].congestion = 
+	//	gcellGrid[target.x][target.y].congestionLimit/2;
 	do
 	{
 		SearchState = astarsearch.SearchStep();
@@ -610,15 +600,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 		if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED) 
 		{
 			MapSearchNode* node = astarsearch.GetSolutionStart();
-			int steps = 0;
-			count = 0;
-			for (int addition = node->z+1; addition >= node->z-1; --addition)
-			{
-				if (addition < 0 || addition >= zDimension || count >=2) continue;
-				threadResult.push_back({addition, node->x, node->y});
-				++count;
-			}
-			gcellGrid[node->z][node->x][node->y].congestion += 1;
+			int steps = 0;			
+			threadResult.push_back({node->x, node->y});
+			gcellGrid[node->x][node->y].congestion += 1;
 			/*
 			ispd18-1
 			net1797
@@ -635,15 +619,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				node = astarsearch.GetSolutionNext();
 
 				if (!node) break;
-				count = 0;
-				for (int addition = node->z+1; addition >= node->z-1; --addition)
-				{
-					if (addition < 0 || addition >= zDimension || count >= 2)	continue;
-					threadResult.push_back({addition, node->x, node->y});
-
-					++count;
-				}
-				gcellGrid[node->z][node->x][node->y].congestion += 1;
+				
+				threadResult.push_back({node->x, node->y});
+				gcellGrid[node->x][node->y].congestion += 1;
 			};
 
 			mtx.lock();
@@ -704,7 +682,7 @@ int main (int argc, char* argv[])
 	int netCounter=0;
 	for (auto net: nets)
 	{
-		allNetsPath[net.first] = vector<CoordinateThreeDim>();
+		allNetsPath[net.first] = vector<CoordinateTwoDim>();
 	}
 
 	//putting obstructions on gcell grid

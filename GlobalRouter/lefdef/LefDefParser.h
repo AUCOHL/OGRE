@@ -19,10 +19,10 @@ namespace my_lefdef
 {
 
 // 2D
-// struct congestionLimit{
-//     int vertical;
-//     int horizontal; 
-// };
+ struct congestionLimit{
+     int vertical;
+     int horizontal; 
+ };
 
 struct gCellGridGlobal
 {
@@ -31,32 +31,32 @@ struct gCellGridGlobal
     int congestion  = 0;
 
     // 2D
-    // congestionLimit limit; 
-    int congestionLimit;
+     congestionLimit limit; 
+    //int congestionLimit;
     long long area; 
     void setCongestionLimit(int congestionLimit_, char dir)
     {
         // 2D 
-        // switch(dir){
-        //     case ('V'): limit.vertical = congestionLimit_;
-        //         break;  
-        //     case ('H'): limit.horizontal = congestionLimit_;
-        //         break; 
-        // }
+         switch(dir){
+             case ('V'): limit.vertical = congestionLimit_;
+                 break;  
+             case ('H'): limit.horizontal = congestionLimit_;
+                 break; 
+         }
 
-        congestionLimit = congestionLimit_;
+        //congestionLimit = congestionLimit_;
     }
     int getCongestionLimit(char dir)
     {
         // 2D 
-        // switch(dir){
-        //     case ('V'): return limit.vertical;
-        //         break;  
-        //     case ('H'): return limit.horizontal;
-        //         break; 
-        // }
+         switch(dir){
+             case ('V'): return limit.vertical;
+                 break;  
+             case ('H'): return limit.horizontal;
+                 break; 
+         }
 
-        return congestionLimit;
+        //return congestionLimit;
     }
     gCellGridGlobal(pair<int, int> startCoord_, pair<int, int> endCoord_, long long area_) : startCoord(startCoord_), endCoord(endCoord_), area(area_){};
 };
@@ -75,7 +75,7 @@ public:
     def::Def &get_def();
     def::Def &def_;
 
-    vector<vector<vector<gCellGridGlobal>>> &build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap);
+    vector<vector<gCellGridGlobal>> &build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap);
 
     void get_connection_locations();
 
