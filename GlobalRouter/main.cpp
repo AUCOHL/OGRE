@@ -691,7 +691,7 @@ int main (int argc, char* argv[])
     // MODIFIED
     xDimension = gcellGrid.size();
     yDimension = gcellGrid[0].size();
-	zDimension = 2; //0 horizontal, 1 vertical
+	zDimension = 2; 
 
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
