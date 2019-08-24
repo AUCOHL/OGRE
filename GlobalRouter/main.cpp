@@ -17,7 +17,6 @@
 #include <stdexcept>
 #include <mutex>          // std::mutex
 
-#include "Watch.h"
 #include "ArgParser.h"
 #include "LefDefParser.h"
 #include "stlastar.h" // See header for copyright and usage information
@@ -34,6 +33,8 @@ int omp_thread_count();
 
 #ifndef UNIT_TEST
 
+unsigned int SearchStep[8];
+
 int zDimension, xDimension, yDimension;
 
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid;
@@ -44,7 +45,7 @@ unordered_map <string, vector<CoordinateThreeDim>> allNetsPath;
 ofstream out;
 
 typedef CoordinateThreeDim Pin;
-typedef priority_queue<pair<int, TwoPinTwoDim>, vector<pair<int, TwoPinTwoDim>>, std::less<pair<int,TwoPinTwoDim>>> pq;
+typedef priority_queue<pair<int, TwoPinTwoDim>, vector<pair<int, TwoPinTwoDim>>, std::greater<pair<int,TwoPinTwoDim>>> pq;
 typedef std::vector<TwoPinTwoDim> Two_pin_list_2d;
 
 std::mutex mtx;           // mutex for critical section
@@ -73,7 +74,7 @@ public:
 	float GoalDistanceEstimate( MapSearchNode &nodeGoal );
 	bool IsGoal( MapSearchNode &nodeGoal );
 	bool GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node );
-	float GetCost( MapSearchNode &successor );
+	float GetCost( MapSearchNode &successor , int threadId);
 	bool IsSameState( MapSearchNode &rhs );
 	void PrintNodeInfo();
 	inline bool operator ==(const MapSearchNode& other)
@@ -190,12 +191,10 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 // of our map the answer is the map terrain value at this node since that is
 // conceptually where we're moving
 
-float MapSearchNode::GetCost( MapSearchNode &successor )
+float MapSearchNode::GetCost( MapSearchNode &successor, int threadId )
 {
-	float cost = 1 + 0.8 / (1 + exp((-1) * 2 * (gcellGrid[z][x][y].congestion + 1 - 1.f * gcellGrid[z][x][y].congestionLimit)));
-	return (z == successor.z) ? cost: cost*2; // so we need to apply dynamic cost function here
-	return cost;
-	return (z != successor.z) ? 1.f: 10.f;
+	float funcP = gcellGrid[z][x][y].congestion / gcellGrid[z][x][y].congestionLimit;
+	return funcP;	
 }
 typedef struct pathCoord
 {
@@ -565,7 +564,7 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
             two_pin.pin2.x = (int) tree.branch[branch.n].x;
             two_pin.pin2.y = (int) tree.branch[branch.n].y;
             two_pin.net_id = netName;
-
+			
            if (two_pin.pin1 != two_pin.pin2)
 		    {
 			   myOrderedNets.push({two_pin.getEuclideanDistance(), two_pin});
@@ -582,7 +581,7 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
 void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name)
 {
 
-	AStarSearch<MapSearchNode> astarsearch(1000000);
+	AStarSearch<MapSearchNode> astarsearch(1000000, id);
 	astarsearch.SetStartAndGoalStates(source, target);
 	// cout << endl << id << endl;
 	if (name == "net1797")
@@ -591,7 +590,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	}
 	vector <CoordinateThreeDim> threadResult;
 	unsigned int SearchState;
-	unsigned int SearchSteps = 0;
+	SearchStep[id] = 0;
 	int count;
 				//Supporting blocked source and target
 	if (gcellGrid[source.z][source.x][source.y].congestion >=
@@ -605,7 +604,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	do
 	{
 		SearchState = astarsearch.SearchStep();
-		SearchSteps++;
+		SearchStep[id]++;
 	} while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
 		if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED)
 		{
@@ -660,7 +659,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 
 int main (int argc, char* argv[])
 {
-    util::Watch watch;
+    //util::Watch watch;
     // Parsing command line arguments
     auto& ap = ArgParser::get();
 
@@ -689,13 +688,12 @@ int main (int argc, char* argv[])
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
-
+	
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
 	auto ordered_nets = orderNets(nets);
 
 	// debugging purposes
-	return 0;
 
 
 	int netCounter=0;
@@ -713,27 +711,22 @@ int main (int argc, char* argv[])
 	printf("nets size: %d\n", (int)ordered_nets.size());
 	int connectionAmount = 0;
 
-	// while(ordered_nets.size())
-    // {
-	// 	auto netName = ordered_nets.top(); ordered_nets.pop();
-	// 	auto &net = nets[netName.second];
+	while(ordered_nets.size())
+    {
+		pair<int,TwoPinTwoDim> TwoPinNet = ordered_nets.top(); ordered_nets.pop(); 
+		MapSearchNode start;
+		start.z = 0; 
+		start.x = TwoPinNet.second.pin1.x; 
+		start.y = TwoPinNet.second.pin1.y;
+		MapSearchNode goal;
+		goal.z = 0;
+		 goal.x = TwoPinNet.second.pin2.x;
+		  goal.y = TwoPinNet.second.pin2.y;
+		tp.enqueue(routeTwoPoints, start, goal, bufferId, TwoPinNet.second.net_id);
+		++bufferId;
+		bufferId %= threadsCounter;
+	}
 
-	// 	bool netFailed = false;
-	// 	connectionAmount += route_nodes.size();
-	// 	for (auto route: route_nodes)
-	// 	{
-	// 		MapSearchNode start;
-	// 		start.z = route.first.z; start.x = route.first.x; start.y = route.first.y;
-	// 		MapSearchNode goal;
-	// 		goal.z = route.second.z; goal.x = route.second.x; goal.y = route.second.y;
-	// 		string name = netName.second;
-
-	// 		tp.enqueue(routeTwoPoints, start, goal, bufferId, name );
-
-	// 		++bufferId;
-	// 		bufferId %= threadsCounter;
-	// 	}
-	// }
     return 0;
 }
 

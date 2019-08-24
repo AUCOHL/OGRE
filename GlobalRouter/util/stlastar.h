@@ -117,7 +117,8 @@ public: // data
 
 public: // methods
 
-
+	int threadId;
+	int historicCost = 0;
 	// constructor just initialises private data
 	AStarSearch() :
 		m_State( SEARCH_STATE_NOT_INITIALISED ),
@@ -130,14 +131,15 @@ public: // methods
 	{
 	}
 
-	AStarSearch( int MaxNodes ) :
+	AStarSearch( int MaxNodes, int _threadId ) :
 		m_State( SEARCH_STATE_NOT_INITIALISED ),
 		m_CurrentSolutionNode( NULL ),
 #if USE_FSA_MEMORY
 		m_FixedSizeAllocator( MaxNodes ),
 #endif
 		m_AllocateNodeCount(0),
-		m_CancelRequest( false )
+		m_CancelRequest( false ),
+		threadId (_threadId)
 	{
 	}
 
@@ -290,8 +292,19 @@ public: // methods
 			{
 
 				// 	The g value for this successor ...
-				float newg = n->g + n->m_UserState.GetCost( (*successor)->m_UserState );
+				float P = 3;
 
+				float ret = n->m_UserState.GetCost( (*successor)->m_UserState, threadId );
+				ret *= P;
+				if (ret > P)
+				{
+					historicCost + m_Steps;
+				}
+				float alpha = historicCost / P;
+				float beta = 2;
+
+				float newg = historicCost + alpha * ret + beta * n->g;
+				
 				// Now we need to find whether the node is on the open or closed lists
 				// If it is but the node that is already on them is better (lower g)
 				// then we can forget about this successor
@@ -825,7 +838,7 @@ public:
 	virtual float GoalDistanceEstimate( T &nodeGoal ) = 0; // Heuristic function which computes the estimated cost to the goal node
 	virtual bool IsGoal( T &nodeGoal ) = 0; // Returns true if this node is the goal node
 	virtual bool GetSuccessors( AStarSearch<T> *astarsearch, T *parent_node ) = 0; // Retrieves all successors to this node and adds them via astarsearch.addSuccessor()
-	virtual float GetCost( T &successor ) = 0; // Computes the cost of travelling from this node to the successor node
+	virtual float GetCost( T &successor, int ) = 0; // Computes the cost of travelling from this node to the successor node
 	virtual bool IsSameState( T &rhs ) = 0; // Returns true if this node is the same as the rhs node
 };
 
