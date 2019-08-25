@@ -6,12 +6,12 @@
 #include <string>
 class CoordinateTwoDim 
 {
-	public:
-		int x;
-		int y;
-	public:
-		CoordinateTwoDim(int _x = 0, int _y = 0) : x{_x}, y{_y} {};
-		CoordinateTwoDim(const CoordinateTwoDim& other) : x{other.x}, y{other.y} {};
+    public:
+        int x;
+        int y;
+    public:
+        CoordinateTwoDim(int _x = 0, int _y = 0) : x{_x}, y{_y} {};
+        CoordinateTwoDim(const CoordinateTwoDim& other) : x{other.x}, y{other.y} {};
 
     bool operator==(const CoordinateTwoDim& other) const {
         return (x == other.x && y == other.y);
@@ -44,21 +44,21 @@ class CoordinateTwoDim
 
     std::string toString() const {
         return std::to_string(x) + "," + std::to_string(y);
-    }		
+    }       
 };
 
 class CoordinateThreeDim 
 {
-	public:
-		int x;
-		int y;
-		int z;
-	public:
-		CoordinateThreeDim(int _z = 0, int _x = 0, int _y = 0):
-			z(_z), x(_x), y(_y) {};
-		CoordinateThreeDim(const CoordinateTwoDim& other, int _z = 0) :
-			z(_z), x(other.x), y(other.y) {};
-	bool operator==(const CoordinateThreeDim& other) const {
+    public:
+        int x;
+        int y;
+        int z;
+    public:
+        CoordinateThreeDim(int _z = 0, int _x = 0, int _y = 0):
+            z(_z), x(_x), y(_y) {};
+        CoordinateThreeDim(const CoordinateTwoDim& other, int _z = 0) :
+            z(_z), x(other.x), y(other.y) {};
+    bool operator==(const CoordinateThreeDim& other) const {
         return (x == other.x && y == other.y && z == other.z);
     }
     std::string toString() const {
@@ -72,16 +72,16 @@ class TwoPinTwoDim
 {
     public:
     std::string net_id;
-	int done;
+    int done;
 
-	public: 
-	TwoPinTwoDim() : net_id(""), done(-1) {};
-	CoordinateTwoDim pin1;
-	CoordinateTwoDim pin2;
-	std::vector<CoordinateTwoDim> path;
+    public: 
+    TwoPinTwoDim() : net_id(""), done(-1) {};
+    CoordinateTwoDim pin1;
+    CoordinateTwoDim pin2;
+    std::vector<CoordinateTwoDim> path;
 
-	std::string toString() const {
-		std::string s = "pin1: " + pin1.toString();
+    std::string toString() const {
+        std::string s = "pin1: " + pin1.toString();
         s += " pin2: " + pin2.toString();
         s += " path: [";
         for (const CoordinateTwoDim& c : path) {
