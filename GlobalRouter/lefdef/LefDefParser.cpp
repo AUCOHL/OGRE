@@ -170,8 +170,16 @@ vector<vector<my_lefdef::gCellGridGlobal>> &LefDefParser::build_Gcell_grid(unord
     
     // MODIFIED
     //building Gcell grid
-
+    // 2D
     myGlobalGrid = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension - 1);
+
+
+	// myGlobalGrid.resize(2);
+ //    for (int i = 0; i < 2; i++)
+ //    {
+ //        myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension - 1);
+ //    }
+
 
     //creating gcells
     for (int i = 0; i < xDimension - 1; ++i)
@@ -190,7 +198,7 @@ vector<vector<my_lefdef::gCellGridGlobal>> &LefDefParser::build_Gcell_grid(unord
             int secondMinY = *itY;
 
             //  NEW ( 2D )
-             myGlobalGrid[i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
+            myGlobalGrid[i].push_back({{firstMinX, firstMinY}, {secondMinX, secondMinY}, (secondMinY - firstMinY) * (secondMinX - firstMinX)});
 
             // MODIFIED   
             //for (int k = 0; k < 2; k++)
@@ -225,7 +233,7 @@ vector<vector<my_lefdef::gCellGridGlobal>> &LefDefParser::build_Gcell_grid(unord
                     freeWires = dimension  / (pitchX * defDBU);
 
                     // NEW ( 2D )
-                     myGlobalGrid[i][j].setCongestionLimit(freeWires*2.5 + myGlobalGrid[i][j].getCongestionLimit('H'), 'H');
+                     myGlobalGrid[i][j].setCongestionLimit(freeWires + myGlobalGrid[i][j].getCongestionLimit('H'), 'H');
                 }
                 else if (l->dir_ == LayerDir::vertical)
                 { //get difference in x
@@ -233,7 +241,7 @@ vector<vector<my_lefdef::gCellGridGlobal>> &LefDefParser::build_Gcell_grid(unord
                     freeWires = dimension / (pitchY * defDBU);
 
                     // NEW ( 2D )
-                     myGlobalGrid[i][j].setCongestionLimit(freeWires*2.5 + myGlobalGrid[i][j].getCongestionLimit('V'), 'V');
+                     myGlobalGrid[i][j].setCongestionLimit(freeWires + myGlobalGrid[i][j].getCongestionLimit('V'), 'V');
                 }
                 //get number of free wires in cell
                // myGlobalGrid[k % 2][i][j].setCongestionLimit(freeWires + myGlobalGrid[k % 2][i][j].getCongestionLimit());

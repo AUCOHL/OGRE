@@ -49,7 +49,7 @@ typedef std::vector<TwoPinTwoDim> Two_pin_list_2d;
 
 std::mutex mtx;           // mutex for critical section
 
-
+ 
 int GetMap(int x, int y)
 {
 	if( x < 0 || x >= xDimension || y < 0 || y >= yDimension)
@@ -474,6 +474,7 @@ void putObstructions()
 				           	//get difference in y
 		                    dimension = endY - startY;
 							//wrong
+							// by Habiba (why wrong?)
 		                    ratio = (endX - startX) / double(gcellGrid[i][j].endCoord.first - gcellGrid[i][j].startCoord.first);
 		                    occupied = dimension / (pitchX * defDBU);
 						}
@@ -481,10 +482,12 @@ void putObstructions()
 				           	//get difference in x
 		                    dimension = endX - startX;
 							//wrong
+							// by Habiba (why wrong?)
 		                    ratio = (endY - startY) / double(gcellGrid[i][j].endCoord.second - gcellGrid[i][j].startCoord.second);
 		                    occupied = dimension  / (pitchY * defDBU);
 				       	}
-						   //wrong
+						   //wrong 
+				       	// by Habiba: We need to have hortizontal and vertical congestion for each gcell using 2D grid
 				       	//gcellGrid[i][j].congestion += (occupied * ratio);
 					}
 				}
