@@ -79,7 +79,7 @@ class TwoPinTwoDim
 	CoordinateTwoDim pin1;
 	CoordinateTwoDim pin2;
 	std::vector<CoordinateTwoDim> path;
-	
+
 	std::string toString() const {
 		std::string s = "pin1: " + pin1.toString();
         s += " pin2: " + pin2.toString();
@@ -103,4 +103,4 @@ class TwoPinTwoDim
 };
 
 
-#endif
+#endif 

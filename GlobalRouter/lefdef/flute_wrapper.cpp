@@ -42,4 +42,4 @@ void Flute::plotTree(Tree& routingTree) {
 
 int Flute::treeWireLength(Tree& routingTree) {
     return static_cast<int>(wirelength(routingTree));
-}
+} 
