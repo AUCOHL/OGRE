@@ -58,6 +58,9 @@ int GetMap( int z, int x, int y)
 		return INVALID;
 	}
 	return (gcellGrid[z][x][y].congestion >= gcellGrid[z][x][y].congestionLimit) ? INVALID: 0;
+
+	// WRONG 
+	// return ((gcellGrid[z][x][y].usedWires >= gcellGrid[z][x][y].maxWire) || (gcellGrid[z][x][y].usedVias >= gcellGrid[z][x][y].maxVia)) ? INVALID: 0;
 }
 
 // Definitions
@@ -734,7 +737,7 @@ void show_usage ()
 {
     cout << endl;
     cout << "Usage:" << endl;
-    cout << "lefdef_parser -lef <lef> -def <def>" << endl << endl;
+    cout << "global_router -lef <lef> -def <def> -output <guide> -thread <# of threads>" << endl << endl;
 }
 
 /**

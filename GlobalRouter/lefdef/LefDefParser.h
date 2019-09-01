@@ -28,6 +28,8 @@ struct gCellGridGlobal
     int congestionLimitV;
     int maxWire; 
     int maxVia; 
+    int usedWires; 
+    int usedVias; 
     long long area;
     void setCongestionLimitW(int congestionLimitW_)
     {
