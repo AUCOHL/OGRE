@@ -483,22 +483,42 @@ void putObstructions()
 
                 		double pitchX = layerMap[k]->pitch_x_;
                 		double pitchY = layerMap[k]->pitch_y_;
-                		int dimension = 0, occupied;
-                		double ratio;
+                		int dimension = 0, occupied, occupiedV, dimension2 = 0;
+                		double ratio, ratioV;
 
 						if (layerMap[k] ->dir_ == LayerDir::horizontal){
 				           	//get difference in y
 		                    dimension = endY - startY;
 		                    ratio = (endX - startX) / double(gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first);
 		                    occupied = dimension / (pitchX * defDBU);
+		                    dimension2 = endX - startX;
+		                    ratioV = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
+                    		occupiedV = dimension2 / (pitchY * defDBU);
+                    		occupiedV *= occupied; 
 						}
 				       	if (layerMap[k] ->dir_ == LayerDir::vertical){
 				           	//get difference in x
 		                    dimension = endX - startX;
 		                    ratio = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
-		                    occupied = dimension  / (pitchY * defDBU);
+		                    occupied = dimension / (pitchY * defDBU);
+		                    dimension2 = endY - startY;
+		                    ratioV = (endX - startX) / double(gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first);
+                    		occupiedV = dimension2 / (pitchX * defDBU);
+                    		occupiedV *= occupied; 
 				       	}
-				       	gcellGrid[k-1][i][j].congestion += (occupied * ratio);
+				       	// gcellGrid[k-1][i][j].congestion += (occupied * ratio);
+
+				       	// cout << "Wr " << int (occupied * ratio * 0.75) << endl;
+				       	// cout << "Vr " << int ( occupiedV * ratioV * 0.25) << endl;
+				       	// cout << "W " << int (occupied * ratio) << endl;
+				       	// cout << "V " << int ( occupiedV * ratioV) << endl;
+
+				       	// // Considering obstructions with maximum capacity of wires and vias
+				       	// cout << gcellGrid[k-1][i][j].maxWire << " " << gcellGrid[k-1][i][j].usedWires << " " << gcellGrid[k-1][i][j].maxVia << " " << gcellGrid[k-1][i][j].usedVias << endl;
+				       	gcellGrid[k-1][i][j].usedWires += int(occupied * ratio * 0.75);
+				       	gcellGrid[k-1][i][j].usedVias += int(occupiedV * ratioV * 0.25);
+
+				       	// cout << gcellGrid[k-1][i][j].maxWire << " " << gcellGrid[k-1][i][j].usedWires << " " << gcellGrid[k-1][i][j].maxVia << " " << gcellGrid[k-1][i][j].usedVias << endl << endl;
 					}
 				}
 			}
