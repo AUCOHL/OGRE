@@ -30,6 +30,8 @@ void show_cmd_args ();
 int omp_thread_count();
 
 #define INVALID 1
+#define ALPHA 0.5
+#define BETA 0.5
 
 #ifndef UNIT_TEST
 
@@ -57,6 +59,8 @@ int GetMap( int z, int x, int y)
 	{
 		return INVALID;
 	}
+
+	// VIA!!
 	return (gcellGrid[z][x][y].congestion >= gcellGrid[z][x][y].congestionLimit) ? INVALID: 0;
 
 	// WRONG 
@@ -196,7 +200,8 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 float MapSearchNode::GetCost( MapSearchNode &successor, int threadId )
 {
-	float funcP = gcellGrid[z][x][y].congestion / gcellGrid[z][x][y].congestionLimit;
+	// float funcP = gcellGrid[z][x][y].congestion / gcellGrid[z][x][y].congestionLimit;
+	float funcP = ALPHA * (gcellGrid[z][x][y].usedWires / double(gcellGrid[z][x][y].maxWire)) + BETA * (gcellGrid[z][x][y].usedVias / double(gcellGrid[z][x][y].maxVia)); 
 	return funcP;	
 }
 typedef struct pathCoord
@@ -616,6 +621,8 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	SearchStep[id] = 0;
 	int count;
 				//Supporting blocked source and target
+
+	// VIA!!
 	if (gcellGrid[source.z][source.x][source.y].congestion >=
 		gcellGrid[source.z][source.x][source.y].congestionLimit)
 		gcellGrid[source.z][source.x][source.y].congestion =
@@ -640,6 +647,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				threadResult.push_back({addition, node->x, node->y});
 				++count;
 			}
+			// VIA!!
 			gcellGrid[node->z][node->x][node->y].congestion += 1;
 			/*
 			ispd18-1
@@ -664,7 +672,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 					threadResult.push_back({addition, node->x, node->y});
 
 					++count;
-				}
+				} 
+
+				// VIA!!
 				gcellGrid[node->z][node->x][node->y].congestion += 1;
 			};
 
