@@ -215,19 +215,25 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 double pitch = layerMap[k + 1]->pitch_;
                 double pitchX = layerMap[k + 1]->pitch_x_;
                 double pitchY = layerMap[k + 1]->pitch_y_;
-                int dimension = 0, freeWires;
+                int dimension = 0, freeWires, freeVias;
                 if (l->dir_ == LayerDir::horizontal)
                 { //get difference in y
                     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
                     freeWires = dimension  / (pitchX * defDBU);
+                    freeVias = freeWires / pitchY;
                 }
                 else if (l->dir_ == LayerDir::vertical)
                 { //get difference in x
                     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
                     freeWires = dimension / (pitchY * defDBU);
+                    freeVias = freeWires / pitchX;
                 }
                 //get number of free wires in cell
-                myGlobalGrid[k][i][j].setCongestionLimit(freeWires*2.5);
+                myGlobalGrid[k][i][j].setCongestionLimitW(freeWires);
+                myGlobalGrid[k][i][j].setCongestionLimitV(freeVias);
+                myGlobalGrid[k][i][j].setWireCap(freeWires * 0.75);
+                myGlobalGrid[k][i][j].setViaCap(freeVias * 0.25);
+                // cout << "Max Wire Capacity " << freeWires << " " << int (freeWires * 0.75) << " Max Via Capacity " << freeVias << " " << int (freeVias * 0.25) << endl; 
             }
         }
     }

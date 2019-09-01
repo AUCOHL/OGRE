@@ -23,12 +23,32 @@ struct gCellGridGlobal
     pair<int, int> startCoord;
     pair<int, int> endCoord;
     int congestion  = 0;
-    int congestionLimit;
+    int congestionLimit; 
+    int congestionLimitW;
+    int congestionLimitV;
+    int maxWire; 
+    int maxVia; 
     long long area;
-    void setCongestionLimit(int congestionLimit_)
+    void setCongestionLimitW(int congestionLimitW_)
     {
-        congestionLimit = congestionLimit_;
+        congestionLimitW = congestionLimitW_;
     }
+
+    void setCongestionLimitV(int congestionLimitV_)
+    {
+        congestionLimitV = congestionLimitV_;
+    }
+
+    void setWireCap(int maxWire_)
+    {
+        maxWire = maxWire_;
+    }
+
+    void setViaCap(int maxVia_)
+    {
+        maxVia = maxVia_;
+    }
+
     gCellGridGlobal(pair<int, int> startCoord_, pair<int, int> endCoord_, long long area_) : startCoord(startCoord_), endCoord(endCoord_), area(area_){};
 };
 
