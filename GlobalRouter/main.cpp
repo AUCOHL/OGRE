@@ -648,7 +648,8 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				++count;
 			}
 			// VIA!!
-			gcellGrid[node->z][node->x][node->y].congestion += 1;
+			gcellGrid[node->z][node->x][node->y].usedWires += 1;
+			
 			/*
 			ispd18-1
 			net1797
@@ -662,6 +663,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 			 */
 			for (;;)
 			{
+				parentNode = node; 
 				node = astarsearch.GetSolutionNext();
 
 				if (!node) break;
@@ -675,7 +677,10 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				} 
 
 				// VIA!!
-				gcellGrid[node->z][node->x][node->y].congestion += 1;
+				if (parentNode.z == node.z)
+					gcellGrid[node->z][node->x][node->y].usedWires += 1;
+				else 
+					gcellGrid[node->z][node->x][node->y].usedVias += 1;
 			};
 
 			mtx.lock();
