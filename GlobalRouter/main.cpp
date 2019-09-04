@@ -73,9 +73,9 @@ int GetMap( int z, int x, int y, int pz)
 	// return (gcellGrid[z][x][y].congestion >= gcellGrid[z][x][y].congestionLimit) ? INVALID: 0;
 
 	if (pz == z)
-		return (gcellGrid[z][x][y].maxWire >= gcellGrid[z][x][y].usedWires) ? INVALID: 0;
+		return (gcellGrid[z][x][y].usedWires >= gcellGrid[z][x][y].maxWire) ? INVALID: 0;
 	else 
-		return (gcellGrid[z][x][y].maxVia >= gcellGrid[z][x][y].usedVias) ? INVALID: 0;
+		return (gcellGrid[z][x][y].usedVias >= gcellGrid[z][x][y].maxVia) ? INVALID: 0;
 }
 
 // Definitions
@@ -425,7 +425,7 @@ inline ThreadPool::~ThreadPool()
     condition.notify_all();
     for(std::thread &worker: workers)
         worker.join();
-	printf("Done!\n");
+	// printf("Done!\n");
 	printOutput2();
 	out.close();
 }
@@ -644,14 +644,14 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				//Supporting blocked source and target
 
 	// VIA!!
-	if (gcellGrid[source.z][source.x][source.y].congestion >=
-		gcellGrid[source.z][source.x][source.y].congestionLimit)
-		gcellGrid[source.z][source.x][source.y].congestion =
-		gcellGrid[source.z][source.x][source.y].congestionLimit/2;
-	if (gcellGrid[target.z][target.x][target.y].congestion >=
-		gcellGrid[target.z][target.x][target.y].congestionLimit)
-		gcellGrid[target.z][target.x][target.y].congestion = 
-		gcellGrid[target.z][target.x][target.y].congestionLimit/2;
+	// if (gcellGrid[source.z][source.x][source.y].congestion >=
+	// 	gcellGrid[source.z][source.x][source.y].congestionLimit)
+	// 	gcellGrid[source.z][source.x][source.y].congestion =
+	// 	gcellGrid[source.z][source.x][source.y].congestionLimit/2;
+	// if (gcellGrid[target.z][target.x][target.y].congestion >=
+	// 	gcellGrid[target.z][target.x][target.y].congestionLimit)
+	// 	gcellGrid[target.z][target.x][target.y].congestion = 
+	// 	gcellGrid[target.z][target.x][target.y].congestionLimit/2;
 	do
 	{
 		SearchState = astarsearch.SearchStep();
@@ -704,7 +704,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 		} 
 		else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
 		{
-		//	printf("Search terminated. Did not find goal state\n");
+			printf("Search terminated. Did not find goal state\n");
 		}
     	astarsearch.EnsureMemoryFreed();
 		++x;
@@ -751,7 +751,8 @@ int main (int argc, char* argv[])
 		allNetsPath[net.first] = vector<triplet>();
 	}
 	//putting obstructions on gcell grid
-    putObstructions();
+    // putObstructions();]
+    cout << "no obstructions" << endl; 
 	puts("Starting to Route!");
 	int net_id = 0;
 	int bufferId = 0;
