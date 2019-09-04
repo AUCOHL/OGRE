@@ -123,8 +123,12 @@ void AddNode(shared_ptr<TreeNode> c1, shared_ptr<TreeNode> c2, shared_ptr<TreeNo
     // case 2. p > c1 > c2
     if (!(c1->parent == p && c2->parent == p)) {
         if (c1->parent == c2) swap(c1, c2);  // make sure (c1>=c2)
-        assert(c2->parent == c1 && c1->parent == p);
+        // assert(c2->parent == c1 && c1->parent == p);
     }
+
+    if (!(c2->parent == c1 && c1->parent ==p))
+    	return; 
+
     TreeNode::ResetParent(c1);
     TreeNode::SetParent(c1, steiner);
     TreeNode::ResetParent(c2);
