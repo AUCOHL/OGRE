@@ -30,8 +30,8 @@ void show_cmd_args ();
 int omp_thread_count();
 
 #define INVALID 1
-#define ALPHA 0.5
-#define BETA 0.5
+#define ALPHA 0.9
+#define BETA 0.1
 
 #ifndef UNIT_TEST
 
@@ -211,9 +211,8 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
-	float cost = (gcellGrid[z][x][y].congestion) /(1.f * gcellGrid[z][x][y].congestionLimit) * 10.0;
-	return (z == successor.z) ? cost: cost*2; // so we need to apply dynamic cost function here
-	return (z != successor.z) ? 1.f: 10.f;
+	float funcP = ALPHA * (gcellGrid[z][x][y].usedWires / double(gcellGrid[z][x][y].maxWire)) + BETA * (gcellGrid[z][x][y].usedVias / double(gcellGrid[z][x][y].maxVia)); 
+	return funcP; 
 }
 typedef struct pathCoord 
 {
