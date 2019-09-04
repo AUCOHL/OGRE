@@ -238,14 +238,14 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                 myGlobalGrid[k][i][j].setCongestionLimitV(freeVias);
                 myGlobalGrid[k][i][j].setWireCap(freeWires * 0.75);
                 myGlobalGrid[k][i][j].setViaCap(freeVias * 0.25);
-                cout << "Max Wire Capacity " << freeWires << " " << int (freeWires * 0.75) << " Max Via Capacity " << freeVias << " " << int (freeVias * 0.25) << endl; 
+                // cout << "Max Wire Capacity " << freeWires << " " << int (freeWires * 0.75) << " Max Via Capacity " << freeVias << " " << int (freeVias * 0.25) << endl; 
             }
         }
     }
     return myGlobalGrid;
 }
 
-
+  
 int MAX_X_IND = 4;
 int MAX_Y_IND = 1;
 pair<int, int> LefDefParser::get_bounding_GCell(int x, int y)
