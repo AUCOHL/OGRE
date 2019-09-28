@@ -37,7 +37,7 @@ make all
 ## Running the tests
 
 ```shell
-./global_router -lef 'lef file path' -def 'def file path'
+./global_router -lef <lef file path> -def <def file path> -output <guide file path> -thread <number of threads> 
 ```
 
 ## Authors

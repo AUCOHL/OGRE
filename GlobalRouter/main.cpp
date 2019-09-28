@@ -30,8 +30,8 @@ void show_cmd_args ();
 int omp_thread_count();
 
 #define INVALID 1
-#define ALPHA 0.9
-#define BETA 0.1
+#define ALPHA 0.4
+#define BETA 0.6
 
 #ifndef UNIT_TEST
 
