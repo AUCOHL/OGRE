@@ -381,6 +381,7 @@ int LefParser::set_via (lefrCallbackType_e, lefiVia* via, lefiUserData ud)
 int LefParser::set_obstruction (lefrCallbackType_e, lefiObstruction* obs, 
                                 lefiUserData ud)
 {
+    bool added = false; 
     auto lef = static_cast<Lef*>(ud);
 
     auto geometries = obs->lefiObstruction::geometries();
@@ -389,7 +390,28 @@ int LefParser::set_obstruction (lefrCallbackType_e, lefiObstruction* obs,
     // TODO
     auto& obsts = lef->pimpl_->obsts_;
     obsts.resize(num_items);
+    string layer;
+    auto m = lef->pimpl_->macros_.back();
+    
+    for (int i=0; i<num_items; i++){
+        if(geometries->getLayer(i)[0] == 'M'){
+            layer = geometries->getLayer(i);
+            added = false; 
+        }
 
+        auto rect = geometries->getRect(i);
+        Obst o;
+        o.xl = rect->xl; 
+        o.yl = rect->yl;
+        o.xh = rect->xh;
+        o.yh = rect->yh; 
+        o.layerS = layer;
+        if (geometries->getLayer(i)[0] != 'M' && !added && layer[0] == 'M'){
+            added = true; 
+            o.layer = stoi(layer.substr(5));
+            m->obsts.push_back(o);
+        }
+    }
     return 0;
 }
 

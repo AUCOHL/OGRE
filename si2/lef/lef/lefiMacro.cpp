@@ -17,7 +17,7 @@
 //    implied. See the License for the specific language governing
 //    permissions and limitations under the License.
 // 
-// For updates, support, or to become part of the LEF/DEF Community,
+// For updates, suppcfort, or to become part of the LEF/DEF Community,
 // check www.openeda.org for details.
 // 
 //  $Author: icftcm $

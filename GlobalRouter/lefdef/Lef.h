@@ -1,10 +1,9 @@
 /**
- * @file    Lef.h
+ * @file    LefDefParser.cpp
  * @author  Jinwook Jung (jinwookjung@kaist.ac.kr)
- * @date    2017-12-23 22:26:47
- *
- * Created on Sat Dec 23 22:26:47 2017.
- */
+ * @author  Ali El-Said, Fady Mohamed, Habiba Gamal (extended)
+ * @date    2019-6-1
+*/
 
 #ifndef LEF_H
 #define LEF_H
@@ -140,6 +139,12 @@ ostream& operator<< (ostream& os, const Via& v);
  */
 struct Obst
 {
+    string layerS; 
+    int layer; 
+    float xl;
+    float yl;
+    float xh; 
+    float yh; 
     // 
 };
 
@@ -157,6 +162,7 @@ struct Macro
     SitePtr site_;
 
     unordered_map<string, PinPtr> pin_umap_;
+    vector<Obst> obsts; 
 };
 
 ostream& operator<< (ostream& os, const Macro& m);

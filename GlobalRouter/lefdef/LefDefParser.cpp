@@ -1,10 +1,9 @@
 /**
  * @file    LefDefParser.cpp
  * @author  Jinwook Jung (jinwookjung@kaist.ac.kr)
- * @date    2018-10-18 10:40:18
- *
- * Created on Tue Oct 16 12:31:28 2018.
- */
+ * @author  Ali El-Said, Fady Mohamed, Habiba Gamal (extended)
+ * @date    2019-6-1
+*/
 
 #include "LefDefParser.h"
 #include "StringUtil.h"
@@ -67,8 +66,6 @@ void LefDefParser::update_def(string bookshelf_pl)
 {
     unordered_map<string, pair<int, int>> pl_umap;
 
-    // Read bookshelf placement file.
-    //cout << "Reading bookshelf pl file..." << endl;
     ifstream ifs(bookshelf_pl);
     if (!ifs.is_open())
     {
@@ -78,7 +75,6 @@ void LefDefParser::update_def(string bookshelf_pl)
     string line;
     getline(ifs, line);
 
-    // FIXME
     assert(line == "UCLA pl 1.0");
 
     while (getline(ifs, line))
@@ -94,7 +90,6 @@ void LefDefParser::update_def(string bookshelf_pl)
         pl_umap[t1] = make_pair(stoi(t2), stoi(t3));
     }
 
-    //cout << "Updating DEF file..." << endl;
     auto &component_umap = def_.get_component_umap();
     auto x_pitch_dbu = lef_.get_min_x_pitch_dbu();
     auto y_pitch_dbu = lef_.get_min_y_pitch_dbu();
@@ -112,8 +107,6 @@ void LefDefParser::update_def(string bookshelf_pl)
             auto y_orig = it.second->y_;
             auto x_new = found->second.first * x_pitch_dbu;
             auto y_new = found->second.second * y_pitch_dbu;
-            //            cout << it.first << " : (" << x_orig << ", " << y_orig << ")"
-            //                             << " -> (" << x_new << ", " << y_new << ")" << endl;
             it.second->x_ = x_new;
             it.second->y_ = y_new;
 
@@ -127,7 +120,6 @@ def::Def &LefDefParser::get_def()
     return def_;
 }
 
-//    vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap)
@@ -135,8 +127,9 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
     vector<def::GCellGridPtr> gCellGridVector = def_.get_gcell_grids();
     set<int> xCoord;
     set<int> yCoord;
-
-    //creating all points based on step and do, inserting into a set to revome duplicates
+    //
+    // ─── CREATING ALL POINTS BASED ON STEP AND DO INSERTING INTO A SET TO REVOME DUPLICATES 
+    //
     for (auto GcellGridItem : gCellGridVector)
     {
         if (GcellGridItem->direction_ == TrackDir::x)
@@ -146,11 +139,16 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             for (int i = GcellGridItem->location_; i < GcellGridItem->location_ + GcellGridItem->num_ * GcellGridItem->step_; i = i + GcellGridItem->step_)
                 yCoord.insert(i);
     }
-    //getting number of metal tracks from def file
+    //
+    // ─── GETTING NUMBER OF METAL TRACKS FROM DEF FILE ───────────────────────────────
+    //    
     vector<def::TrackPtr> tracks = def_.get_tracks();
     unordered_set<string> tracks_names;
 
-    //create a map of metal layer name and layer pointer
+    //
+    // ─── CREATE A MAP OF METAL LAYER NAME AND LAYER POINTER ─────────────────────────
+    //    
+    
     for (int i = 0; i < tracks.size(); i++)
     {
         string layerName = tracks[i]->layer_;
@@ -158,23 +156,23 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         int l = layerName[layerName.length()-1] - '0';
         layerMap[l] = lef_.get_layer(layerName);
     }
-    //get dimensions of gcell grid
+    //
+    // ─── GET DIMENSIONS OF GCELL GRID ───────────────────────────────────────────────
+    //    
     int xDimension = xCoord.size();
     int yDimension = yCoord.size();
     int zDimension = tracks_names.size();
-    // cout << "Y DIMENSION " << yDimension - 1 << endl;
-    // cout << "X DIMENSION " << xDimension - 1 << endl;
-    // cout << "Z DIMENSION " << zDimension << endl;
-
-
-    //building Gcell grid
+    //
+    // ─── BUILDING GCELL GRID ────────────────────────────────────────────────────────
+    //    
     myGlobalGrid.resize(zDimension);
     for (int i = 0; i < zDimension; i++)
     {
         myGlobalGrid[i] = vector<vector<my_lefdef::gCellGridGlobal>>(xDimension - 1);
     }
-
-    //creating gcells
+    //
+    // ─── CREATING GCELLS ────────────────────────────────────────────────────────────
+    //    
     for (int i = 0; i < xDimension - 1; ++i)
     {
         auto it = xCoord.begin();
@@ -196,28 +194,71 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
             }
         }
     }
-   //get units of lef and def
+    //
+    // ─── GET UNITS OF LEF AND DEF ───────────────────────────────────────────────────
+    //  
     int defDBU = def_.get_dbu();
-
-    //creating congestion based on available metal wires
+    //
+    // ─── CREATING CONGESTION BASED ON AVAILABLE METAL WIRES ─────────────────────────
+    //
     for (int k = 0; k < zDimension; k++)
     {
         for (int i = 0; i < xDimension - 1; ++i)
         {
             for (int j = 0; j < yDimension - 1; ++j)
             {
+<<<<<<< HEAD
 
 
                 // DONE
                 // string metalString = layerMap.begin()->first;
                 // metalString = metalString.substr(0, 5);
+
+                
+=======
+>>>>>>> b97b29dae3d94a19a271e88e9dc2f1a1bfd0d235
                 lef::LayerPtr l = layerMap[k + 1];
                 double pitch = layerMap[k + 1]->pitch_;
-                double pitchX = layerMap[k + 1]->pitch_x_;
-                double pitchY = layerMap[k + 1]->pitch_y_;
+                double pitchX = layerMap[k + 1]->pitch_x_ * defDBU;
+                double pitchY = layerMap[k + 1]->pitch_y_ * defDBU;
                 int dimension = 0, freeWires, freeVias, dimension2;
+<<<<<<< HEAD
+                long long Area = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
+                Area *= (myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first);
+                int capacity = Area / (long long) (pitchX * pitchY);
+                myGlobalGrid[k][i][j].setCapacity(capacity);
+                myGlobalGrid[k][i][j].maxWire = capacity * 0.75;
+                myGlobalGrid[k][i][j].maxVia = capacity * 0.25;
+
+                // if (l->dir_ == LayerDir::horizontal)
+                // { //get difference in y
+                //     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
+                //     freeWires = dimension  / (pitchX * defDBU);
+                //     dimension2 = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
+                //     freeVias = dimension2 / (pitchY * defDBU);
+                //     freeVias *= freeWires; 
+                // }
+                // else if (l->dir_ == LayerDir::vertical)
+                // { //get difference in x
+                //     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
+                //     freeWires = dimension / (pitchY * defDBU);
+                //     freeVias = freeWires / (pitchX * defDBU);
+                //     dimension2 = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
+                //     freeVias = dimension2 / (pitchY * defDBU);
+                //     freeVias *= freeWires; 
+                // }
+                // //get number of free wires in cell
+                // myGlobalGrid[k][i][j].setCongestionLimitW(freeWires);
+                // myGlobalGrid[k][i][j].setCongestionLimitV(freeVias);
+                // myGlobalGrid[k][i][j].setWireCap(freeWires * 0.75);
+                // myGlobalGrid[k][i][j].setViaCap(freeVias * 0.25);
+                // cout << "Max Wire Capacity " << freeWires << " " << int (freeWires * 0.75) << " Max Via Capacity " << freeVias << " " << int (freeVias * 0.25) << endl; 
+=======
                 if (l->dir_ == LayerDir::horizontal)
-                { //get difference in y
+                { 
+                    //
+                    // GET DIFFERENCE IN Y
+                    //  
                     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
                     freeWires = dimension  / (pitchX * defDBU);
                     dimension2 = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
@@ -225,7 +266,10 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                     freeVias *= freeWires; 
                 }
                 else if (l->dir_ == LayerDir::vertical)
-                { //get difference in x
+                { 
+                    //
+                    // GET DIFFERENCE IN X
+                    //        
                     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
                     freeWires = dimension / (pitchY * defDBU);
                     freeVias = freeWires / (pitchX * defDBU);
@@ -233,12 +277,14 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
                     freeVias = dimension2 / (pitchY * defDBU);
                     freeVias *= freeWires; 
                 }
-                //get number of free wires in cell
+                //
+                // GET NUMBER OF FREE WIRES IN CELL
+                //
                 myGlobalGrid[k][i][j].setCongestionLimitW(freeWires);
                 myGlobalGrid[k][i][j].setCongestionLimitV(freeVias);
                 myGlobalGrid[k][i][j].setWireCap(freeWires * 0.75);
                 myGlobalGrid[k][i][j].setViaCap(freeVias * 0.25);
-                // cout << "Max Wire Capacity " << freeWires << " " << int (freeWires * 0.75) << " Max Via Capacity " << freeVias << " " << int (freeVias * 0.25) << endl; 
+>>>>>>> b97b29dae3d94a19a271e88e9dc2f1a1bfd0d235
             }
         }
     }
@@ -248,18 +294,18 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
   
 int MAX_X_IND = 4;
 int MAX_Y_IND = 1;
+//
+// ─── BINARY SEARCH TO GET THE BOUNDING GCELL ────────────────────────────────────
+//
 pair<int, int> LefDefParser::get_bounding_GCell(int x, int y)
 {
     MAX_X_IND = myGlobalGrid[0].size() - 1;
     MAX_Y_IND = myGlobalGrid[0][0].size() - 1;
-    //D(MAX_X_IND), D(MAX_Y_IND);
-    // Binary search on x
 
     int lo = 0, midx, hi = MAX_X_IND;
     while (lo < hi)
     {
         midx = lo + (hi - lo + 1) / 2;
-        //  D(midx);
 
         if (x >= myGlobalGrid[0][midx][0].startCoord.first)
             lo = midx;
@@ -282,4 +328,4 @@ pair<int, int> LefDefParser::get_bounding_GCell(int x, int y)
     return {ansx, ansy};
 }
 
-} // namespace my_lefdef
+}

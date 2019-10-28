@@ -23,6 +23,7 @@ struct gCellGridGlobal
     pair<int, int> startCoord;
     pair<int, int> endCoord;
     int congestion  = 0;
+    int capacity = 0;
     int congestionLimit; 
     int congestionLimitW;
     int congestionLimitV;
@@ -31,6 +32,10 @@ struct gCellGridGlobal
     int usedWires = 0; 
     int usedVias = 0; 
     long long area;
+    void setCapacity(int capacity_)
+    {
+        capacity = capacity_;
+    }  
     void setCongestionLimitW(int congestionLimitW_)
     {
         congestionLimitW = congestionLimitW_;
