@@ -52,6 +52,10 @@ struct triplet
 	{
 		return z == other.z && x == other.x && y == other.y;
 	}
+	// bool operator < (const triplet& other)
+	// {
+	// 	return z < other.z;
+	// }
     triplet(const triplet& other) : x(other.x), y(other.y), z(other.z) {};
 };
 
@@ -64,6 +68,10 @@ int GetMap( int z, int x, int y, int pz)
 	{
 		return INVALID;	 
 	}
+
+	// VIA!!
+	// return (gcellGrid[z][x][y].congestion >= gcellGrid[z][x][y].congestionLimit) ? INVALID: 0;
+
 	if (pz == z)
 		return (gcellGrid[z][x][y].usedWires >= gcellGrid[z][x][y].maxWire) ? INVALID: 0;
 	else 
@@ -96,8 +104,16 @@ public:
 
 bool MapSearchNode::IsSameState( MapSearchNode &rhs )
 {
-	// same state in a maze search is simply when (z,x,y) are the same
-	return( (x == rhs.x) && (y == rhs.y) && (z == rhs.z));
+
+	// same state in a maze search is simply when (z, x,y) are the same
+	if( (x == rhs.x) && (y == rhs.y) && (z == rhs.z))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void MapSearchNode::PrintNodeInfo()
@@ -109,13 +125,22 @@ void MapSearchNode::PrintNodeInfo()
 
 // Here's the heuristic function that estimates the distance from a Node
 // to the Goal. 
+
+//changed
 float MapSearchNode::GoalDistanceEstimate( MapSearchNode &nodeGoal )
 {
 	return (abs(x - nodeGoal.x) + abs(y - nodeGoal.y) + abs(z - nodeGoal.z));
 }
+
+
+//changed
 bool MapSearchNode::IsGoal( MapSearchNode &nodeGoal )
 {
-	return ( (x == nodeGoal.x) && (y == nodeGoal.y) && (z == nodeGoal.z));
+	if( (x == nodeGoal.x) && (y == nodeGoal.y) && (z == nodeGoal.z))
+	{
+		return true;
+	}
+	return false;
 }
 
 // This generates the successors to the given Node. It uses a helper function called
@@ -123,6 +148,7 @@ bool MapSearchNode::IsGoal( MapSearchNode &nodeGoal )
 // is done for each node internally, so here you just set the state information that
 // is specific to the application
 
+//changed
 bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node )
 {
 
@@ -139,9 +165,7 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 	
 
 	MapSearchNode NewNode;
-	//
-	// ─── PUSH ALL THE POSSIBLE MOVES ────────────────────────────────────────────────
-	//
+	// push each possible move except allowing the search to go backwards
 	if( (GetMap( z,x-1, y, z) != INVALID) && layerMap[z+1] ->dir_ == LayerDir::horizontal && !((parent_x == x-1) && (parent_y == y) && (parent_z == z))) 
 	{
 		NewNode = MapSearchNode(z, x-1, y );
@@ -190,9 +214,6 @@ float MapSearchNode::GetCost( MapSearchNode &successor )
 	float funcP = ALPHA * (gcellGrid[z][x][y].usedWires / double(gcellGrid[z][x][y].maxWire)) + BETA * (gcellGrid[z][x][y].usedVias / double(gcellGrid[z][x][y].maxVia)); 
 	return funcP * 30; 
 }
-//
-// ─── USE FOR OUTPUT ─────────────────────────────────────────────────────────────
-//
 typedef struct pathCoord 
 {
 	int lx, ly, ux, uy, z;
@@ -220,12 +241,10 @@ void write_seg(int lx, int ly, int ux, int uy, int z){
     int endX = gcellGrid[z-1][ux][uy].endCoord.first;
     int endY = gcellGrid[z-1][ux][uy].endCoord.second;
     out << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
+   // cout << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
 }
 
-//
-// ─── FUNCTION TO PRINT THE GUIDE ────────────────────────────────────────────────
-//
-void printOutput()
+void printOutput2()
 {
 	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
 	{
@@ -322,9 +341,7 @@ void printOutput()
 		out << ")" << endl;
 	}
 }
-//
-// ─── THREAD CLASS ───────────────────────────────────────────────────────────────
-// https://github.com/progschj/ThreadPool
+
 class ThreadPool {
 public:
     ThreadPool(size_t);
@@ -408,10 +425,10 @@ inline ThreadPool::~ThreadPool()
     for(std::thread &worker: workers)
         worker.join();
 	// printf("Done!\n");
-	printOutput();
+	printOutput2();
 	out.close();
 }
-// ────────────────────────────────────────────────────────────────────────────────
+
 
 void putObstructions()
 {
@@ -420,7 +437,6 @@ void putObstructions()
 	int defDBU = ldp.def_.get_dbu();
     int lefDBU = ldp.lef_.get_dbu();
 
-<<<<<<< HEAD
     int i = 0;
 	for (auto & comp: compMap){
 		int x0 = comp.second->x_;
@@ -582,51 +598,11 @@ void putObstructions()
 			  //      	gcellGrid[k-1][i][j].usedVias += int(occupiedV * ratioV * 0.25);
 			  //      	cout << gcellGrid[k-1][i][j].maxWire << " " << gcellGrid[k-1][i][j].usedWires << " " << gcellGrid[k-1][i][j].maxVia << " " << gcellGrid[k-1][i][j].usedVias << endl << endl;
 					// cout << endl;
-=======
-						if (i == pMax.first)
-							endX = ux;
-						else
-							endX = gcellGrid[k-1][i][j].endCoord.first;
-						if (j == pMax.second)
-							endY = uy;
-						else
-							endY = gcellGrid[k-1][i][j].endCoord.second;
-
-                		double pitchX = layerMap[k]->pitch_x_;
-                		double pitchY = layerMap[k]->pitch_y_;
-                		int dimension = 0, occupied, occupiedV, dimension2 = 0;
-                		double ratio, ratioV;
-
-						if (layerMap[k] ->dir_ == LayerDir::horizontal){
-				           	//get difference in y
-		                    dimension = endY - startY;
-		                    ratio = (endX - startX) / double(gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first);
-		                    occupied = dimension / (pitchX * defDBU);
-		                    dimension2 = endX - startX;
-		                    ratioV = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
-                    		occupiedV = dimension2 / (pitchY * defDBU);
-                    		occupiedV *= occupied; 
-						}
-				       	if (layerMap[k] ->dir_ == LayerDir::vertical){
-				           	//get difference in x
-		                    dimension = endX - startX;
-		                    ratio = (endY - startY) / double(gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second);
-		                    occupied = dimension / (pitchY * defDBU);
-		                    dimension2 = endY - startY;
-		                    ratioV = (endX - startX) / double(gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first);
-                    		occupiedV = dimension2 / (pitchX * defDBU);
-                    		occupiedV *= occupied; 
-				       	}
-				       	gcellGrid[k-1][i][j].usedWires += int(occupied * ratio * 0.75);
-				       	gcellGrid[k-1][i][j].usedVias += int(occupiedV * ratioV * 0.25);
-					}
->>>>>>> b97b29dae3d94a19a271e88e9dc2f1a1bfd0d235
 				}
 			}
 		}
 	}
 }
-<<<<<<< HEAD
 		// 	for(auto & port: pin.second->ports_){
 
 // 		// 		int lx =  port->bbox_.lx_ * defDBU;
@@ -717,11 +693,6 @@ void putObstructions()
 // 	}
 // }
 
-=======
-//
-// ─── ORDER THE NETS ACCORDING TO WIRELENGTH ─────────────────────────────────────
-//
->>>>>>> b97b29dae3d94a19a271e88e9dc2f1a1bfd0d235
 typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::less<pair<int,string>>> pq;
 pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
@@ -763,6 +734,7 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
 			goto exit;
 		}
 		fluteTree = Flutee::flute(d, x, y, 3, mapping);
+		//printf("FLUTE wirelength of Net: %s | %d\n", net->first.c_str(), fluteTree.length);
 		ordered_nets.push({fluteTree.length, net->first});
 		exit:
 			++net;
@@ -780,9 +752,7 @@ int layerStringtoNumber(const string layerName)
     	result += layerName[i];
     return stoi(result) - 1;
 }
-//
-// ─── ASSIGN LAYERS TO STEINER NODES ─────────────────────────────────────────────
-//
+
 void dfs(shared_ptr<salt::TreeNode> node, int p_layer)
 {
 	int p_x = node->loc.x, c_x;
@@ -818,20 +788,21 @@ struct params
 	 source(source_), target(target_), threadId(threadId_), netName(netName_){};
 	 params(){};
 };
+// every thread will route a whole net!
 volatile int x = 0;
-#include <mutex>          
-std::mutex mtx; 
+#include <mutex>          // std::mutex
+std::mutex mtx;           // mutex for critical section
 void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name)	
 {
 
 	AStarSearch<MapSearchNode> astarsearch(1000000);
 	astarsearch.SetStartAndGoalStates(source, target);
+	// cout << endl << id << endl;
 
 	vector <triplet> threadResult;
 	unsigned int SearchState;
 	unsigned int SearchSteps = 0;
 	int count;
-<<<<<<< HEAD
 	// // 			Supporting blocked source and target
 	// if (gcellGrid[source.z][source.x][source.y].usedWires >=
 	// 	gcellGrid[source.z][source.x][source.y].maxWire )
@@ -847,8 +818,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 	// 	gcellGrid[target.z][target.x][target.y].maxVia)
 	// 	gcellGrid[target.z][target.x][target.y].usedVias = gcellGrid[target.z][target.x][target.y].maxVia - 2; 
 
-=======
->>>>>>> b97b29dae3d94a19a271e88e9dc2f1a1bfd0d235
 	do
 	{
 		SearchState = astarsearch.SearchStep();
@@ -869,7 +838,8 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				++count;
 			}
 
-			//gcellGrid[node->z][node->x][node->y].usedWires += 1;
+			// VIA!!
+			gcellGrid[node->z][node->x][node->y].usedWires += 1;
 
 			for (;;)
 			{
@@ -891,6 +861,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 					gcellGrid[node->z][node->x][node->y].usedWires += 1;
 				else 
 					gcellGrid[node->z][node->x][node->y].usedVias += 1;
+
 			};
 			mtx.lock();
 			allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
@@ -953,7 +924,7 @@ int main (int argc, char* argv[])
 	{
 		allNetsPath[net.first] = vector<triplet>();
 	}
-    // putObstructions();
+    putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
 	int bufferId = 0;
