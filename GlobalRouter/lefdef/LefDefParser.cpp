@@ -120,6 +120,7 @@ def::Def &LefDefParser::get_def()
     return def_;
 }
 
+// Done by OGRE team (until eof)
 vector<vector<vector<gCellGridGlobal>>> myGlobalGrid;
 
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap)

@@ -384,9 +384,10 @@ int LefParser::set_obstruction (lefrCallbackType_e, lefiObstruction* obs,
     auto geometries = obs->lefiObstruction::geometries();
     auto num_items = geometries->numItems();
 
-    // TODO
     auto& obsts = lef->pimpl_->obsts_;
     obsts.resize(num_items);
+
+    // Done by OGRE team
     string layer;
     auto m = lef->pimpl_->macros_.back();
     

@@ -72,7 +72,6 @@ int GetMap( int z, int x, int y, int pz)
 }
 
 // Definitions
-
 class MapSearchNode
 {
 public:
@@ -191,7 +190,6 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 // given this node, what does it cost to move to successor. In the case
 // of our map the answer is the map terrain value at this node since that is 
 // conceptually where we're moving
-
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
 	float funcP = ALPHA * (gcellGrid[z][x][y].usedWires / double(gcellGrid[z][x][y].maxWire)) + BETA * (gcellGrid[z][x][y].usedVias / double(gcellGrid[z][x][y].maxVia)); 
@@ -225,8 +223,10 @@ void write_seg(int lx, int ly, int ux, int uy, int z){
     int endY = gcellGrid[z-1][ux][uy].endCoord.second;
     out << startX << " " << startY << " " << endX << " " << endY << " Metal" << z << endl;
 }
-
-void printOutput2()
+//
+// ─── Print output into guide file ───────────────────────────────────────────────
+//
+void printOutput()
 {
 	for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
 	{
@@ -406,11 +406,13 @@ inline ThreadPool::~ThreadPool()
     condition.notify_all();
     for(std::thread &worker: workers)
         worker.join();
-	printOutput2();
+	printOutput();
 	out.close();
 }
 
-
+//
+// ─── Update capacity of gcells based on placement of obstructions ───────────────────────────────────────────────
+//
 void putObstructions()
 {
 	cout << "Placing Obstructions on Grid" << endl;
@@ -537,7 +539,7 @@ void putObstructions()
 
             		double utilization = (obstructionChangeInX * obstructionChangeInY) / (gcellChangeInX * gcellChangeInY);
             		if(utilization == 1){
-            			utilization = 0.9; 
+            			utilization = 0.95; 
             		}
             		int capacity = gcellGrid[k-1][i][j].capacity * (1  - utilization);
 	            	gcellGrid[k-1][i][j].setCapacity(capacity);
@@ -549,6 +551,9 @@ void putObstructions()
 	}
 }
 
+//
+// ─── Order Nets in descending order ───────────────────────────────────────────────
+//
 typedef priority_queue<pair<int, string>, vector<pair<int, string>>, std::less<pair<int,string>>> pq;
 pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
@@ -643,7 +648,11 @@ struct params
 	 source(source_), target(target_), threadId(threadId_), netName(netName_){};
 	 params(){};
 };
-// every thread will route a whole net!
+
+//
+// ─── Routing of Two-Pin Subnets ───────────────────────────────────────────────
+// ─── Every thread will route a whole net ──────────────────────────────────────
+//
 volatile int x = 0;
 #include <mutex>          // std::mutex
 std::mutex mtx;           // mutex for critical section
@@ -652,8 +661,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 
 	AStarSearch<MapSearchNode> astarsearch(1000000);
 	astarsearch.SetStartAndGoalStates(source, target);
-	// cout << endl << id << endl;
-
 	vector <triplet> threadResult;
 	unsigned int SearchState;
 	unsigned int SearchSteps = 0;
@@ -679,7 +686,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				++count;
 			}
 
-			// VIA!!
 			gcellGrid[node->z][node->x][node->y].usedWires += 1;
 
 			for (;;)
@@ -697,7 +703,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 					++count;
 				}
 				
-				// VIA!!
+				//
+				// ─── Increment utilization of Gcell ───────────────────────────────────────────────
+				//
 				if (parentNode->z == node->z)
 					gcellGrid[node->z][node->x][node->y].usedWires += 1;
 				else 
@@ -765,7 +773,7 @@ int main (int argc, char* argv[])
 	{
 		allNetsPath[net.first] = vector<triplet>();
 	}
-    // putObstructions();
+    putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
 	int bufferId = 0;

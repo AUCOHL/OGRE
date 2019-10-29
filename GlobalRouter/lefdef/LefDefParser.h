@@ -18,7 +18,7 @@
 namespace my_lefdef
 {
 
-struct gCellGridGlobal
+struct gCellGridGlobal // Done by OGRE team
 {
     pair<int, int> startCoord;
     pair<int, int> endCoord;
@@ -72,11 +72,11 @@ public:
     // Following functions will be removed soon
     def::Def &get_def();
     def::Def &def_;
-
-    vector<vector<vector<gCellGridGlobal>>> &build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap);
-
     void get_connection_locations();
 
+    // Done by OGRE team
+    vector<vector<vector<gCellGridGlobal>>> &build_Gcell_grid(unordered_map<int, lef::LayerPtr> &layerMap);
+    // Done by OGRE team
     pair<int, int> get_bounding_GCell(int x, int y);
 
 // private:
