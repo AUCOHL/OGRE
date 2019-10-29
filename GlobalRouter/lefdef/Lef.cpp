@@ -113,9 +113,6 @@ void Lef::read_lef (string filename)
     }
 
     const auto DBU = pimpl_->unit_.db_number_;
-    // cout << "min_x_pitch: " << pimpl_->min_x_pitch_ << endl;
-    // cout << "min_y_pitch: " << pimpl_->min_y_pitch_ << endl;
-    // cout << "DBU: " << DBU << endl;
     pimpl_->min_x_pitch_dbu_ = pimpl_->min_x_pitch_ * DBU;
     pimpl_->min_x_pitch_dbu_ = pimpl_->min_x_pitch_ * DBU;
     pimpl_->min_y_pitch_dbu_ = pimpl_->min_y_pitch_ * DBU;

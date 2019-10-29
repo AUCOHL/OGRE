@@ -207,76 +207,14 @@ vector<vector<vector<my_lefdef::gCellGridGlobal>>> &LefDefParser::build_Gcell_gr
         {
             for (int j = 0; j < yDimension - 1; ++j)
             {
-
-
-                // DONE
-                // string metalString = layerMap.begin()->first;
-                // metalString = metalString.substr(0, 5);
                 lef::LayerPtr l = layerMap[k + 1];
                 double pitch = layerMap[k + 1]->pitch_;
                 double pitchX = layerMap[k + 1]->pitch_x_ * defDBU;
                 double pitchY = layerMap[k + 1]->pitch_y_ * defDBU;
-                int dimension = 0, freeWires, freeVias, dimension2;
-                long long Area = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-                Area *= (myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first);
-                int capacity = Area / (long long) (pitchX * pitchY);
+                int capacity = myGlobalGrid[k][i][j].area / (long long) (pitchX * pitchY);
                 myGlobalGrid[k][i][j].setCapacity(capacity);
                 myGlobalGrid[k][i][j].maxWire = capacity * 0.75;
                 myGlobalGrid[k][i][j].maxVia = capacity * 0.25;
-
-                // if (l->dir_ == LayerDir::horizontal)
-                // { //get difference in y
-                //     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-                //     freeWires = dimension  / (pitchX * defDBU);
-                //     dimension2 = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
-                //     freeVias = dimension2 / (pitchY * defDBU);
-                //     freeVias *= freeWires; 
-                // }
-                // else if (l->dir_ == LayerDir::vertical)
-                // { //get difference in x
-                //     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
-                //     freeWires = dimension / (pitchY * defDBU);
-                //     freeVias = freeWires / (pitchX * defDBU);
-                //     dimension2 = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-                //     freeVias = dimension2 / (pitchY * defDBU);
-                //     freeVias *= freeWires; 
-                // }
-                // //get number of free wires in cell
-                // myGlobalGrid[k][i][j].setCongestionLimitW(freeWires);
-                // myGlobalGrid[k][i][j].setCongestionLimitV(freeVias);
-                // myGlobalGrid[k][i][j].setWireCap(freeWires * 0.75);
-                // myGlobalGrid[k][i][j].setViaCap(freeVias * 0.25);
-                // // cout << "Max Wire Capacity " << freeWires << " " << int (freeWires * 0.75) << " Max Via Capacity " << freeVias << " " << int (freeVias * 0.25) << endl; 
-                // if (l->dir_ == LayerDir::horizontal)
-                // { 
-                //     //
-                //     // GET DIFFERENCE IN Y
-                //     //  
-                //     dimension = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-                //     freeWires = dimension  / (pitchX * defDBU);
-                //     dimension2 = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
-                //     freeVias = dimension2 / (pitchY * defDBU);
-                //     freeVias *= freeWires; 
-                // }
-                // else if (l->dir_ == LayerDir::vertical)
-                // { 
-                //     //
-                //     // GET DIFFERENCE IN X
-                //     //        
-                //     dimension = myGlobalGrid[k][i][j].endCoord.first - myGlobalGrid[k][i][j].startCoord.first;
-                //     freeWires = dimension / (pitchY * defDBU);
-                //     freeVias = freeWires / (pitchX * defDBU);
-                //     dimension2 = myGlobalGrid[k][i][j].endCoord.second - myGlobalGrid[k][i][j].startCoord.second;
-                //     freeVias = dimension2 / (pitchY * defDBU);
-                //     freeVias *= freeWires; 
-                // }
-                // //
-                // // GET NUMBER OF FREE WIRES IN CELL
-                // //
-                // myGlobalGrid[k][i][j].setCongestionLimitW(freeWires);
-                // myGlobalGrid[k][i][j].setCongestionLimitV(freeVias);
-                // myGlobalGrid[k][i][j].setWireCap(freeWires * 0.75);
-                // myGlobalGrid[k][i][j].setViaCap(freeVias * 0.25);
             }
         }
     }
