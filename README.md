@@ -51,5 +51,7 @@ make all
 * Doctor Mohamed Shalan was our advisor for the contest.
 * Lef Def parser's author is [jinwookjungs](https://github.com/jinwookjungs)
 * Fast Implementation of A star algorithm in 2D [justinhj](https://github.com/justinhj/astar-algorithm-cpp)
+* FLUTE: Fast Lookup Table Based Technique for RSMT Construction and Wirelength Estimation (http://home.eng.iastate.edu/~cnchu/flute.html)
+* SALT: Steiner Shallow-Light Tree for VLSI Routing. (https://github.com/chengengjie/salt)
 
 
