@@ -139,13 +139,6 @@ ostream& operator<< (ostream& os, const Via& v);
  */
 struct Obst
 {
-    string layerS; 
-    int layer; 
-    float xl;
-    float yl;
-    float xh; 
-    float yh; 
-    // 
 };
 
 

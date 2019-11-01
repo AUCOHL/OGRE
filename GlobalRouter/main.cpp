@@ -193,7 +193,7 @@ bool MapSearchNode::GetSuccessors( AStarSearch<MapSearchNode> *astarsearch, MapS
 float MapSearchNode::GetCost( MapSearchNode &successor )
 {
 	float funcP = ALPHA * (gcellGrid[z][x][y].usedWires / double(gcellGrid[z][x][y].maxWire)) + BETA * (gcellGrid[z][x][y].usedVias / double(gcellGrid[z][x][y].maxVia)); 
-	return funcP * 30; 
+	return funcP * 20; 
 }
 typedef struct pathCoord 
 {
@@ -408,147 +408,6 @@ inline ThreadPool::~ThreadPool()
         worker.join();
 	printOutput();
 	out.close();
-}
-
-//
-// ─── Update capacity of gcells based on placement of obstructions ───────────────────────────────────────────────
-//
-void putObstructions()
-{
-	cout << "Placing Obstructions on Grid" << endl;
-	auto& ldp = my_lefdef::LefDefParser::get_instance();
-	unordered_map<string, def::ComponentPtr> compMap = ldp.def_.get_component_umap();
-	int defDBU = ldp.def_.get_dbu();
-    int lefDBU = ldp.lef_.get_dbu();
-
-    int i = 0;
-	for (auto & comp: compMap){
-		int x0 = comp.second->x_;
-		int y0 = comp.second->y_;
-		int W = comp.second-> lef_macro_ -> size_x_ * defDBU;
-		int H = comp.second-> lef_macro_ -> size_y_ * defDBU;
-		string orientation = comp.second->orient_str_;
-
-		for(auto & obs: comp.second-> lef_macro_->obsts){
-			// cout <<comp.second->  lef_macro_->name_;
-
-			//using units of DEF
-			int x = obs.xl * defDBU;
-			int y = obs.yl * defDBU;
-			int ux = obs.xh * defDBU;
-			int uy = obs.yh * defDBU;
-
-			int w = ux - x;
-			int h = uy - y; 
-
-			int xl, yl, xh, yh; 
-
-
-			//getting the coordinates of the obstruction after placement  
-			if (orientation == "N"){
-				xl = x0 + x;
-				yl = y0 + y;
-				xh = xl + w;
-				yh = yl + h; 
-
-			} else if (orientation == "FN"){
-				xl = x0 + W - x - w; 
-				yl = y0 + y;
-				xh = xl + w;
-				yh = yl + h; 
-				
-			} else if (orientation == "S"){
-				xl = x0 + W - x - w;
-				yl = y0 + H - y - h; 
-				xh = xl + w;
-				yh = yl + h; 
-
-			} else if (orientation == "FS"){
-				xl = x0 + x;
-				yl = y0 + H - y - h;
-				xh = xl + w;
-				yh = yl + h; 
-
-			} else if (orientation == "W"){
-				xl = x0 + H - y - h;
-				yl = y0 + x; 
-				xh = xl + h; 
-				yh = yl + w; 
-
-			} else if (orientation == "FW"){
-				xl = x0 + y;
-				yl = y0 + x;
-				xh = xl + h; 
-				yh = yl + w; 
-
-			} else if (orientation == "E"){
-				xl = x0 + y;
-				yl = y0 + W - x - w;
-				xh = xl + h; 
-				yh = yl + w; 
-
-			} else if (orientation == "FE"){
-				xl = x0 + H - y - h; 
-				yl = y0 + W - x - w; 
-				xh = xl + h; 
-				yh = yl + w; 
-
-			} else {
-				xl = x0 + x;
-				yl = y0 + y;
-				xh = xl + w;
-				yh = yl + h; 
-			}
-			int k = obs.layer;
-			pair<int, int> pMin;
-			pair<int, int> pMax;
-			pMin = ldp.get_bounding_GCell(xl, yl);
-			pMax = ldp.get_bounding_GCell(xh, yh);
-			pair <int, int> temp = pMin;
-			pMin = {min(pMin.first, pMax.first), min(pMin.second, pMax.second)};
-			pMax = {max(temp.first, pMax.first), max(temp.second, pMax.second)};
-
-			int startX, startY, endX, endY;
-			for (int i = pMin.first; i<=pMax.first; i++){
-
-				for (int j=pMin.second; j<=pMax.second; j++){
-					if (i == pMin.first)
-						startX = xl;
-					else
-						startX = gcellGrid[k-1][i][j].startCoord.first;
-					if (j == pMin.second)
-						startY = yl;
-					else
-						startY = gcellGrid[k-1][i][j].startCoord.second;
-
-					if (i == pMax.first)
-						endX = xh;
-					else
-						endX = gcellGrid[k-1][i][j].endCoord.first;
-					if (j == pMax.second)
-						endY = yh;
-					else
-						endY = gcellGrid[k-1][i][j].endCoord.second;
-            		double pitchX = layerMap[k]->pitch_x_ * defDBU;
-            		double pitchY = layerMap[k]->pitch_y_ * defDBU;
-
-            		double obstructionChangeInX = endX - startX;
-            		double obstructionChangeInY = endY - startY;
-            		double gcellChangeInX = gcellGrid[k-1][i][j].endCoord.first - gcellGrid[k-1][i][j].startCoord.first;
-            		double gcellChangeInY = gcellGrid[k-1][i][j].endCoord.second - gcellGrid[k-1][i][j].startCoord.second;
-
-            		double utilization = (obstructionChangeInX * obstructionChangeInY) / (gcellChangeInX * gcellChangeInY);
-            		if(utilization == 1){
-            			utilization = 0.95; 
-            		}
-            		int capacity = gcellGrid[k-1][i][j].capacity * (1  - utilization);
-	            	gcellGrid[k-1][i][j].setCapacity(capacity);
-	                gcellGrid[k-1][i][j].setWireCap(capacity * 0.75);
-	                gcellGrid[k-1][i][j].setViaCap(capacity * 0.25);
-				}
-			}
-		}
-	}
 }
 
 //
@@ -773,7 +632,6 @@ int main (int argc, char* argv[])
 	{
 		allNetsPath[net.first] = vector<triplet>();
 	}
-    putObstructions();
 	puts("Starting to Route!");
 	int net_id = 0;
 	int bufferId = 0;
