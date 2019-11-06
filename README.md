@@ -48,7 +48,7 @@ make all
 
 ## Acknowledgments
 
-* Doctor Mohamed Shalan [(shalan)](https://github.com/shalan) was our advisor for the contest.
+* Doctor Mohamed Shalan [shalan](https://github.com/shalan) was our advisor for the contest.
 * Lef Def parser's author is [jinwookjungs](https://github.com/jinwookjungs)
 * Fast Implementation of A star algorithm in 2D [justinhj](https://github.com/justinhj/astar-algorithm-cpp)
 * FLUTE: Fast Lookup Table Based Technique for RSMT Construction and Wirelength Estimation (http://home.eng.iastate.edu/~cnchu/flute.html)
