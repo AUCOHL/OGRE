@@ -8,6 +8,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
+Make sure to first have G++ Compiler and Boost.
+
 What things you need to do to get the Lef Def Parser working
 ```shell
 git clone https://github.com/fadymoh/Global-Router-ICCAD-Contest
