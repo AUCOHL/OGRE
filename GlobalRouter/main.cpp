@@ -543,8 +543,9 @@ void putObstructions()
             		}
             		int capacity = gcellGrid[k-1][i][j].capacity * (1  - utilization);
 	            	gcellGrid[k-1][i][j].setCapacity(capacity);
-	                gcellGrid[k-1][i][j].setWireCap(capacity * 0.75);
-	                gcellGrid[k-1][i][j].setViaCap(capacity * 0.25);
+	                gcellGrid[k-1][i][j].setWireCap(capacity * 1- (0.5(utilization)+0.25));
+	                gcellGrid[k-1][i][j].setViaCap(capacity * 0.5(utilization)+0.25);
+
 				}
 			}
 		}
