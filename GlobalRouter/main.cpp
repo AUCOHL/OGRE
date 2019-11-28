@@ -778,11 +778,12 @@ int main (int argc, char* argv[])
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
 
-	auto x = orderNets(nets);
-	queue <decltype(x.top())> ordered_nets;
+	pq x = orderNets(nets);
+	queue <pair<int, string>> ordered_nets;
 	for (int i = 0;i<x.size();i++)
 	{
-		ordered_nets.push(x.top());
+		pair<int, string> b = x.top();
+		ordered_nets.push(b);
 		x.pop();
 	}
 
@@ -804,26 +805,34 @@ int main (int argc, char* argv[])
 REROUTE:
 	if (failed)
 	{
-		queue<decltype(x.top())> empty;
+		queue<pair<int, string>> empty;
    		swap(ordered_nets, empty);
 
-		int w = ordered_nets_backup.size();
+		auto ordered_nets_backup2 = ordered_nets_backup;
+		int w = ordered_nets_backup2.size();
+		pair<int, string> a;
 		for (int i =0 ;i<w; i++)
 		{
-			if (ordered_nets_backup.front().second == failedNetName)
+			a = ordered_nets_backup2.front();
+			if (a.second == failedNetName)
 			{
-				ordered_nets.push(ordered_nets_backup.front());
+				ordered_nets.push(a);
 				break;
 			}
+			ordered_nets_backup2.pop();
 		}
-		for (int j =0 ;j<w; j++)
+		int ww = ordered_nets_backup.size();
+		pair<int, string> c;
+		for (int j =0 ;j<ww; j++)
 		{
-			if (ordered_nets_backup.front().second != failedNetName)
+			c = ordered_nets_backup.front();
+			if (c.second == failedNetName)
 			{
-				ordered_nets.push(ordered_nets_backup.front());
 				ordered_nets_backup.pop();
+				c = ordered_nets_backup.front();
 			}
-
+			ordered_nets.push(c);
+			ordered_nets_backup.pop();
 		}
 		ordered_nets_backup = ordered_nets;
 		failed = false;
