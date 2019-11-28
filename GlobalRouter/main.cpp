@@ -39,6 +39,8 @@ int zDimension, xDimension, yDimension;
 vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGrid;
 unordered_map <int, lef::LayerPtr> layerMap;
 ofstream out;
+bool failed = false;
+string failedNetName;
 
 struct triplet
 {
@@ -543,8 +545,8 @@ void putObstructions()
             		}
             		int capacity = gcellGrid[k-1][i][j].capacity * (1  - utilization);
 	            	gcellGrid[k-1][i][j].setCapacity(capacity);
-	                gcellGrid[k-1][i][j].setWireCap(capacity * 1- (0.5(utilization)+0.25));
-	                gcellGrid[k-1][i][j].setViaCap(capacity * 0.5(utilization)+0.25);
+	                gcellGrid[k-1][i][j].setWireCap(capacity * 1- ((0.5*utilization)+0.25));
+	                gcellGrid[k-1][i][j].setViaCap(capacity * ((0.5*utilization)+0.25));
 
 				}
 			}
@@ -689,7 +691,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 
 			gcellGrid[node->z][node->x][node->y].usedWires += 1;
 
-			for (;;)
+			do
 			{
 				MapSearchNode* parentNode = node; 
 				node = astarsearch.GetSolutionNext();
@@ -712,7 +714,9 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 				else 
 					gcellGrid[node->z][node->x][node->y].usedVias += 1;
 
-			};
+			}while(!failed);
+			if (failed)
+				return;
 			mtx.lock();
 			allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
 			mtx.unlock();
@@ -720,7 +724,12 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 		} 
 		else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)   
 		{
-			printf("Search terminated. Did not find goal state\n");
+			printf("Search terminated. will Ripup and reroute\n");
+			failedNetName = name;
+			mtx.lock();
+			failed = true;
+			mtx.unlock();
+			return;
 		}
     	astarsearch.EnsureMemoryFreed();
 		++x;
@@ -768,7 +777,16 @@ int main (int argc, char* argv[])
 	
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
-	auto ordered_nets = orderNets(nets);
+
+	auto x = orderNets(nets);
+	queue <decltype(x.top())> ordered_nets;
+	for (int i = 0;i<x.size();i++)
+	{
+		ordered_nets.push(x.top());
+		x.pop();
+	}
+
+	auto ordered_nets_backup = ordered_nets;
 	int netCounter=0;
 	for (auto net: nets)
 	{
@@ -782,10 +800,62 @@ int main (int argc, char* argv[])
 
 	//
 	// ─── START ROUTING ──────────────────────────────────────────────────────────────
-	//
+	//	
+REROUTE:
+	if (failed)
+	{
+		queue<decltype(x.top())> empty;
+   		swap(ordered_nets, empty);
+
+		int w = ordered_nets_backup.size();
+		for (int i =0 ;i<w; i++)
+		{
+			if (ordered_nets_backup.front().second == failedNetName)
+			{
+				ordered_nets.push(ordered_nets_backup.front());
+				break;
+			}
+		}
+		for (int j =0 ;j<w; j++)
+		{
+			if (ordered_nets_backup.front().second != failedNetName)
+			{
+				ordered_nets.push(ordered_nets_backup.front());
+				ordered_nets_backup.pop();
+			}
+
+		}
+		ordered_nets_backup = ordered_nets;
+		failed = false;
+
+		// auto n = ordered_nets_backup.top();
+		// vector<decltype(n)> temp;
+		// while (ordered_nets_backup.size())
+		// {
+			
+		// 	if (ordered_nets_backup.top().second == failedNetName)
+		// 	{
+		// 		auto check = ordered_nets_backup.top();
+		// 		temp.insert(temp.begin(), ordered_nets_backup.top());
+		// 		ordered_nets_backup.pop();
+		// 	}
+		// 	else
+		// 	{
+		// 		temp.push_back(ordered_nets_backup.top());
+		// 		ordered_nets_backup.pop();
+		// 	}
+		// }
+		// for (int i = 0 ; i<temp.size();i++)
+		// {
+		// 	ordered_nets.push(temp[i]);
+		// }
+		// ordered_nets_backup = ordered_nets;
+		// failed = false;
+	}
+
 	while(ordered_nets.size())
     {
-		auto netName = ordered_nets.top(); ordered_nets.pop();
+		auto netName = ordered_nets.front(); ordered_nets.pop();
 		auto &net = nets[netName.second];
 
 		double eps = 0.0;	// setting for shallowness vs. lightness
@@ -821,6 +891,8 @@ int main (int argc, char* argv[])
 				// SCHEDULE JOBS FOR 2-PIN NETS
 				//
 				tp.enqueue(routeTwoPoints, start, goal, bufferId, name );
+				if (failed)
+					goto REROUTE;
 				
 				++bufferId;
 				bufferId %= threadsCounter;
