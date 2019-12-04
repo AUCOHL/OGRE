@@ -675,7 +675,7 @@ struct params
 volatile int x = 0;
 #include <mutex> // std::mutex
 std::mutex mtx;  // mutex for critical section
-bool failed2 = false;
+bool failed = false;
 void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name, bool &failed)
 {
     cout<<"before declarations"<<endl;
@@ -742,7 +742,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
             else
                 gcellGrid[node->z][node->x][node->y].usedVias += 1;
 
-        } while (!failed2);
+        } while (!failed);
         mtx.lock();
         allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
         mtx.unlock();
@@ -753,15 +753,12 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
         cout << "Search terminated. will Ripup and reroute\n";
         //failedNetName = name;
         //cout << failedNetName << endl;
-        cout << "why you fucking hoe" << endl;
         mtx.lock();
-        failed2 = true;
+        failed = true;
         //cout << "FAILED GOA: " << failed << endl;
         mtx.unlock();
-        cout << "fucking hoe " << failed2 << endl;
         //return;
     }
-    else {cout<<"???????????\n";}
     else {cout<<"???????????\n";}
     cout << "FAILED GOA 2: "<< endl;
     astarsearch.EnsureMemoryFreed();
@@ -795,12 +792,12 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
         // SCHEDULE JOBS FOR 2-PIN NETS
         //
         //routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name, bool &failed);
-        failed2 = false;
+        failed = false;
         cout<<"def here"<<endl;
         //routeTwoPoints(start, goal, bufferId, name, failed);
-        tp.enqueue(routeTwoPoints, start, goal, bufferId, name, failed2);
-        cout<<"failed is --> "<<failed2<<endl;
-        if (failed2)
+        tp.enqueue(routeTwoPoints, start, goal, bufferId, name, std::ref(failed));
+        cout<<"failed is --> "<<failed<<endl;
+        if (failed)
         {
             cout << "d5alt aho" << endl;
             gcellGrid = gcellGridCopy;
@@ -814,8 +811,8 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
                 route_nodes.insert(route_nodes.begin(), x );
                 break;
             }
-            failed2 = false;
-            Route(failed2,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy);
+            failed = false;
+            Route(failed,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy);
             return;
         }
         cout<<"before end"<<endl;
