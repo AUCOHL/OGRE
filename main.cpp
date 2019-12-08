@@ -2,7 +2,7 @@
  * @file    main.cpp
  * @author  Ali El-Said, Fady Mohamed, Habiba Gamal
  * @date    2019-6-1
-*/
+ */
 
 #include "common/common_header.h"
 #include <boost/functional/hash.hpp>
@@ -64,7 +64,7 @@ int GetMap(int z, int x, int y, int pz)
     {
         return INVALID;
     }
-
+    
     if (pz == z)
         return (gcellGrid[z][x][y].usedWires >= gcellGrid[z][x][y].maxWire) ? INVALID : 0;
     else
@@ -85,7 +85,7 @@ public:
         x = px;
         y = py;
     }
-
+    
     float GoalDistanceEstimate(MapSearchNode &nodeGoal);
     bool IsGoal(MapSearchNode &nodeGoal);
     bool GetSuccessors(AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node);
@@ -100,7 +100,7 @@ public:
 
 bool MapSearchNode::IsSameState(MapSearchNode &rhs)
 {
-
+    
     // same state in a maze search is simply when (z, x,y) are the same
     if ((x == rhs.x) && (y == rhs.y) && (z == rhs.z))
     {
@@ -135,18 +135,18 @@ bool MapSearchNode::IsGoal(MapSearchNode &nodeGoal)
 
 bool MapSearchNode::GetSuccessors(AStarSearch<MapSearchNode> *astarsearch, MapSearchNode *parent_node)
 {
-
+    
     int parent_x = -1;
     int parent_y = -1;
     int parent_z = -1;
-
+    
     if (parent_node)
     {
         parent_x = parent_node->x;
         parent_y = parent_node->y;
         parent_z = parent_node->z;
     }
-
+    
     MapSearchNode NewNode;
     // push each possible move except allowing the search to go backwards
     if ((GetMap(z, x - 1, y, z) != INVALID) && layerMap[z + 1]->dir_ == LayerDir::horizontal && !((parent_x == x - 1) && (parent_y == y) && (parent_z == z)))
@@ -154,31 +154,31 @@ bool MapSearchNode::GetSuccessors(AStarSearch<MapSearchNode> *astarsearch, MapSe
         NewNode = MapSearchNode(z, x - 1, y);
         astarsearch->AddSuccessor(NewNode);
     }
-
+    
     if ((GetMap(z, x, y - 1, z) != INVALID) && layerMap[z + 1]->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y - 1) && (parent_z == z)))
     {
         NewNode = MapSearchNode(z, x, y - 1);
         astarsearch->AddSuccessor(NewNode);
     }
-
+    
     if ((GetMap(z, x + 1, y, z) != INVALID) && layerMap[z + 1]->dir_ == LayerDir::horizontal && !((parent_x == x + 1) && (parent_y == y) && (parent_z == z)))
     {
         NewNode = MapSearchNode(z, x + 1, y);
         astarsearch->AddSuccessor(NewNode);
     }
-
+    
     if ((GetMap(z, x, y + 1, z) != INVALID) && layerMap[z + 1]->dir_ == LayerDir::vertical && !((parent_x == x) && (parent_y == y + 1) && (parent_z == z)))
     {
         NewNode = MapSearchNode(z, x, y + 1);
         astarsearch->AddSuccessor(NewNode);
     }
-
+    
     if ((GetMap(z - 1, x, y, z) != INVALID) && !((parent_x == x) && (parent_y == y) && (parent_z == z - 1)))
     {
         NewNode = MapSearchNode(z - 1, x, y);
         astarsearch->AddSuccessor(NewNode);
     }
-
+    
     if ((GetMap(z + 1, x, y, z) != INVALID) && !((parent_x == x) && (parent_y == y) && (parent_z == z + 1)))
     {
         NewNode = MapSearchNode(z + 1, x, y);
@@ -202,7 +202,7 @@ typedef struct pathCoord
     {
         return lx == other.lx && ly == other.ly && ux == other.ux && uy == other.uy && z == other.z;
     }
-
+    
 } pathCoord_t;
 
 class MyHashFunction {
@@ -232,14 +232,14 @@ void printOutput()
     for (auto it = allNetsPath.begin(); it != allNetsPath.end(); ++it)
     {
         out << it->first << endl
-            << "(" << endl;
+        << "(" << endl;
         auto myPath = it->second;
         if (myPath.size() <= 0)
         {
             out << ")" << endl;
             continue;
         }
-
+        
         int layerMax = layerMap.size();
         vector<vector<pair<int, int>>> routes(layerMax + 1);
         for (int i = 0; i < myPath.size(); i++)
@@ -343,13 +343,13 @@ public:
     auto enqueue(F &&f, Args &&... args)
     -> std::future<typename std::result_of<F(Args...)>::type>;
     ~ThreadPool();
-
+    
 private:
     // need to keep track of threads so we can join them
     std::vector<std::thread> workers;
     // the task queue
     std::queue<std::function<void()>> tasks;
-
+    
     // synchronization
     std::mutex queue_mutex;
     std::condition_variable condition;
@@ -358,28 +358,28 @@ private:
 
 // the constructor just launches some amount of workers
 inline ThreadPool::ThreadPool(size_t threads)
-        : stop(false)
+: stop(false)
 {
     for (size_t i = 0; i < threads; ++i)
         workers.emplace_back(
-                [this] {
-                    for (;;)
-                    {
-                        std::function<void()> task;
-
-                        {
-                            std::unique_lock<std::mutex> lock(this->queue_mutex);
-                            this->condition.wait(lock,
-                                                 [this] { return this->stop || !this->tasks.empty(); });
-                            if (this->stop && this->tasks.empty())
-                                return;
-                            task = std::move(this->tasks.front());
-                            this->tasks.pop();
-                        }
-
-                        task();
-                    }
-                });
+                             [this] {
+                                 for (;;)
+                                 {
+                                     std::function<void()> task;
+                                     
+                                     {
+                                         std::unique_lock<std::mutex> lock(this->queue_mutex);
+                                         this->condition.wait(lock,
+                                                              [this] { return this->stop || !this->tasks.empty(); });
+                                         if (this->stop && this->tasks.empty())
+                                             return;
+                                         task = std::move(this->tasks.front());
+                                         this->tasks.pop();
+                                     }
+                                     
+                                     task();
+                                 }
+                             });
 }
 
 // add new work item to the pool
@@ -388,16 +388,16 @@ auto ThreadPool::enqueue(F &&f, Args &&... args)
 -> std::future<typename std::result_of<F(Args...)>::type>
 {
     using return_type = typename std::result_of<F(Args...)>::type;
-
+    
     auto task = std::make_shared<std::packaged_task<return_type()>>(
-            std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+                                                                    std::bind(std::forward<F>(f), std::forward<Args>(args)...));
     std::future<return_type> res = task->get_future();
     {
         std::unique_lock<std::mutex> lock(queue_mutex);
         // don't allow enqueueing after stopping the pool
         if (stop)
             throw std::runtime_error("enqueue on stopped ThreadPool");
-
+        
         tasks.emplace([task]() { (*task)(); });
     }
     condition.notify_one();
@@ -428,7 +428,7 @@ void putObstructions()
     unordered_map<string, def::ComponentPtr> compMap = xldp.def_.get_component_umap();
     int defDBU = xldp.def_.get_dbu();
     int lefDBU = xldp.lef_.get_dbu();
-
+    
     int i = 0;
     for (auto &comp : compMap)
     {
@@ -437,22 +437,22 @@ void putObstructions()
         int W = comp.second->lef_macro_->size_x_ * defDBU;
         int H = comp.second->lef_macro_->size_y_ * defDBU;
         string orientation = comp.second->orient_str_;
-
+        
         for (auto &obs : comp.second->lef_macro_->obsts)
         {
             // cout <<comp.second-> lef_macro_->name_;
-
+            
             //using units of DEF
             int x = obs.xl * defDBU;
             int y = obs.yl * defDBU;
             int ux = obs.xh * defDBU;
             int uy = obs.yh * defDBU;
-
+            
             int w = ux - x;
             int h = uy - y;
-
+            
             int xl, yl, xh, yh;
-
+            
             cout << "putObstructions(1)" << endl;
             //getting the coordinates of the obstruction after placement
             if (orientation == "N")
@@ -530,7 +530,7 @@ void putObstructions()
             int startX, startY, endX, endY;
             for (int i = pMin.first; i <= pMax.first; i++)
             {
-
+                
                 for (int j = pMin.second; j <= pMax.second; j++)
                 {
                     if (i == pMin.first)
@@ -541,7 +541,7 @@ void putObstructions()
                         startY = yl;
                     else
                         startY = gcellGrid[k - 1][i][j].startCoord.second;
-
+                    
                     if (i == pMax.first)
                         endX = xh;
                     else
@@ -552,18 +552,23 @@ void putObstructions()
                         endY = gcellGrid[k - 1][i][j].endCoord.second;
                     double pitchX = layerMap[k]->pitch_x_ * defDBU;
                     double pitchY = layerMap[k]->pitch_y_ * defDBU;
-
+                    
                     double obstructionChangeInX = endX - startX;
                     double obstructionChangeInY = endY - startY;
                     double gcellChangeInX = gcellGrid[k - 1][i][j].endCoord.first - gcellGrid[k - 1][i][j].startCoord.first;
                     double gcellChangeInY = gcellGrid[k - 1][i][j].endCoord.second - gcellGrid[k - 1][i][j].startCoord.second;
-
+                    
                     double utilization = (obstructionChangeInX * obstructionChangeInY) / (gcellChangeInX * gcellChangeInY);
-//                    if(utilization == 1){
-//                        utilization = 0.95;
-//                    }
+                    //                    if(utilization == 1){
+                    //                        utilization = 0.95;
+                    //                    }
+                    
                     int capacity = gcellGrid[k - 1][i][j].capacity * (1 - utilization);
                     gcellGrid[k - 1][i][j].setCapacity(capacity);
+                    if (gcellGrid[k-1][i][j].capacity == 0 && k==1 && i == 0 && j ==0)
+                    {
+                        cout << gcellGrid[k-1][i][j].capacity << endl;
+                    }
                     gcellGrid[k-1][i][j].setWireCap(capacity * 1- ((-2*pow(utilization,2))+2*utilization+0.25));
                     gcellGrid[k-1][i][j].setViaCap(capacity * ((-2*pow(utilization,2))+2*utilization+0.25));
                     cout << "DONE WITH putObstructions()" << endl;
@@ -581,7 +586,7 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
 {
     auto net = nets.begin();
     auto &xldp = my_lefdef::LefDefParser::get_instance();
-
+    
     Flutee::Tree fluteTree;
     int flutewl;
     Flutee::readLUT("POWV9.dat", "PORT9.dat");
@@ -591,10 +596,10 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
     {
         d = 0;
         int connectionSize = net->second->connections_.size();
-
+        
         int64_t *x = new int64_t[connectionSize + 10], *y = new int64_t[connectionSize + 10];
         int *mapping = new int[connectionSize + 1];
-
+        
         for (int i = 0; i < connectionSize; ++i)
         {
             int xCoord = net->second->connections_[i]->lx_;
@@ -617,7 +622,7 @@ pq orderNets(unordered_map<string, def::NetPtr> &nets)
         }
         fluteTree = Flutee::flute(d, x, y, 3, mapping);
         ordered_nets.push({fluteTree.length, net->first});
-        exit:
+    exit:
         ++net;
     }
     return ordered_nets;
@@ -639,12 +644,12 @@ void dfs(shared_ptr<salt::TreeNode> node, int p_layer)
     int p_x = node->loc.x, c_x;
     int p_y = node->loc.y, c_y;
     int p_z, c_z;
-
+    
     if (idMap.find(node->id) != idMap.end())
         p_z = idMap[node->id].second;
     else
         p_z = p_layer; // node is a steiner node
-
+    
     for (auto child : node->children)
     {
         c_x = child->loc.x;
@@ -667,6 +672,7 @@ struct params
     params(MapSearchNode source_, MapSearchNode target_, int threadId_, string netName_) : source(source_), target(target_), threadId(threadId_), netName(netName_){};
     params(){};
 };
+auto &ldp = my_lefdef::LefDefParser::get_instance();
 
 //
 // ─── Routing of Two-Pin Subnets ───────────────────────────────────────────────
@@ -678,6 +684,41 @@ std::mutex mtx;  // mutex for critical section
 bool failed = false;
 void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name, bool &failed)
 {
+    bool undoChanges = false;
+    
+    //    if (gcellGrid[source.z][source.x][source.y].capacity == 0 || (gcellGrid[source.z][source.x][source.y].usedWires >= gcellGrid[source.z][source.x][source.y].maxWire))
+    //    {
+    //        gcellGrid[source.z][source.x][source.y].setCapacity(gcellGrid[source.z][source.x][source.y].capacity+200);
+    //        gcellGrid[source.z][source.x][source.y].setWireCap(gcellGrid[source.z][source.x][source.y].maxWire+100);
+    //        gcellGrid[source.z][source.x][source.y].setWireCap(gcellGrid[source.z][source.x][source.y].maxVia+100);
+    //    }
+    //    if (gcellGrid[source.z][source.x][source.y].capacity == 0 ||  (gcellGrid[target.z][target.x][target.y].usedWires >= gcellGrid[target.z][target.x][target.y].maxWire))
+    //    {
+    //        gcellGrid[target.z][target.x][target.y].setCapacity(gcellGrid[target.z][target.x][target.y].capacity+200);
+    //        gcellGrid[target.z][target.x][target.y].setWireCap(gcellGrid[target.z][target.x][target.y].maxWire+100);
+    //        gcellGrid[target.z][target.x][target.y].setWireCap(gcellGrid[target.z][target.x][target.y].maxVia+100);
+    //    }
+    if (gcellGrid[source.z][source.x][source.y].capacity == 0 || gcellGrid[target.z][target.x][target.y].capacity == 0)
+    {
+        undoChanges = true;
+        int zz = gcellGrid.size();
+        int xx = gcellGrid[0].size();
+        int yy = gcellGrid[0][0].size();
+        for (int ziter = 0;ziter<zz;ziter++)
+        {
+            for (int xiter = 0 ;xiter<xx;xiter++)
+            {
+                for (int yiter = 0;yiter<yy;yiter++)
+                {
+                    gcellGrid[ziter][xiter][yiter].setCapacity(gcellGrid[ziter][xiter][yiter].capacity+2);
+                    gcellGrid[ziter][xiter][yiter].setWireCap(gcellGrid[ziter][xiter][yiter].maxWire+1);
+                    gcellGrid[ziter][xiter][yiter].setViaCap(gcellGrid[ziter][xiter][yiter].maxVia+1);
+                }
+            }
+        }
+        
+    }
+    
     cout<<"before declarations"<<endl;
     AStarSearch<MapSearchNode> astarsearch(1000000);
     astarsearch.SetStartAndGoalStates(source, target);
@@ -686,20 +727,24 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
     unsigned int SearchSteps = 0;
     int count;
     cout<<"before dowhile"<<SearchState<< endl;
+    
+    
+    
     do
     {
-        cout<<"!"<<SearchSteps;
+        //cout<<"!"<<SearchSteps;
         SearchState = astarsearch.SearchStep();
-        cout<<"!"<<SearchSteps;
+        //cout<<"!"<<SearchSteps;
         SearchSteps++;
         if (SearchSteps>10000)
         {
+            cout<<"!!!"<<endl;
             SearchState = AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED;
         }
-
+        
     } while (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SEARCHING);
-    cout<<"seems like here"<<endl;
-
+    cout<<"!!"<<SearchSteps<<"!!";
+    
     if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED)
     {
         cout << "SUCCEEDED" << endl;
@@ -710,14 +755,14 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
         {
             if (addition < 0 || addition >= zDimension || count >= 2)
                 continue;
-
+            
             threadResult.push_back({addition, node->x, node->y});
-
+            
             ++count;
         }
-
+        
         gcellGrid[node->z][node->x][node->y].usedWires += 1;
-
+        
         do
         {
             MapSearchNode *parentNode = node;
@@ -730,10 +775,10 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
                 if (addition < 0 || addition >= zDimension || count >= 2)
                     continue;
                 threadResult.push_back({addition, node->x, node->y});
-
+                
                 ++count;
             }
-
+            
             //
             // ─── Increment utilization of Gcell ───────────────────────────────────────────────
             //
@@ -741,32 +786,65 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
                 gcellGrid[node->z][node->x][node->y].usedWires += 1;
             else
                 gcellGrid[node->z][node->x][node->y].usedVias += 1;
-
+            
         } while (!failed);
+        
         mtx.lock();
         allNetsPath[name].insert(allNetsPath[name].begin(), threadResult.begin(), threadResult.end());
         mtx.unlock();
         astarsearch.FreeSolutionNodes();
+        
+        if (undoChanges)
+        {
+            undoChanges = false;
+            int zz = gcellGrid.size();
+            int xx = gcellGrid[0].size();
+            int yy = gcellGrid[0][0].size();
+            for (int ziter = 0;ziter<zz;ziter++)
+            {
+                for (int xiter = 0 ;xiter<xx;xiter++)
+                {
+                    for (int yiter = 0;yiter<yy;yiter++)
+                    {
+                        gcellGrid[ziter][xiter][yiter].setCapacity(gcellGrid[ziter][xiter][yiter].capacity-2);
+                        gcellGrid[ziter][xiter][yiter].setWireCap(gcellGrid[ziter][xiter][yiter].maxWire-1);
+                        gcellGrid[ziter][xiter][yiter].setViaCap(gcellGrid[ziter][xiter][yiter].maxVia-1);
+                        if (gcellGrid[ziter][xiter][yiter].capacity<0)
+                            gcellGrid[ziter][xiter][yiter].setCapacity(0);
+                        if (gcellGrid[ziter][xiter][yiter].maxWire<0)
+                            gcellGrid[ziter][xiter][yiter].setWireCap(0);
+                        if (gcellGrid[ziter][xiter][yiter].maxVia<0)
+                            gcellGrid[ziter][xiter][yiter].setViaCap(0);
+                    }
+                }
+            }
+        }
     }
     else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)
     {
         cout << "Search terminated. will Ripup and reroute\n";
+        astarsearch.CancelSearch();
+        astarsearch.EnsureMemoryFreed();
+        astarsearch.FreeSolutionNodes();
+        MapSearchNode *node = astarsearch.GetSolutionStart();
+        auto blabla = ldp.get_bounding_GCell(node->x,node->y);
         //failedNetName = name;
-        //cout << failedNetName << endl;
-        mtx.lock();
+        cout << name << endl;
         failed = true;
         //cout << "FAILED GOA: " << failed << endl;
-        mtx.unlock();
-        //return;
+        cout << source.z<<","<<source.x<<","<<source.y<< endl;
+        cout << target.z<<","<<target.x<<","<<target.y<<","<< endl;
+        cout<<"b.";
+        return;
     }
     else {cout<<"???????????\n";}
-    cout << "FAILED GOA 2: "<< endl;
+    
+    
     astarsearch.EnsureMemoryFreed();
     ++x;
     return;
 }
 
-auto &ldp = my_lefdef::LefDefParser::get_instance();
 
 ThreadPool tp(1);
 
@@ -794,23 +872,30 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
         //routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name, bool &failed);
         failed = false;
         cout<<"def here"<<endl;
-        //routeTwoPoints(start, goal, bufferId, name, failed);
-        tp.enqueue(routeTwoPoints, start, goal, bufferId, name, std::ref(failed));
+        routeTwoPoints(start, goal, bufferId, name, failed);
+        //tp.enqueue(routeTwoPoints, start, goal, bufferId, name, std::ref(failed));
         cout<<"failed is --> "<<failed<<endl;
         if (failed)
         {
             cout << "d5alt aho" << endl;
             gcellGrid = gcellGridCopy;
-            allNetsPath = allNetsPathCopy;
+            //            gcellGrid.clear();
+            //            for (int j=0;j<gcellGridCopy.size();j++)
+            //            {
+            //                gcellGrid.push_back()
+            //            }
+            allNetsPath.clear();
             cout<<"reached failed"<<endl;
-            for (auto it = route_nodes.begin(); it != route_nodes.end(); ++it)
-            {
-                cout<<"inside?"<<endl;
-                auto x = *it; // or std::move(*it)
-                route_nodes.erase(it);
-                route_nodes.insert(route_nodes.begin(), x );
-                break;
-            }
+            //            for (auto it = route_nodes.begin(); it != route_nodes.end(); ++it)
+            //            {
+            //                cout<<"inside?"<<endl;
+            //                auto x = *it; // or std::move(*it)
+            //                route_nodes.erase(it);
+            //                route_nodes.insert(route_nodes.begin(), x );
+            //                break;
+            //            }
+            route_nodes.insert(route_nodes.begin(),route_nodes[ii]);
+            route_nodes.erase(route_nodes.begin()+ii+1);
             failed = false;
             Route(failed,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy);
             return;
@@ -838,7 +923,7 @@ int main(int argc, char *argv[])
     //
     // ─── INITIALIZE THE THREADS ─────────────────────────────────────────────────────
     //
-
+    
     if (filename_lef == "" or filename_def == "" or outfile_guide == "" or thread_count == "")
     {
         show_usage();
@@ -851,19 +936,19 @@ int main(int argc, char *argv[])
     //
     ldp.read_lef(filename_lef);
     ldp.read_def(filename_def);
-
+    
     //
     // ─── BUILD GLOBAL GRID ──────────────────────────────────────────────────────────
     //
-
+    
     gcellGrid = ldp.build_Gcell_grid(layerMap);
     zDimension = gcellGrid.size();
     xDimension = gcellGrid[0].size();
     yDimension = gcellGrid[0][0].size();
-
+    
     unordered_map<string, def::NetPtr> nets;
     nets = ldp.def_.get_net_umap();
-
+    
     pq xx = orderNets(nets);
     queue<pair<int, string>> ordered_nets;
     for (int i = 0; i < xx.size(); i++)
@@ -872,16 +957,16 @@ int main(int argc, char *argv[])
         ordered_nets.push(b);
         xx.pop();
     }
-
-
+    
+    
     int netCounter = 0;
     for (auto net : nets)
     {
         allNetsPath[net.first] = vector<triplet>();
     }
-
+    
     putObstructions();
-
+    
     puts("Starting to Route!");
     cout <<"Hello"<<endl;
     printf("nets size: %d\n", (int)ordered_nets.size());
@@ -895,8 +980,8 @@ int main(int argc, char *argv[])
         auto netName = ordered_nets.front(); ordered_nets.pop();
         auto &net = nets[netName.second];
         string name;
-
-        double eps = 0.0;	// setting for shallowness vs. lightness
+        
+        double eps = 0.0;    // setting for shallowness vs. lightness
         salt::Net salt_net;
         idMap.clear();
         //
@@ -920,6 +1005,7 @@ int main(int argc, char *argv[])
             name = netName.second;
             unordered_map<string, vector<triplet>> allNetsPathCopy;
             vector<vector<vector<my_lefdef::gCellGridGlobal>>> gcellGridCopy;
+            gcellGridCopy = gcellGrid;
             Route(false,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy);
         }
         else
@@ -939,7 +1025,7 @@ int main(int argc, char *argv[])
                 {
                     p = ldp.get_bounding_GCell(net->connections_[i]->pin_->x_,net->connections_[i]->pin_->y_ );
                     layerNo = layerStringtoNumber(net->connections_[i]->pin_->layer_);
-
+                    
                 }
                 for (int addition = layerNo-1; addition <= layerNo+1; ++addition)
                 {
@@ -958,7 +1044,7 @@ void show_usage()
     cout << endl;
     cout << "Usage:" << endl;
     cout << "global_router -lef <lef> -def <def> -output <guide> -thread <# of threads>" << endl
-         << endl;
+    << endl;
 }
 
 /**
@@ -989,7 +1075,7 @@ int omp_thread_count()
 {
     int n = 0;
 #pragma omp parallel reduction(+ \
-							   : n)
+: n)
     n += 1;
     return n;
 }
@@ -1001,3 +1087,4 @@ int omp_thread_count()
 #include <boost/test/unit_test.hpp>
 
 #endif
+
