@@ -1,0 +1,545 @@
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.000]                     ISPD 2019 - Detailed Routing Contest                       
+[   0.000]                              Team number : 15                                  
+[   0.000]                              Team name: Dr. CU                                 
+[   0.000]         Members: Gengjie Chen, Haocheng Li, Bentian Jiang, Jingsong Chen,      
+[   0.000]                  Evangeline F.Y. Young                                         
+[   0.000]         Affiliation: The Chinese University of Hong Kong                       
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.000] Input .lef file   : ispd19_test3.input.lef
+[   0.000] Input .def file.  : ispd19_test3.input.def
+[   0.001] Input .guide file : ispd19_test3.input.guide
+[   0.001] # of threads      : 26
+[   0.001] Runtime limit (sec): 1000000
+[   0.001] Output file name  : bullshit.def
+[   0.001] multiNetVerbose   : MIDDLE
+[   0.001] 
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[0]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[10]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[11]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[12]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[13]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[14]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[15]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[1]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[2]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+WARNING: Ignoring TRISTATE OUTPUT statement in pin Q[3]. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+[   0.203] 
+[   0.203] ################################################################
+[   0.203] Start initializing database
+[   0.203] 
+[   0.428] 
+[   3.422] Finish initializing database
+[   3.422] MEM: cur=368.145MB, peak=368.145MB
+[   3.422] 
+[   3.422] 
+[   3.422] ################################################################
+[   3.422] Start RRR iteration 0
+[   3.422] 
+[   3.422] defaultGuideExpand = 2 
+[   3.422] wrongWayPointDensity = 0.1 
+[   3.422] addDiffLayerGuides = false 
+[   3.435] Warning: Net net8720 expands 1 iterations, which takes 0.00041259 s in total.
+[   3.445] Warning: Net net8682 expands 1 iterations, which takes 0.00821281 s in total.
+[   3.450] Warning: Net net8331 expands 5 iterations, which takes 0.00468197 s in total.
+[   3.453] Warning: Net net8085 expands 1 iterations, which takes 0.000120917 s in total.
+[   3.456] Warning: Net net8466 expands 1 iterations, which takes 0.0131988 s in total.
+[   3.458] Warning: Net net8881 expands 8 iterations, which takes 0.0278459 s in total.
+[   3.461] Warning: Net net7919 expands 5 iterations, which takes 0.00448456 s in total.
+[   3.466] Warning: Net net7654 expands 1 iterations, which takes 0.00191277 s in total.
+[   3.469] Warning: Net net7754 expands 7 iterations, which takes 0.00735448 s in total.
+[   3.469] Warning: Net net8410 expands 9 iterations, which takes 0.0257139 s in total.
+[   3.470] Warning: Net net7429 expands 1 iterations, which takes 0.00116341 s in total.
+[   3.472] Warning: Net net7340 expands 4 iterations, which takes 0.00182072 s in total.
+[   3.473] Warning: Net net7201 expands 1 iterations, which takes 0.000380892 s in total.
+[   3.473] Warning: Net net7168 expands 1 iterations, which takes 0.000128541 s in total.
+[   3.476] Warning: Net net7376 expands 3 iterations, which takes 0.00641825 s in total.
+[   3.478] Warning: Net net6969 expands 1 iterations, which takes 0.00163186 s in total.
+[   3.478] Warning: Net net6851 expands 1 iterations, which takes 0.000217955 s in total.
+[   3.480] Warning: Net net7087 expands 1 iterations, which takes 0.00592544 s in total.
+[   3.481] Warning: Net net6735 expands 1 iterations, which takes 0.000127191 s in total.
+[   3.481] Warning: Net net6731 expands 1 iterations, which takes 0.000155611 s in total.
+[   3.482] Warning: Net net6678 expands 1 iterations, which takes 0.000192828 s in total.
+[   3.484] Warning: Net net6575 expands 1 iterations, which takes 0.000233695 s in total.
+[   3.486] Warning: Net net6454 expands 1 iterations, which takes 7.8469e-05 s in total.
+[   3.489] Warning: Net net6275 expands 3 iterations, which takes 0.000804131 s in total.
+[   3.490] Warning: Net net6239 expands 1 iterations, which takes 0.000121401 s in total.
+[   3.491] Warning: Net net6740 expands 3 iterations, which takes 0.0102784 s in total.
+[   3.491] Warning: Net net6101 expands 1 iterations, which takes 0.000204087 s in total.
+[   3.492] Warning: Net net7835 expands 1 iterations, which takes 0.0321662 s in total.
+[   3.495] Warning: Net net5947 expands 3 iterations, which takes 0.000555984 s in total.
+[   3.500] Warning: Net net5761 expands 3 iterations, which takes 0.000588028 s in total.
+[   3.502] Warning: Net net5721 expands 1 iterations, which takes 0.000131623 s in total.
+[   3.503] Warning: Net net6077 expands 9 iterations, which takes 0.0121191 s in total.
+[   3.505] Warning: Net net5606 expands 1 iterations, which takes 2.6674e-05 s in total.
+[   3.506] Warning: Net net5525 expands 1 iterations, which takes 7.1172e-05 s in total.
+[   3.508] Warning: Net net5458 expands 1 iterations, which takes 0.000166372 s in total.
+[   3.512] Warning: Net net5292 expands 1 iterations, which takes 5.7031e-05 s in total.
+[   3.513] Warning: Net net6684 expands 8 iterations, which takes 0.0316179 s in total.
+[   3.514] Warning: Net net5442 expands 1 iterations, which takes 0.00512323 s in total.
+[   3.514] Warning: Net net5324 expands 5 iterations, which takes 0.00316165 s in total.
+[   3.516] Warning: Net net6043 expands 2 iterations, which takes 0.0242082 s in total.
+[   3.519] Warning: Net net4945 expands 3 iterations, which takes 0.000395729 s in total.
+[   3.521] Warning: Net net4880 expands 1 iterations, which takes 4.776e-05 s in total.
+[   3.522] Warning: Net net7660 expands 9 iterations, which takes 0.0584386 s in total.
+[   3.522] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   3.522] Warning: Net net4825 expands 1 iterations, which takes 5.653e-05 s in total.
+[   3.526] Warning: Net net5121 expands 1 iterations, which takes 0.010158 s in total.
+[   3.527] Warning: Net net4715 expands 1 iterations, which takes 0.000545742 s in total.
+[   3.528] Warning: Net net4654 expands 1 iterations, which takes 7.1972e-05 s in total.
+[   3.528] Warning: Net net6006 expands 9 iterations, which takes 0.034994 s in total.
+[   3.530] Warning: Net net5957 expands 1 iterations, which takes 0.0354101 s in total.
+[   3.530] Warning: Net net7980 expands 9 iterations, which takes 0.0747554 s in total.
+[   3.530] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   3.536] Warning: Net net4514 expands 5 iterations, which takes 0.00558473 s in total.
+[   3.537] Warning: Net net4235 expands 1 iterations, which takes 2.7753e-05 s in total.
+[   3.537] Warning: Net net5698 expands 4 iterations, which takes 0.0350255 s in total.
+[   3.538] Warning: Net net4195 expands 1 iterations, which takes 0.000369633 s in total.
+[   3.540] Warning: Net net4205 expands 4 iterations, which takes 0.00301049 s in total.
+[   3.541] Warning: Net net5068 expands 3 iterations, which takes 0.0255049 s in total.
+[   3.543] Warning: Net net4031 expands 1 iterations, which takes 0.000973438 s in total.
+[   3.552] Warning: Net net3843 expands 1 iterations, which takes 0.000182038 s in total.
+[   3.562] Warning: Net net3499 expands 1 iterations, which takes 9.2437e-05 s in total.
+[   3.564] Warning: Net net3458 expands 4 iterations, which takes 0.00140029 s in total.
+[   3.566] Warning: Net net3466 expands 6 iterations, which takes 0.00329806 s in total.
+[   3.570] Warning: Net net3339 expands 3 iterations, which takes 0.000738586 s in total.
+[   3.580] Warning: Net net3687 expands 1 iterations, which takes 0.0240746 s in total.
+[   3.581] Warning: Net net3164 expands 1 iterations, which takes 0.000185059 s in total.
+[   3.582] Warning: Net net3136 expands 1 iterations, which takes 7.9072e-05 s in total.
+[   3.583] Warning: Net net3118 expands 1 iterations, which takes 0.000127165 s in total.
+[   3.587] Warning: Net net3071 expands 1 iterations, which takes 0.00117758 s in total.
+[   3.592] Warning: Net net4570 expands 1 iterations, which takes 0.0597828 s in total.
+[   3.593] Warning: Net net3002 expands 1 iterations, which takes 7.2258e-05 s in total.
+[   3.593] Warning: Net net3003 expands 1 iterations, which takes 0.000366217 s in total.
+[   3.596] Warning: Net net3202 expands 6 iterations, which takes 0.0221374 s in total.
+[   3.597] Warning: Net net3173 expands 5 iterations, which takes 0.0183549 s in total.
+[   3.602] Warning: Net net2710 expands 1 iterations, which takes 4.1225e-05 s in total.
+[   3.603] Warning: Net net2703 expands 3 iterations, which takes 0.00117402 s in total.
+[   3.603] Warning: Net net2759 expands 1 iterations, which takes 0.00296634 s in total.
+[   3.608] Warning: Net net2473 expands 3 iterations, which takes 0.000588486 s in total.
+[   3.612] Warning: Net net2365 expands 4 iterations, which takes 0.00120412 s in total.
+[   3.613] Warning: Net net3135 expands 9 iterations, which takes 0.030206 s in total.
+[   3.613] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   3.619] Warning: Net net2104 expands 1 iterations, which takes 0.000137311 s in total.
+[   3.621] Warning: Net net2026 expands 1 iterations, which takes 1.5601e-05 s in total.
+[   3.621] Warning: Net net2000 expands 1 iterations, which takes 5.262e-05 s in total.
+[   3.636] Warning: Net net1786 expands 4 iterations, which takes 0.0108837 s in total.
+[   3.637] Warning: Net net5377 expands 1 iterations, which takes 0.122768 s in total.
+[   3.653] Warning: Net net1566 expands 9 iterations, which takes 0.0124828 s in total.
+[   3.653] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   3.653] Warning: Net net1654 expands 8 iterations, which takes 0.0188144 s in total.
+[   3.654] Warning: Net net1379 expands 1 iterations, which takes 0.000107577 s in total.
+[   3.655] Warning: Net net1348 expands 1 iterations, which takes 9.236e-06 s in total.
+[   3.655] Warning: Net net1341 expands 8 iterations, which takes 0.000107053 s in total.
+[   3.667] Warning: Net net2310 expands 3 iterations, which takes 0.0546154 s in total.
+[   3.670] Warning: Net net1248 expands 1 iterations, which takes 9.7519e-05 s in total.
+[   3.679] Warning: Net net1486 expands 3 iterations, which takes 0.0341954 s in total.
+[   3.685] Warning: Net net1720 expands 9 iterations, which takes 0.0577715 s in total.
+[   3.685] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   3.686] Warning: Net net1032 expands 1 iterations, which takes 0.00139114 s in total.
+[   3.686] Warning: Net net1641 expands 1 iterations, which takes 0.0473697 s in total.
+[   3.687] Warning: Net net894 expands 1 iterations, which takes 6.5528e-05 s in total.
+[   3.693] Warning: Net net1408 expands 4 iterations, which takes 0.0440126 s in total.
+[   3.702] Warning: Net net855 expands 9 iterations, which takes 0.0141504 s in total.
+[   3.702] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   3.709] Warning: Net net7285 expands 4 iterations, which takes 0.238604 s in total.
+[   3.710] Warning: Net net579 expands 1 iterations, which takes 0.000104998 s in total.
+[   3.715] Warning: Net net450 expands 1 iterations, which takes 0.000145646 s in total.
+[   3.721] Warning: Net net757 expands 5 iterations, which takes 0.027221 s in total.
+[   3.722] Warning: Net net378 expands 3 iterations, which takes 0.00107912 s in total.
+[   3.729] Warning: Net net229 expands 1 iterations, which takes 0.000142794 s in total.
+[   3.736] Warning: Net net8116 expands 9 iterations, which takes 0.284731 s in total.
+[   3.785] Warning: Net net2602 expands 4 iterations, which takes 0.180325 s in total.
+[   3.788] Warning: Net net6094 expands 8 iterations, which takes 0.296273 s in total.
+[   3.792] Warning: Net net4993 expands 7 iterations, which takes 0.27482 s in total.
+[   3.800] Warning: Net net7491 expands 7 iterations, which takes 0.332391 s in total.
+[   3.834] Warning: Net net5504 expands 3 iterations, which takes 0.298676 s in total.
+[   3.840] Warning: Net net8437 expands 8 iterations, which takes 0.396924 s in total.
+[   3.859] Warning: Net net748 expands 4 iterations, which takes 0.165354 s in total.
+[   3.869] Warning: Net net3646 expands 4 iterations, which takes 0.310552 s in total.
+[   3.884] Warning: Net net5894 expands 3 iterations, which takes 0.370396 s in total.
+[   3.894] Warning: Net net859 expands 8 iterations, which takes 0.205861 s in total.
+[   3.899] Warning: Net net2508 expands 8 iterations, which takes 0.291657 s in total.
+[   3.908] Warning: Net net4405 expands 3 iterations, which takes 0.358464 s in total.
+[   3.912] Warning: Net net6798 expands 2 iterations, which takes 0.357504 s in total.
+[   3.950] Warning: Net net15 expands 2 iterations, which takes 0.204361 s in total.
+[   4.020] Warning: Net net4805 expands 9 iterations, which takes 0.496907 s in total.
+[   4.020] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.118] Warning: Net net3290 expands 7 iterations, which takes 0.547344 s in total.
+[   4.137] Warning: Net net449 expands 3 iterations, which takes 0.415662 s in total.
+[   4.159] Warning: Net net3972 expands 9 iterations, which takes 0.614725 s in total.
+[   4.159] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.391] Warning: Net net930 expands 5 iterations, which takes 0.69754 s in total.
+[   4.666] Warning: Net net1308 expands 9 iterations, which takes 1.0091 s in total.
+[   4.666] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.825] Warning: Net net692 expands 6 iterations, which takes 1.1144 s in total.
+[   4.826] preMT #threads=26 (dur: min=0.3097, max=1.39592, avg=0.53373) 
+[   4.826] 
+[   4.826] ----------------------------------------------------------------
+[   4.826] Stage PRE: #nets = 8953
+[   4.826] 	#succ = 4468 (#SUCC_NORMAL = 4153 #SUCC_ONE_PIN = 315 )
+[   4.826] 	#fail = 4485 (#FAIL_DETACHED_GUIDE = 9 #FAIL_DETACHED_PIN = 4476 )
+[   4.826] 	misc (#FIX_DETACHED_PIN = 122 )
+[   4.826] ----------------------------------------------------------------
+[   4.826] 
+[   4.826] Start multi-thread scheduling. There are 8953 nets to route.
+[   5.296] Finish multi-thread scheduling. There will be 96 batches.
+[   5.296] 
+[  63.531] allMazeMT #threads=26 (dur: min=9.17138, max=57.2343, avg=14.5485) 
+[  63.531] allCommitMT #threads=26 (dur: min=0.0545363, max=0.249042, avg=0.114077) 
+[  63.531] allGetViaTypesMT #threads=26 (dur: min=0.166888, max=0.348924, avg=0.225318) 
+[  63.531] allCommitViaTypesMT #threads=26 (dur: min=0.0970827, max=0.249217, avg=0.146067) 
+[  63.581] 
+[  63.581] Finish RRR iteration 0
+[  63.581] MEM: cur=2520.9MB, peak=2690.57MB
+[  63.581] 
+[  63.581] ----------------------------------------------------------------
+[  63.581] Stage PRE: #nets = 8953
+[  63.581] 	#succ = 4468 (#SUCC_NORMAL = 4153 #SUCC_ONE_PIN = 315 )
+[  63.581] 	#fail = 4485 (#FAIL_DETACHED_GUIDE = 9 #FAIL_DETACHED_PIN = 4476 )
+[  63.581] 	misc (#FIX_DETACHED_PIN = 122 )
+[  63.581] Stage MAZE: #nets = 4146
+[  63.581] 	#succ = 4146 (#SUCC_NORMAL = 4146 )
+[  63.581] Stage POST_MAZE: #nets = 0
+[  63.581] 	#succ = 0 ()
+[  63.581] 	misc (#MIN_AREA_SHADOWED_VIO = 14 #REMOVE_TRACK_SWITCH_PIN = 8 #REMOVE_TRACK_SWITCH_NORMAL = 807 #REMOVE_TRACK_SWITCH_HORSESHOE = 914 )
+[  63.581] Stage POST: #nets = 0
+[  63.581] 	#succ = 0 ()
+[  63.581] 	misc (#LINK_PIN_VIO = 182 )
+[  63.581] ----------------------------------------------------------------
+[  63.581] 
+[  63.581] 
+[  63.581] ################################################################
+[  63.581] Start RRR iteration 1
+[  63.581] 
+[  64.175] defaultGuideExpand = 4 
+[  64.175] wrongWayPointDensity = 0.2 
+[  64.175] addDiffLayerGuides = true 
+[  64.180] Warning: Net net8720 expands 1 iterations, which takes 0.000150408 s in total.
+[  64.202] Warning: Net net7168 expands 1 iterations, which takes 0.00012547 s in total.
+[  64.203] Warning: Net net7654 expands 1 iterations, which takes 0.00755205 s in total.
+[  64.204] Warning: Net net7376 expands 2 iterations, which takes 0.00406128 s in total.
+[  64.205] Warning: Net net7201 expands 1 iterations, which takes 0.00375049 s in total.
+[  64.208] Warning: Net net6735 expands 1 iterations, which takes 0.000333346 s in total.
+[  64.211] Warning: Net net6454 expands 1 iterations, which takes 0.000215066 s in total.
+[  64.213] Warning: Net net6239 expands 1 iterations, which takes 0.000216669 s in total.
+[  64.224] Warning: Net net5525 expands 1 iterations, which takes 0.000123934 s in total.
+[  64.226] Warning: Net net5292 expands 1 iterations, which takes 0.000192507 s in total.
+[  64.229] Warning: Net net5761 expands 3 iterations, which takes 0.00909197 s in total.
+[  64.229] Warning: Net net4880 expands 1 iterations, which takes 4.9711e-05 s in total.
+[  64.229] Warning: Net net4825 expands 1 iterations, which takes 5.6907e-05 s in total.
+[  64.230] Warning: Net net4654 expands 1 iterations, which takes 8.4929e-05 s in total.
+[  64.231] Warning: Net net6740 expands 2 iterations, which takes 0.0238059 s in total.
+[  64.238] Warning: Net net3843 expands 1 iterations, which takes 0.000186242 s in total.
+[  64.241] Warning: Net net5121 expands 1 iterations, which takes 0.0122595 s in total.
+[  64.241] Warning: Net net3499 expands 1 iterations, which takes 9.4516e-05 s in total.
+[  64.243] Warning: Net net3164 expands 1 iterations, which takes 0.000103844 s in total.
+[  64.245] Warning: Net net3002 expands 1 iterations, which takes 0.000148883 s in total.
+[  64.249] Warning: Net net2710 expands 1 iterations, which takes 7.9341e-05 s in total.
+[  64.252] Warning: Net net7835 expands 1 iterations, which takes 0.0343796 s in total.
+[  64.255] Warning: Net net2104 expands 1 iterations, which takes 0.000126677 s in total.
+[  64.256] Warning: Net net2136 expands 1 iterations, which takes 0.00152603 s in total.
+[  64.256] Warning: Net net4570 expands 1 iterations, which takes 0.0219897 s in total.
+[  64.257] Warning: Net net2000 expands 1 iterations, which takes 9.2952e-05 s in total.
+[  64.261] Warning: Net net4031 expands 1 iterations, which takes 0.00138317 s in total.
+[  64.262] Warning: Net net1379 expands 1 iterations, which takes 0.000137554 s in total.
+[  64.265] Warning: Net net1248 expands 1 iterations, which takes 0.000101647 s in total.
+[  64.268] Warning: Net net894 expands 1 iterations, which takes 6.5215e-05 s in total.
+[  64.269] Warning: Net net3118 expands 1 iterations, which takes 0.025082 s in total.
+[  64.279] Warning: Net net579 expands 1 iterations, which takes 0.000188084 s in total.
+[  64.324] Warning: Net net1408 expands 3 iterations, which takes 0.0624167 s in total.
+[  64.355] Warning: Net net748 expands 3 iterations, which takes 0.0831492 s in total.
+[  64.358] Warning: Net net6798 expands 1 iterations, which takes 0.120199 s in total.
+[  64.393] Warning: Net net15 expands 1 iterations, which takes 0.0790961 s in total.
+[  64.394] Warning: Net net5504 expands 2 iterations, which takes 0.166632 s in total.
+[  64.441] Warning: Net net757 expands 5 iterations, which takes 0.169793 s in total.
+[  64.578] Warning: Net net5894 expands 3 iterations, which takes 0.359024 s in total.
+[  64.640] Warning: Net net3646 expands 4 iterations, which takes 0.399841 s in total.
+[  64.685] Warning: Net net4405 expands 3 iterations, which takes 0.450113 s in total.
+[  64.921] Warning: Net net930 expands 3 iterations, which takes 0.646484 s in total.
+[  64.957] Warning: Net net7754 expands 7 iterations, which takes 0.763114 s in total.
+[  65.079] Warning: Net net449 expands 3 iterations, which takes 0.792799 s in total.
+[  65.755] Warning: Net net3290 expands 7 iterations, which takes 1.5127 s in total.
+[  65.757] preMT #threads=26 (dur: min=0.11114, max=1.57867, avg=0.311796) 
+[  65.757] 
+[  65.757] ----------------------------------------------------------------
+[  65.757] Stage PRE: #nets = 1492
+[  65.757] 	#succ = 1492 (#SUCC_NORMAL = 1492 )
+[  65.757] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 8764 #ADD_DIFF_LAYER_GUIDE_2 = 8550 #FIX_DETACHED_PIN = 67 )
+[  65.757] ----------------------------------------------------------------
+[  65.757] 
+[  65.757] Start multi-thread scheduling. There are 1492 nets to route.
+[  65.999] Finish multi-thread scheduling. There will be 99 batches.
+[  65.999] 
+[ 181.914] allMazeMT #threads=26 (dur: min=1.41194, max=115.068, avg=10.2314) 
+[ 181.915] allCommitMT #threads=26 (dur: min=0.01844, max=0.221352, avg=0.0849065) 
+[ 181.915] allGetViaTypesMT #threads=26 (dur: min=0.0482005, max=0.309279, avg=0.128463) 
+[ 181.915] allCommitViaTypesMT #threads=26 (dur: min=0.0251117, max=0.195879, avg=0.0828408) 
+[ 181.949] 
+[ 181.949] Finish RRR iteration 1
+[ 181.949] MEM: cur=4205.75MB, peak=4930.34MB
+[ 181.949] 
+[ 181.949] ----------------------------------------------------------------
+[ 181.949] Stage PRE: #nets = 1492
+[ 181.949] 	#succ = 1492 (#SUCC_NORMAL = 1492 )
+[ 181.949] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 8764 #ADD_DIFF_LAYER_GUIDE_2 = 8550 #FIX_DETACHED_PIN = 67 )
+[ 181.949] Stage MAZE: #nets = 1492
+[ 181.949] 	#succ = 1492 (#SUCC_NORMAL = 1492 )
+[ 181.949] Stage POST_MAZE: #nets = 0
+[ 181.949] 	#succ = 0 ()
+[ 181.949] 	misc (#MIN_AREA_SHADOWED_VIO = 6 #REMOVE_TRACK_SWITCH_PIN = 2 #REMOVE_TRACK_SWITCH_NORMAL = 305 #REMOVE_TRACK_SWITCH_HORSESHOE = 459 )
+[ 181.949] Stage POST: #nets = 0
+[ 181.949] 	#succ = 0 ()
+[ 181.949] 	misc (#LINK_PIN_VIO = 139 )
+[ 181.949] ----------------------------------------------------------------
+[ 181.949] 
+[ 181.949] 
+[ 181.949] ################################################################
+[ 181.949] Start RRR iteration 2
+[ 181.949] 
+[ 182.521] defaultGuideExpand = 8 
+[ 182.521] wrongWayPointDensity = 0.3 
+[ 182.521] addDiffLayerGuides = true 
+[ 182.525] Warning: Net net8720 expands 1 iterations, which takes 0.000126767 s in total.
+[ 182.540] Warning: Net net7168 expands 1 iterations, which takes 0.000454287 s in total.
+[ 182.541] Warning: Net net7201 expands 1 iterations, which takes 0.00281836 s in total.
+[ 182.545] Warning: Net net6735 expands 1 iterations, which takes 0.000425478 s in total.
+[ 182.546] Warning: Net net6454 expands 1 iterations, which takes 0.000142168 s in total.
+[ 182.549] Warning: Net net6239 expands 1 iterations, which takes 0.000358725 s in total.
+[ 182.554] Warning: Net net5525 expands 1 iterations, which takes 0.00012656 s in total.
+[ 182.556] Warning: Net net5292 expands 1 iterations, which takes 0.000187161 s in total.
+[ 182.559] Warning: Net net4880 expands 1 iterations, which takes 0.000125793 s in total.
+[ 182.559] Warning: Net net4825 expands 1 iterations, which takes 0.000144199 s in total.
+[ 182.560] Warning: Net net4654 expands 1 iterations, which takes 0.000196471 s in total.
+[ 182.564] Warning: Net net4031 expands 1 iterations, which takes 0.00132878 s in total.
+[ 182.567] Warning: Net net3499 expands 1 iterations, which takes 0.000139506 s in total.
+[ 182.570] Warning: Net net6740 expands 1 iterations, which takes 0.00113913 s in total.
+[ 182.570] Warning: Net net3164 expands 1 iterations, which takes 0.000188293 s in total.
+[ 182.570] Warning: Net net3118 expands 1 iterations, which takes 0.000129119 s in total.
+[ 182.573] Warning: Net net2710 expands 1 iterations, which takes 0.000101136 s in total.
+[ 182.576] Warning: Net net5504 expands 1 iterations, which takes 0.0157567 s in total.
+[ 182.576] Warning: Net net2104 expands 1 iterations, which takes 0.000130245 s in total.
+[ 182.577] Warning: Net net2000 expands 1 iterations, which takes 7.7351e-05 s in total.
+[ 182.580] Warning: Net net1379 expands 1 iterations, which takes 0.000190933 s in total.
+[ 182.581] Warning: Net net1248 expands 1 iterations, which takes 0.000202053 s in total.
+[ 182.586] Warning: Net net579 expands 1 iterations, which takes 0.000220905 s in total.
+[ 182.594] Warning: Net net748 expands 2 iterations, which takes 0.0102245 s in total.
+[ 182.649] Warning: Net net5894 expands 2 iterations, which takes 0.0794542 s in total.
+[ 182.733] Warning: Net net3646 expands 3 iterations, which takes 0.166162 s in total.
+[ 183.008] Warning: Net net4405 expands 3 iterations, which takes 0.44406 s in total.
+[ 183.056] Warning: Net net930 expands 3 iterations, which takes 0.465049 s in total.
+[ 183.056] preMT #threads=26 (dur: min=0.0659152, max=0.533095, avg=0.110011) 
+[ 183.056] 
+[ 183.056] ----------------------------------------------------------------
+[ 183.056] Stage PRE: #nets = 868
+[ 183.056] 	#succ = 868 (#SUCC_NORMAL = 868 )
+[ 183.056] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 1608 #ADD_DIFF_LAYER_GUIDE_2 = 1321 #FIX_DETACHED_PIN = 53 )
+[ 183.056] ----------------------------------------------------------------
+[ 183.057] 
+[ 183.057] Start multi-thread scheduling. There are 868 nets to route.
+[ 183.144] Finish multi-thread scheduling. There will be 89 batches.
+[ 183.144] 
+[ 272.979] allMazeMT #threads=26 (dur: min=0.414825, max=89.2443, avg=7.80349) 
+[ 272.979] allCommitMT #threads=26 (dur: min=0.00511739, max=0.138309, avg=0.0451346) 
+[ 272.979] allGetViaTypesMT #threads=26 (dur: min=0.0125836, max=0.24255, avg=0.073027) 
+[ 272.979] allCommitViaTypesMT #threads=26 (dur: min=0.00661975, max=0.12257, avg=0.0427844) 
+[ 273.006] 
+[ 273.006] Finish RRR iteration 2
+[ 273.006] MEM: cur=5506.3MB, peak=6244.97MB
+[ 273.006] 
+[ 273.006] ----------------------------------------------------------------
+[ 273.006] Stage PRE: #nets = 868
+[ 273.006] 	#succ = 868 (#SUCC_NORMAL = 868 )
+[ 273.006] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 1608 #ADD_DIFF_LAYER_GUIDE_2 = 1321 #FIX_DETACHED_PIN = 53 )
+[ 273.006] Stage MAZE: #nets = 868
+[ 273.006] 	#succ = 868 (#SUCC_NORMAL = 868 )
+[ 273.006] Stage POST_MAZE: #nets = 0
+[ 273.006] 	#succ = 0 ()
+[ 273.006] 	misc (#MIN_AREA_SHADOWED_VIO = 3 #REMOVE_TRACK_SWITCH_PIN = 1 #REMOVE_TRACK_SWITCH_NORMAL = 173 #REMOVE_TRACK_SWITCH_HORSESHOE = 144 )
+[ 273.006] Stage POST: #nets = 0
+[ 273.006] 	#succ = 0 ()
+[ 273.006] 	misc (#LINK_PIN_VIO = 128 )
+[ 273.006] ----------------------------------------------------------------
+[ 273.006] 
+[ 273.006] 
+[ 273.006] ################################################################
+[ 273.006] Start RRR iteration 3
+[ 273.006] 
+[ 273.511] defaultGuideExpand = 14 
+[ 273.512] wrongWayPointDensity = 0.4 
+[ 273.512] addDiffLayerGuides = true 
+[ 273.525] Warning: Net net7168 expands 1 iterations, which takes 0.00026992 s in total.
+[ 273.528] Warning: Net net7201 expands 1 iterations, which takes 0.00288678 s in total.
+[ 273.530] Warning: Net net6735 expands 1 iterations, which takes 0.000495929 s in total.
+[ 273.531] Warning: Net net6454 expands 1 iterations, which takes 0.000541565 s in total.
+[ 273.533] Warning: Net net6740 expands 1 iterations, which takes 0.00333166 s in total.
+[ 273.534] Warning: Net net6239 expands 1 iterations, which takes 0.000417007 s in total.
+[ 273.538] Warning: Net net5525 expands 1 iterations, which takes 0.000432582 s in total.
+[ 273.540] Warning: Net net5292 expands 1 iterations, which takes 0.000326967 s in total.
+[ 273.541] Warning: Net net4880 expands 1 iterations, which takes 0.000150354 s in total.
+[ 273.542] Warning: Net net4825 expands 1 iterations, which takes 0.000197335 s in total.
+[ 273.543] Warning: Net net4654 expands 1 iterations, which takes 0.000162472 s in total.
+[ 273.548] Warning: Net net4031 expands 1 iterations, which takes 0.00157219 s in total.
+[ 273.551] Warning: Net net3499 expands 1 iterations, which takes 0.000108898 s in total.
+[ 273.552] Warning: Net net3118 expands 1 iterations, which takes 7.9638e-05 s in total.
+[ 273.554] Warning: Net net2710 expands 1 iterations, which takes 4.6712e-05 s in total.
+[ 273.557] Warning: Net net2000 expands 1 iterations, which takes 6.1217e-05 s in total.
+[ 273.560] Warning: Net net1379 expands 1 iterations, which takes 0.000119083 s in total.
+[ 273.561] Warning: Net net1248 expands 1 iterations, which takes 0.000212725 s in total.
+[ 273.566] Warning: Net net748 expands 1 iterations, which takes 0.00137735 s in total.
+[ 273.607] Warning: Net net5894 expands 2 iterations, which takes 0.0693208 s in total.
+[ 274.023] Warning: Net net4405 expands 3 iterations, which takes 0.460153 s in total.
+[ 274.023] preMT #threads=26 (dur: min=0.0560513, max=0.51048, avg=0.0780113) 
+[ 274.024] 
+[ 274.024] ----------------------------------------------------------------
+[ 274.024] Stage PRE: #nets = 466
+[ 274.024] 	#succ = 466 (#SUCC_NORMAL = 466 )
+[ 274.024] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 781 #ADD_DIFF_LAYER_GUIDE_2 = 534 #FIX_DETACHED_PIN = 42 )
+[ 274.024] ----------------------------------------------------------------
+[ 274.024] 
+[ 274.024] Start multi-thread scheduling. There are 466 nets to route.
+[ 274.084] Finish multi-thread scheduling. There will be 70 batches.
+[ 274.084] 
+[ 341.881] allMazeMT #threads=26 (dur: min=0, max=67.409, avg=5.37495) 
+[ 341.881] allCommitMT #threads=26 (dur: min=0, max=0.0784497, avg=0.0177905) 
+[ 341.881] allGetViaTypesMT #threads=26 (dur: min=0, max=0.188192, avg=0.0333629) 
+[ 341.881] allCommitViaTypesMT #threads=26 (dur: min=0, max=0.0681909, avg=0.0177924) 
+[ 341.905] 
+[ 341.905] Finish RRR iteration 3
+[ 341.905] MEM: cur=6588.73MB, peak=7267.91MB
+[ 341.905] 
+[ 341.905] ----------------------------------------------------------------
+[ 341.905] Stage PRE: #nets = 466
+[ 341.905] 	#succ = 466 (#SUCC_NORMAL = 466 )
+[ 341.905] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 781 #ADD_DIFF_LAYER_GUIDE_2 = 534 #FIX_DETACHED_PIN = 42 )
+[ 341.905] Stage MAZE: #nets = 466
+[ 341.905] 	#succ = 466 (#SUCC_NORMAL = 466 )
+[ 341.905] Stage POST_MAZE: #nets = 0
+[ 341.905] 	#succ = 0 ()
+[ 341.905] 	misc (#MIN_AREA_SHADOWED_VIO = 25 #REMOVE_TRACK_SWITCH_PIN = 1 #REMOVE_TRACK_SWITCH_NORMAL = 110 #REMOVE_TRACK_SWITCH_HORSESHOE = 80 )
+[ 341.905] Stage POST: #nets = 0
+[ 341.905] 	#succ = 0 ()
+[ 341.905] 	misc (#LINK_PIN_VIO = 90 )
+[ 341.905] ----------------------------------------------------------------
+[ 341.905] 
+[ 341.905] 
+[ 341.905] ################################################################
+[ 341.905] Start RRR iteration 4
+[ 341.905] 
+[ 342.573] defaultGuideExpand = 22 
+[ 342.573] wrongWayPointDensity = 0.5 
+[ 342.573] addDiffLayerGuides = true 
+[ 342.576] Warning: Net net8720 expands 1 iterations, which takes 0.000142216 s in total.
+[ 342.576] Warning: Net net7168 expands 1 iterations, which takes 0.000133243 s in total.
+[ 342.579] Warning: Net net6735 expands 1 iterations, which takes 0.000128171 s in total.
+[ 342.583] Warning: Net net6454 expands 1 iterations, which takes 0.00324382 s in total.
+[ 342.585] Warning: Net net4880 expands 1 iterations, which takes 0.000105935 s in total.
+[ 342.590] Warning: Net net4031 expands 1 iterations, which takes 0.00178311 s in total.
+[ 342.590] Warning: Net net3499 expands 1 iterations, which takes 0.000115714 s in total.
+[ 342.596] Warning: Net net2000 expands 1 iterations, which takes 9.7348e-05 s in total.
+[ 342.597] Warning: Net net1379 expands 1 iterations, which takes 0.000131509 s in total.
+[ 342.604] Warning: Net net748 expands 1 iterations, which takes 0.00170684 s in total.
+[ 342.671] Warning: Net net5894 expands 2 iterations, which takes 0.0873954 s in total.
+[ 343.148] Warning: Net net4405 expands 3 iterations, which takes 0.559554 s in total.
+[ 343.148] preMT #threads=26 (dur: min=0.0298216, max=0.574057, avg=0.0577543) 
+[ 343.148] 
+[ 343.148] ----------------------------------------------------------------
+[ 343.148] Stage PRE: #nets = 263
+[ 343.148] 	#succ = 263 (#SUCC_NORMAL = 263 )
+[ 343.148] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 780 #ADD_DIFF_LAYER_GUIDE_2 = 560 #FIX_DETACHED_PIN = 36 )
+[ 343.148] ----------------------------------------------------------------
+[ 343.148] 
+[ 343.148] Start multi-thread scheduling. There are 263 nets to route.
+[ 343.195] Finish multi-thread scheduling. There will be 66 batches.
+[ 343.195] 
+[ 418.370] allMazeMT #threads=26 (dur: min=0, max=74.9105, avg=4.83318) 
+[ 418.370] allCommitMT #threads=26 (dur: min=0, max=0.0472717, avg=0.00794144) 
+[ 418.370] allGetViaTypesMT #threads=26 (dur: min=0, max=0.148182, avg=0.0175655) 
+[ 418.370] allCommitViaTypesMT #threads=26 (dur: min=0, max=0.0380053, avg=0.00760226) 
+[ 418.389] 
+[ 418.389] Finish RRR iteration 4
+[ 418.389] MEM: cur=7461.58MB, peak=8338.45MB
+[ 418.389] 
+[ 418.389] ----------------------------------------------------------------
+[ 418.389] Stage PRE: #nets = 263
+[ 418.389] 	#succ = 263 (#SUCC_NORMAL = 263 )
+[ 418.389] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 780 #ADD_DIFF_LAYER_GUIDE_2 = 560 #FIX_DETACHED_PIN = 36 )
+[ 418.390] Stage MAZE: #nets = 263
+[ 418.390] 	#succ = 263 (#SUCC_NORMAL = 263 )
+[ 418.390] Stage POST_MAZE: #nets = 0
+[ 418.390] 	#succ = 0 ()
+[ 418.390] 	misc (#MIN_AREA_VIO = 2 #MIN_AREA_SHADOWED_VIO = 27 #REMOVE_TRACK_SWITCH_PIN = 1 #REMOVE_TRACK_SWITCH_NORMAL = 68 #REMOVE_TRACK_SWITCH_HORSESHOE = 51 )
+[ 418.390] Stage POST: #nets = 0
+[ 418.390] 	#succ = 0 ()
+[ 418.390] 	misc (#LINK_PIN_VIO = 71 )
+[ 418.390] ----------------------------------------------------------------
+[ 418.390] 
+[ 419.288] There will be 40 batches for getting via types. 
+[ 419.603] allPostMaze2MT #threads=26 (dur: min=0.0208212, max=0.094285, avg=0.0467952) 
+[ 419.801] allGetViaTypesMT #threads=26 (dur: min=0.0526694, max=0.0971671, avg=0.0662287) 
+[ 419.801] allCommitViaTypesMT #threads=26 (dur: min=0.0592072, max=0.0848969, avg=0.0688447) 
+[ 420.035] allGetViaTypesMT #threads=26 (dur: min=0.0723132, max=0.142779, avg=0.0895791) 
+[ 420.035] allCommitViaTypesMT #threads=26 (dur: min=0.0502513, max=0.0760405, avg=0.0603972) 
+[ 420.269] allGetViaTypesMT #threads=26 (dur: min=0.0762937, max=0.138797, avg=0.0939436) 
+[ 420.269] allCommitViaTypesMT #threads=26 (dur: min=0.0530808, max=0.0812965, avg=0.0632934) 
+[ 420.307] postMT #threads=26 (dur: min=0.0368152, max=0.0379501, avg=0.0372677) 
+[ 420.321] #nets connected by STT: 4492
+[ 420.321] 
+[ 420.321] ################################################################
+[ 420.321] Finish all RRR iterations and PostRoute
+[ 420.321] MEM: cur=7461.64MB, peak=8338.45MB
+[ 420.321] 
+[ 420.321] ----------------------------------------------------------------
+[ 420.321] Stage PRE: #nets = 263
+[ 420.321] 	#succ = 263 (#SUCC_NORMAL = 263 )
+[ 420.321] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 780 #ADD_DIFF_LAYER_GUIDE_2 = 560 #FIX_DETACHED_PIN = 36 )
+[ 420.321] Stage MAZE: #nets = 263
+[ 420.321] 	#succ = 263 (#SUCC_NORMAL = 263 )
+[ 420.321] Stage POST_MAZE: #nets = 0
+[ 420.321] 	#succ = 0 ()
+[ 420.321] 	misc (#MIN_AREA_VIO = 4 #MIN_AREA_SHADOWED_VIO = 55 #REMOVE_TRACK_SWITCH_PIN = 1 #REMOVE_TRACK_SWITCH_NORMAL = 68 #REMOVE_TRACK_SWITCH_HORSESHOE = 51 )
+[ 420.321] Stage POST: #nets = 4146
+[ 420.321] 	#succ = 4146 (#SUCC_NORMAL = 330 #SUCC_CONN_EXT_PIN = 3816 )
+[ 420.321] 	misc (#LINK_PIN_VIO = 671 #FILL_SAME_NET_SPACE = 1393 #REMOVE_CORNER = 10049 )
+[ 420.330] --- Wire Usage ---
+[ 420.330] Among 0 grid points and 0-long tracks (length is normalized by M2 pitch): 
+[ 420.330] usage      |    grid    |   length  
+[ 420.330] 1          | 788275     | 780499    
+[ 420.330] 2          | 90         | 89.5      
+[ 420.342] --- Via Usage ---
+[ 420.342] Among 0 via candidates --- 
+[ 420.342] usage      | routed    
+[ 420.342] 1          | 48058     
+[ 420.380] --- Wire-Wire Short/Spacing Vios Vios ---
+[ 420.380] usage      | # space    |        # short          |       short area       
+[ 420.380] layer      | wire-wire  | wire-wire  | wire-fixed | wire-wire  | wire-fixed
+[ 420.380] Metal1     | 19         | 18         | 445        | 17         | 1087.5    
+[ 420.380] Metal2     | 47         | 46         | 2          | 23.5       | 1         
+[ 420.380] Metal3     | 8          | 8          | 3          | 4          | 1.5       
+[ 420.380] Metal5     | 2          | 1          | 0          | 0.25       | 0         
+[ 420.380] SumW       | 76         | 73         | 450        | 44.75      | 1090      
+[ 420.380] BigSumW    | 76         | 523                     | 1134.75                
+[ 420.490] --- Via-Via/Wire Short/Spacing Vios ---
+[ 420.490] layer      |      via-via            |      via-wire           | via-fixed 
+[ 420.490]            | same       | top        | bot        | top        | 
+[ 420.490] Via1       | 9          | 4          | 18         | 11         | 12        
+[ 420.490] Via2       | 1          | 0          | 3          | 0          | 9         
+[ 420.490] Via3       | 0          | 0          | 0          | 0          | 9         
+[ 420.490] Via4       | 0          | 0          | 0          | 0          | 9         
+[ 420.490] SumV       | 10         | 4          | 21         | 11         | 39        
+[ 420.490] BigSumV    | 14                      | 32                      | 39        
+[ 420.490] --- Estimated Scores ---
+[ 420.490] item       | metric     | weight     | score      | %         
+[ 420.490] wirelength | 780678     | 0.5        | 390339     | 0.344114  
+[ 420.490] # vias     | 48058      | 2          | 96116      | 0.0847337 
+[ 420.490] short      | 1134.75    | 500        | 567375     | 0.500185  
+[ 420.490] space      | 161        | 500        | 80500      | 0.070967  
+[ 420.490] total score = 1.13433e+06
+[ 420.490] ----------------------------------------------------------------
+[ 420.490] 
+[ 420.984] Finish writing def
+[ 420.984] MEM: cur=7461.64MB, peak=8338.45MB
+[ 420.984] 
+[ 420.990] --------------------------------------------------------------------------- 
+[ 420.990]                                Terminated...                                
+[ 420.990] --------------------------------------------------------------------------- 

@@ -1,0 +1,111 @@
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.000]                     ISPD 2019 - Detailed Routing Contest                       
+[   0.000]                              Team number : 15                                  
+[   0.000]                              Team name: Dr. CU                                 
+[   0.000]         Members: Gengjie Chen, Haocheng Li, Bentian Jiang, Jingsong Chen,      
+[   0.000]                  Evangeline F.Y. Young                                         
+[   0.000]         Affiliation: The Chinese University of Hong Kong                       
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.001] Input .lef file   : ispd18_test7.input.lef
+[   0.001] Input .def file.  : ispd18_test7.input.def
+[   0.001] Input .guide file : ispd18_test7.input.guide
+[   0.001] # of threads      : 26
+[   0.001] Runtime limit (sec): 1000000
+[   0.001] Output file name  : bullshit.def
+[   0.001] multiNetVerbose   : MIDDLE
+[   0.001] 
+[   2.839] 
+[   2.839] ################################################################
+[   2.839] Start initializing database
+[   2.839] 
+[   2.840] Warning in MetalLayer: For Metal9, no spacing rules...
+[   2.841] Warning: In layer Metal9, width = 1000 > maxEolWidth = 0
+[   5.060] 
+[  59.827] Finish initializing database
+[  59.827] MEM: cur=7067.96MB, peak=7206.49MB
+[  59.827] 
+[  59.827] 
+[  59.827] ################################################################
+[  59.827] Start RRR iteration 0
+[  59.827] 
+[  59.828] defaultGuideExpand = 2 
+[  59.828] wrongWayPointDensity = 0.1 
+[  59.828] addDiffLayerGuides = false 
+[  60.067] preMT #threads=26 (dur: min=0.138483, max=0.139087, avg=0.138691) 
+[  60.068] 
+[  60.068] ----------------------------------------------------------------
+[  60.068] Stage PRE: #nets = 179863
+[  60.068] 	#succ = 160 (#SUCC_ONE_PIN = 160 )
+[  60.068] 	#fail = 179703 (#FAIL_DETACHED_PIN = 179703 )
+[  60.068] ----------------------------------------------------------------
+[  60.068] 
+[  60.068] Start multi-thread scheduling. There are 179863 nets to route.
+[  60.085] Finish multi-thread scheduling. There will be 1 batches.
+[  60.085] 
+[  60.085] allMazeMT #threads=26 (dur: min=0, max=2.52e-07, avg=9.69231e-09) 
+[  60.085] allCommitMT #threads=26 (dur: min=0, max=2.4e-07, avg=9.23077e-09) 
+[  60.085] allGetViaTypesMT #threads=26 (dur: min=0, max=2.38e-07, avg=9.15385e-09) 
+[  60.085] allCommitViaTypesMT #threads=26 (dur: min=0, max=2.35e-07, avg=9.03846e-09) 
+[  60.138] 
+[  60.138] Finish RRR iteration 0
+[  60.181] MEM: cur=7188.28MB, peak=7241.64MB
+[  60.181] 
+[  60.181] ----------------------------------------------------------------
+[  60.181] Stage PRE: #nets = 179863
+[  60.181] 	#succ = 160 (#SUCC_ONE_PIN = 160 )
+[  60.181] 	#fail = 179703 (#FAIL_DETACHED_PIN = 179703 )
+[  60.181] ----------------------------------------------------------------
+[  60.181] 
+[  60.181] 
+[  60.181] ################################################################
+[  60.181] Start RRR iteration 1
+[  60.181] 
+[  60.186] No net is identified for this iteration of RRR.
+[  60.186] 
+[  60.194] There will be 1 batches for getting via types. 
+[  60.275] allPostMaze2MT #threads=26 (dur: min=0.0262876, max=0.0269493, avg=0.0265216) 
+[  60.307] allGetViaTypesMT #threads=26 (dur: min=0.0150989, max=0.0156086, avg=0.0152803) 
+[  60.307] allCommitViaTypesMT #threads=26 (dur: min=0.0146012, max=0.0151151, avg=0.0147857) 
+[  60.340] allGetViaTypesMT #threads=26 (dur: min=0.016198, max=0.0168282, avg=0.0164099) 
+[  60.340] allCommitViaTypesMT #threads=26 (dur: min=0.0150073, max=0.015494, avg=0.0152057) 
+[  60.373] allGetViaTypesMT #threads=26 (dur: min=0.0142857, max=0.0147753, avg=0.0145096) 
+[  60.373] allCommitViaTypesMT #threads=26 (dur: min=0.0148606, max=0.0182246, avg=0.0155018) 
+[  60.387] postMT #threads=26 (dur: min=0.0133514, max=0.0139005, avg=0.0135766) 
+[  68.790] #nets connected by STT: 179703
+[  68.790] 
+[  68.790] ################################################################
+[  68.790] Finish all RRR iterations and PostRoute
+[  68.790] MEM: cur=8734.84MB, peak=8734.84MB
+[  68.790] 
+[  68.790] ----------------------------------------------------------------
+[  68.790] --- Wire Usage ---
+[  68.790] Among 0 grid points and 0-long tracks (length is normalized by M2 pitch): 
+[  68.790] usage      |    grid    |   length  
+[  68.791] --- Via Usage ---
+[  68.791] Among 0 via candidates --- 
+[  68.791] usage      | routed    
+[  68.792] --- Wire-Wire Short/Spacing Vios Vios ---
+[  68.792] usage      | # space    |        # short          |       short area       
+[  68.792] layer      | wire-wire  | wire-wire  | wire-fixed | wire-wire  | wire-fixed
+[  68.792] SumW       | 0          | 0          | 0          | 0          | 0         
+[  68.792] BigSumW    | 0          | 0                       | 0                      
+[  68.792] --- Via-Via/Wire Short/Spacing Vios ---
+[  68.792] layer      |      via-via            |      via-wire           | via-fixed 
+[  68.792]            | same       | top        | bot        | top        | 
+[  68.792] SumV       | 0          | 0          | 0          | 0          | 0         
+[  68.792] BigSumV    | 0                       | 0                       | 0         
+[  68.792] --- Estimated Scores ---
+[  68.792] item       | metric     | weight     | score      | %         
+[  68.792] wirelength | 0          | 0.5        | 0          | -nan      
+[  68.792] # vias     | 0          | 2          | 0          | -nan      
+[  68.792] short      | 0          | 500        | 0          | -nan      
+[  68.792] space      | 0          | 500        | 0          | -nan      
+[  68.792] total score = 0
+[  68.792] ----------------------------------------------------------------
+[  68.792] 
+[  80.454] Finish writing def
+[  80.462] MEM: cur=5273.82MB, peak=8734.84MB
+[  80.462] 
+[  80.557] --------------------------------------------------------------------------- 
+[  80.557]                                Terminated...                                
+[  80.557] --------------------------------------------------------------------------- 

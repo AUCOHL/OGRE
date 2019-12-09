@@ -1,0 +1,22 @@
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.000]                     ISPD 2019 - Detailed Routing Contest                       
+[   0.000]                              Team number : 15                                  
+[   0.000]                              Team name: Dr. CU                                 
+[   0.000]         Members: Gengjie Chen, Haocheng Li, Bentian Jiang, Jingsong Chen,      
+[   0.000]                  Evangeline F.Y. Young                                         
+[   0.000]         Affiliation: The Chinese University of Hong Kong                       
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.002] Input .lef file   : ispd19_test9.input.lef
+[   0.002] Input .def file.  : ispd19_test9.input.def
+[   0.002] Input .guide file : ispd19_test9.input.guide
+[   0.002] # of threads      : 26
+[   0.002] Runtime limit (sec): 1000000
+[   0.002] Output file name  : bullshit.def
+[   0.002] multiNetVerbose   : MIDDLE
+[   0.002] 
+WARNING: Ignoring TRISTATE OUTPUT statement in pin ECK. Pin direction is replaced to OUTPUT [LEF CONTROL PARSER]
+[  15.668] 
+[  15.668] ################################################################
+[  15.668] Start initializing database
+[  15.668] 
+[  24.608] 

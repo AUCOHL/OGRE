@@ -1,0 +1,793 @@
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.000]                     ISPD 2019 - Detailed Routing Contest                       
+[   0.000]                              Team number : 15                                  
+[   0.000]                              Team name: Dr. CU                                 
+[   0.000]         Members: Gengjie Chen, Haocheng Li, Bentian Jiang, Jingsong Chen,      
+[   0.000]                  Evangeline F.Y. Young                                         
+[   0.000]         Affiliation: The Chinese University of Hong Kong                       
+[   0.000] ------------------------------------------------------------------------------ 
+[   0.001] Input .lef file   : ispd18_test2.input.lef
+[   0.001] Input .def file.  : ispd18_test2.input.def
+[   0.001] Input .guide file : ispd18_test2.input.guide
+[   0.001] # of threads      : 26
+[   0.001] Runtime limit (sec): 1000000
+[   0.001] Output file name  : bullshit.def
+[   0.001] multiNetVerbose   : MIDDLE
+[   0.001] 
+[   0.866] 
+[   0.866] ################################################################
+[   0.866] Start initializing database
+[   0.866] 
+[   1.226] 
+[   4.089] Finish initializing database
+[   4.089] MEM: cur=793.48MB, peak=793.48MB
+[   4.089] 
+[   4.089] 
+[   4.089] ################################################################
+[   4.090] Start RRR iteration 0
+[   4.090] 
+[   4.090] defaultGuideExpand = 2 
+[   4.090] wrongWayPointDensity = 0.1 
+[   4.090] addDiffLayerGuides = false 
+[   4.135] Warning: Net ionet9 expands 2 iterations, which takes 0.0127372 s in total.
+[   4.166] Warning: Net ionet10 expands 4 iterations, which takes 0.0440453 s in total.
+[   4.172] Warning: Net ionet37 expands 2 iterations, which takes 0.00546713 s in total.
+[   4.176] Warning: Net ionet20 expands 6 iterations, which takes 0.0398728 s in total.
+[   4.178] Warning: Net ionet38 expands 2 iterations, which takes 0.00554558 s in total.
+[   4.205] Warning: Net ionet31 expands 9 iterations, which takes 0.0536371 s in total.
+[   4.205] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.221] Warning: Net ionet1 expands 5 iterations, which takes 0.0984605 s in total.
+[   4.224] Warning: Net ionet18 expands 8 iterations, which takes 0.0880358 s in total.
+[   4.236] Warning: Net ionet27 expands 9 iterations, which takes 0.0886748 s in total.
+[   4.236] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.241] Warning: Net ionet28 expands 9 iterations, which takes 0.0929901 s in total.
+[   4.241] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.269] Warning: Net ionet26 expands 9 iterations, which takes 0.123305 s in total.
+[   4.269] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.317] Warning: Net ionet11 expands 1 iterations, which takes 0.187061 s in total.
+[   4.687] Warning: Net ionet12 expands 6 iterations, which takes 0.561763 s in total.
+[   4.789] Warning: Net ionet17 expands 7 iterations, which takes 0.653638 s in total.
+[   4.871] Warning: Net ionet29 expands 6 iterations, which takes 0.718455 s in total.
+[   4.965] Warning: Net ionet15 expands 9 iterations, which takes 0.840755 s in total.
+[   4.965] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   4.988] Warning: Net ionet14 expands 9 iterations, which takes 0.863246 s in total.
+[   4.988] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   5.309] Warning: Net ionet13 expands 8 iterations, which takes 1.18509 s in total.
+[   5.485] Warning: Net ionet36 expands 7 iterations, which takes 1.32872 s in total.
+[   5.508] Warning: Net ionet43 expands 9 iterations, which takes 1.30216 s in total.
+[   5.508] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   5.615] Warning: Net ionet50 expands 9 iterations, which takes 1.3453 s in total.
+[   5.615] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   5.748] Warning: Net ionet6 expands 8 iterations, which takes 1.62424 s in total.
+[   5.769] Warning: Net ionet4 expands 9 iterations, which takes 1.64741 s in total.
+[   5.770] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   5.940] Warning: Net ionet44 expands 9 iterations, which takes 1.71841 s in total.
+[   5.940] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.001] Warning: Net ionet24 expands 9 iterations, which takes 1.85659 s in total.
+[   6.003] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.353] Warning: Net ionet22 expands 9 iterations, which takes 2.2112 s in total.
+[   6.353] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.354] Warning: Net ionet42 expands 9 iterations, which takes 2.17504 s in total.
+[   6.354] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.400] Warning: Net ionet49 expands 9 iterations, which takes 2.15936 s in total.
+[   6.400] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.458] Warning: Net ionet48 expands 9 iterations, which takes 2.22194 s in total.
+[   6.459] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.489] Warning: Net ionet47 expands 9 iterations, which takes 2.26398 s in total.
+[   6.489] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.520] Warning: Net ionet25 expands 9 iterations, which takes 2.37642 s in total.
+[   6.520] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.544] Warning: Net ionet71 expands 8 iterations, which takes 0.143974 s in total.
+[   6.545] Warning: Net ionet16 expands 9 iterations, which takes 2.40896 s in total.
+[   6.545] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.564] Warning: Net ionet21 expands 9 iterations, which takes 2.4272 s in total.
+[   6.564] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.649] Warning: Net ionet51 expands 9 iterations, which takes 2.32499 s in total.
+[   6.649] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.667] Warning: Net ionet78 expands 5 iterations, which takes 0.0180379 s in total.
+[   6.739] Warning: Net ionet40 expands 9 iterations, which takes 2.56309 s in total.
+[   6.739] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   6.861] Warning: Net ionet79 expands 7 iterations, which takes 0.193104 s in total.
+[   7.122] Warning: Net ionet54 expands 9 iterations, which takes 2.2385 s in total.
+[   7.122] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.289] Warning: Net ionet56 expands 9 iterations, which takes 2.30169 s in total.
+[   7.289] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.299] Warning: Net ionet30 expands 9 iterations, which takes 3.1472 s in total.
+[   7.299] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.337] Warning: Net ionet53 expands 9 iterations, which takes 2.54705 s in total.
+[   7.337] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.382] Warning: Net ionet75 expands 9 iterations, which takes 0.837727 s in total.
+[   7.382] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.472] Warning: Net ionet72 expands 9 iterations, which takes 1.01353 s in total.
+[   7.472] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.668] Warning: Net ionet76 expands 9 iterations, which takes 1.12272 s in total.
+[   7.668] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.743] Warning: Net ionet55 expands 9 iterations, which takes 2.77805 s in total.
+[   7.743] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.774] Warning: Net ionet68 expands 9 iterations, which takes 1.77021 s in total.
+[   7.774] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.924] Warning: Net ionet57 expands 9 iterations, which takes 2.61442 s in total.
+[   7.924] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   7.924] Warning: Net ionet91 expands 9 iterations, which takes 0.000119793 s in total.
+[   7.924] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.003] Warning: Net ionet86 expands 9 iterations, which takes 0.620819 s in total.
+[   8.003] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.014] Warning: Net ionet93 expands 9 iterations, which takes 0.0111087 s in total.
+[   8.014] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.024] Warning: Net ionet94 expands 9 iterations, which takes 0.00925857 s in total.
+[   8.024] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.109] Warning: Net ionet81 expands 9 iterations, which takes 1.24821 s in total.
+[   8.109] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.117] Warning: Net ionet96 expands 9 iterations, which takes 0.00757628 s in total.
+[   8.117] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.142] Warning: Net ionet82 expands 9 iterations, which takes 1.0196 s in total.
+[   8.142] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.156] Warning: Net ionet98 expands 9 iterations, which takes 0.0141762 s in total.
+[   8.156] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.205] Warning: Net ionet85 expands 9 iterations, which takes 0.867805 s in total.
+[   8.205] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.224] Warning: Net ionet100 expands 8 iterations, which takes 0.0190522 s in total.
+[   8.234] Warning: Net ionet101 expands 2 iterations, which takes 0.00998566 s in total.
+[   8.302] Warning: Net ionet73 expands 9 iterations, which takes 1.81336 s in total.
+[   8.302] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.307] Warning: Net ionet83 expands 9 iterations, which takes 1.0175 s in total.
+[   8.307] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.345] Warning: Net ionet99 expands 9 iterations, which takes 0.189233 s in total.
+[   8.346] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.376] Warning: Net ionet80 expands 9 iterations, which takes 1.63674 s in total.
+[   8.376] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.389] Warning: Net ionet59 expands 9 iterations, which takes 2.88108 s in total.
+[   8.389] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.401] Warning: Net ionet97 expands 9 iterations, which takes 0.28416 s in total.
+[   8.401] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.425] Warning: Net ionet60 expands 9 iterations, which takes 2.81017 s in total.
+[   8.425] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.453] Warning: Net ionet88 expands 9 iterations, which takes 0.785278 s in total.
+[   8.453] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.454] Warning: Net ionet69 expands 9 iterations, which takes 2.10051 s in total.
+[   8.454] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.461] Warning: Net ionet52 expands 9 iterations, which takes 3.77409 s in total.
+[   8.461] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.472] Warning: Net ionet70 expands 9 iterations, which takes 2.1184 s in total.
+[   8.472] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.478] Warning: Net ionet292 expands 3 iterations, which takes 0.0052916 s in total.
+[   8.502] Warning: Net ionet84 expands 9 iterations, which takes 1.20283 s in total.
+[   8.502] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.521] Warning: Net ionet77 expands 9 iterations, which takes 1.95693 s in total.
+[   8.521] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.525] Warning: Net ionet262 expands 9 iterations, which takes 0.0691696 s in total.
+[   8.534] Warning: Net ionet89 expands 9 iterations, which takes 0.790543 s in total.
+[   8.534] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.547] Warning: Net ionet453 expands 1 iterations, which takes 0.000619364 s in total.
+[   8.547] Warning: Net ionet307 expands 2 iterations, which takes 0.0250821 s in total.
+[   8.716] Warning: Net ionet481 expands 9 iterations, which takes 0.168723 s in total.
+[   8.716] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.752] Warning: Net ionet92 expands 9 iterations, which takes 0.828169 s in total.
+[   8.752] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.760] Warning: Net ionet482 expands 4 iterations, which takes 0.043277 s in total.
+[   8.772] Warning: Net ionet74 expands 9 iterations, which takes 2.25179 s in total.
+[   8.772] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.775] Warning: Net ionet289 expands 6 iterations, which takes 0.311111 s in total.
+[   8.831] Warning: Net ionet288 expands 7 iterations, which takes 0.368969 s in total.
+[   8.832] Warning: Net ionet490 expands 1 iterations, which takes 0.000654773 s in total.
+[   8.856] Warning: Net ionet487 expands 5 iterations, which takes 0.0960209 s in total.
+[   8.858] Warning: Net ionet491 expands 2 iterations, which takes 0.0259297 s in total.
+[   8.878] Warning: Net ionet496 expands 1 iterations, which takes 0.0183697 s in total.
+[   8.913] Warning: Net ionet497 expands 1 iterations, which takes 0.031348 s in total.
+[   8.916] Warning: Net ionet479 expands 5 iterations, which takes 0.368987 s in total.
+[   8.919] Warning: Net ionet495 expands 4 iterations, which takes 0.0625287 s in total.
+[   8.930] Warning: Net ionet90 expands 9 iterations, which takes 1.1561 s in total.
+[   8.930] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.987] Warning: Net ionet58 expands 9 iterations, which takes 3.50131 s in total.
+[   8.987] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   8.995] Warning: Net ionet500 expands 3 iterations, which takes 0.0756172 s in total.
+[   9.007] Warning: Net ionet63 expands 9 iterations, which takes 3.23627 s in total.
+[   9.007] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.008] Warning: Net ionet498 expands 3 iterations, which takes 0.093757 s in total.
+[   9.015] Warning: Net ionet508 expands 2 iterations, which takes 0.0070774 s in total.
+[   9.017] Warning: Net ionet503 expands 3 iterations, which takes 0.029955 s in total.
+[   9.037] Warning: Net ionet512 expands 3 iterations, which takes 0.0220257 s in total.
+[   9.038] Warning: Net ionet514 expands 1 iterations, which takes 0.000689032 s in total.
+[   9.039] Warning: Net ionet516 expands 1 iterations, which takes 0.000869399 s in total.
+[   9.043] Warning: Net ionet517 expands 2 iterations, which takes 0.00323721 s in total.
+[   9.069] Warning: Net ionet486 expands 9 iterations, which takes 0.316438 s in total.
+[   9.069] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.070] Warning: Net ionet524 expands 1 iterations, which takes 0.000706348 s in total.
+[   9.079] Warning: Net ionet95 expands 9 iterations, which takes 1.05567 s in total.
+[   9.079] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.095] Warning: Net ionet525 expands 9 iterations, which takes 0.0242391 s in total.
+[   9.095] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.099] Warning: Net ionet499 expands 4 iterations, which takes 0.18197 s in total.
+[   9.113] Warning: Net ionet502 expands 4 iterations, which takes 0.18258 s in total.
+[   9.154] Warning: Net ionet513 expands 3 iterations, which takes 0.137143 s in total.
+[   9.158] Warning: Net ionet559 expands 5 iterations, which takes 0.0634666 s in total.
+[   9.189] Warning: Net ionet561 expands 3 iterations, which takes 0.0904704 s in total.
+[   9.193] Warning: Net ionet66 expands 9 iterations, which takes 3.25237 s in total.
+[   9.193] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.194] Warning: Net ionet574 expands 1 iterations, which takes 0.00130499 s in total.
+[   9.195] Warning: Net ionet504 expands 4 iterations, which takes 0.200051 s in total.
+[   9.197] Warning: Net ionet580 expands 1 iterations, which takes 0.00191796 s in total.
+[   9.197] Warning: Net ionet489 expands 9 iterations, which takes 0.421637 s in total.
+[   9.197] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.201] Warning: Net ionet582 expands 2 iterations, which takes 0.00329014 s in total.
+[   9.202] Warning: Net ionet583 expands 1 iterations, which takes 0.00123935 s in total.
+[   9.203] Warning: Net ionet573 expands 1 iterations, which takes 0.00720996 s in total.
+[   9.209] Warning: Net ionet581 expands 1 iterations, which takes 0.00934127 s in total.
+[   9.216] Warning: Net ionet585 expands 1 iterations, which takes 0.0113981 s in total.
+[   9.224] Warning: Net ionet587 expands 1 iterations, which takes 0.00656353 s in total.
+[   9.255] Warning: Net ionet61 expands 9 iterations, which takes 3.50715 s in total.
+[   9.255] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.255] Warning: Net ionet566 expands 3 iterations, which takes 0.097275 s in total.
+[   9.257] Warning: Net ionet592 expands 1 iterations, which takes 0.00138822 s in total.
+[   9.267] Warning: Net ionet593 expands 1 iterations, which takes 0.0111695 s in total.
+[   9.280] Warning: Net ionet595 expands 1 iterations, which takes 0.0103195 s in total.
+[   9.294] Warning: Net ionet558 expands 9 iterations, which takes 0.213818 s in total.
+[   9.294] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.329] Warning: Net ionet488 expands 5 iterations, which takes 0.556788 s in total.
+[   9.344] Warning: Net ionet520 expands 9 iterations, which takes 0.301004 s in total.
+[   9.344] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.375] Warning: Net ionet591 expands 3 iterations, which takes 0.143979 s in total.
+[   9.390] Warning: Net ionet600 expands 3 iterations, which takes 0.0457201 s in total.
+[   9.392] Warning: Net ionet602 expands 1 iterations, which takes 0.00163954 s in total.
+[   9.409] Warning: Net ionet603 expands 3 iterations, which takes 0.0169549 s in total.
+[   9.411] Warning: Net ionet604 expands 1 iterations, which takes 0.00096461 s in total.
+[   9.412] Warning: Net ionet606 expands 1 iterations, which takes 0.00082076 s in total.
+[   9.421] Warning: Net ionet607 expands 2 iterations, which takes 0.00896188 s in total.
+[   9.424] Warning: Net ionet608 expands 1 iterations, which takes 0.00297361 s in total.
+[   9.425] Warning: Net ionet609 expands 1 iterations, which takes 0.000814668 s in total.
+[   9.430] Warning: Net ionet610 expands 2 iterations, which takes 0.00409803 s in total.
+[   9.437] Warning: Net ionet621 expands 2 iterations, which takes 0.00670531 s in total.
+[   9.456] Warning: Net ionet87 expands 9 iterations, which takes 1.98397 s in total.
+[   9.456] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.465] Warning: Net ionet623 expands 1 iterations, which takes 0.00531688 s in total.
+[   9.481] Warning: Net ionet510 expands 5 iterations, which takes 0.472783 s in total.
+[   9.495] Warning: Net ionet628 expands 1 iterations, which takes 0.00930697 s in total.
+[   9.499] Warning: Net ionet624 expands 3 iterations, which takes 0.0335844 s in total.
+[   9.501] Warning: Net ionet630 expands 1 iterations, which takes 0.0015998 s in total.
+[   9.518] Warning: Net ionet631 expands 3 iterations, which takes 0.0168699 s in total.
+[   9.524] Warning: Net ionet601 expands 3 iterations, which takes 0.148566 s in total.
+[   9.525] Warning: Net ionet629 expands 1 iterations, which takes 0.0256483 s in total.
+[   9.549] Warning: Net ionet584 expands 5 iterations, which takes 0.347093 s in total.
+[   9.551] Warning: Net ionet637 expands 1 iterations, which takes 0.00111929 s in total.
+[   9.575] Warning: Net ionet634 expands 3 iterations, which takes 0.0564562 s in total.
+[   9.586] Warning: Net ionet181 expands 9 iterations, which takes 1.24082 s in total.
+[   9.586] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.589] Warning: Net ionet645 expands 1 iterations, which takes 0.00185065 s in total.
+[   9.598] Warning: Net ionet642 expands 1 iterations, which takes 0.0316344 s in total.
+[   9.620] Warning: Net ionet597 expands 4 iterations, which takes 0.332832 s in total.
+[   9.649] Warning: Net ionet651 expands 1 iterations, which takes 0.0267133 s in total.
+[   9.665] Warning: Net ionet171 expands 9 iterations, which takes 1.34698 s in total.
+[   9.665] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.688] Warning: Net ionet636 expands 3 iterations, which takes 0.161194 s in total.
+[   9.688] Warning: Net ionet652 expands 2 iterations, which takes 0.038798 s in total.
+[   9.704] Warning: Net ionet655 expands 1 iterations, which takes 0.0156871 s in total.
+[   9.719] Warning: Net ionet571 expands 5 iterations, which takes 0.560154 s in total.
+[   9.747] Warning: Net ionet579 expands 5 iterations, which takes 0.552552 s in total.
+[   9.758] Warning: Net ionet648 expands 3 iterations, which takes 0.157889 s in total.
+[   9.770] Warning: Net ionet657 expands 2 iterations, which takes 0.0707735 s in total.
+[   9.794] Warning: Net ionet622 expands 5 iterations, which takes 0.357349 s in total.
+[   9.891] Warning: Net ionet653 expands 3 iterations, which takes 0.225844 s in total.
+[   9.917] Warning: Net ionet658 expands 3 iterations, which takes 0.208288 s in total.
+[   9.918] Warning: Net ionet227 expands 9 iterations, which takes 1.51463 s in total.
+[   9.918] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.941] Warning: Net ionet660 expands 4 iterations, which takes 0.193217 s in total.
+[   9.946] Warning: Net ionet663 expands 3 iterations, which takes 0.151396 s in total.
+[   9.975] Warning: Net ionet659 expands 3 iterations, which takes 0.255581 s in total.
+[   9.981] Warning: Net ionet180 expands 9 iterations, which takes 1.64866 s in total.
+[   9.981] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[   9.981] Warning: Net ionet674 expands 1 iterations, which takes 0.000584834 s in total.
+[  10.001] Warning: Net ionet635 expands 4 iterations, which takes 0.477058 s in total.
+[  10.011] Warning: Net ionet676 expands 1 iterations, which takes 0.00886589 s in total.
+[  10.022] Warning: Net ionet673 expands 2 iterations, which takes 0.0461683 s in total.
+[  10.044] Warning: Net ionet675 expands 3 iterations, which takes 0.0623242 s in total.
+[  10.067] Warning: Net ionet680 expands 1 iterations, which takes 0.0154203 s in total.
+[  10.085] Warning: Net ionet662 expands 4 iterations, which takes 0.314894 s in total.
+[  10.089] Warning: Net ionet682 expands 1 iterations, which takes 0.0146652 s in total.
+[  10.094] Warning: Net ionet191 expands 9 iterations, which takes 1.71637 s in total.
+[  10.094] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.105] Warning: Net ionet671 expands 4 iterations, which takes 0.163856 s in total.
+[  10.138] Warning: Net ionet688 expands 2 iterations, which takes 0.0332809 s in total.
+[  10.164] Warning: Net ionet661 expands 5 iterations, which takes 0.405862 s in total.
+[  10.168] Warning: Net ionet683 expands 3 iterations, which takes 0.0832569 s in total.
+[  10.200] Warning: Net ionet679 expands 4 iterations, which takes 0.1786 s in total.
+[  10.204] Warning: Net ionet672 expands 4 iterations, which takes 0.258062 s in total.
+[  10.208] Warning: Net ionet665 expands 4 iterations, which takes 0.316415 s in total.
+[  10.231] Warning: Net ionet670 expands 4 iterations, which takes 0.312588 s in total.
+[  10.311] Warning: Net ionet728 expands 2 iterations, which takes 0.102477 s in total.
+[  10.386] Warning: Net ionet699 expands 3 iterations, which takes 0.219562 s in total.
+[  10.412] Warning: Net ionet110 expands 9 iterations, which takes 2.17339 s in total.
+[  10.412] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.429] Warning: Net ionet306 expands 9 iterations, which takes 1.9265 s in total.
+[  10.429] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.431] Warning: Net ionet740 expands 1 iterations, which takes 0.0010303 s in total.
+[  10.457] Warning: Net ionet690 expands 4 iterations, which takes 0.316762 s in total.
+[  10.471] Warning: Net ionet599 expands 6 iterations, which takes 1.14111 s in total.
+[  10.473] Warning: Net ionet749 expands 1 iterations, which takes 0.00171886 s in total.
+[  10.574] Warning: Net ionet725 expands 4 iterations, which takes 0.373535 s in total.
+[  10.579] Warning: Net ionet668 expands 5 iterations, which takes 0.662203 s in total.
+[  10.581] Warning: Net ionet753 expands 1 iterations, which takes 0.0012264 s in total.
+[  10.636] Warning: Net ionet734 expands 3 iterations, which takes 0.249757 s in total.
+[  10.647] Warning: Net ionet757 expands 1 iterations, which takes 0.0103646 s in total.
+[  10.671] Warning: Net ionet758 expands 1 iterations, which takes 0.0235396 s in total.
+[  10.693] Warning: Net ionet755 expands 3 iterations, which takes 0.112123 s in total.
+[  10.700] Warning: Net ionet305 expands 8 iterations, which takes 2.22049 s in total.
+[  10.719] Warning: Net ionet195 expands 9 iterations, which takes 2.33019 s in total.
+[  10.720] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.722] Warning: Net ionet763 expands 1 iterations, which takes 0.00204001 s in total.
+[  10.759] Warning: Net ionet687 expands 5 iterations, which takes 0.660299 s in total.
+[  10.767] Warning: Net ionet767 expands 1 iterations, which takes 0.00717647 s in total.
+[  10.790] Warning: Net ionet747 expands 5 iterations, which takes 0.358734 s in total.
+[  10.791] Warning: Net ionet733 expands 4 iterations, which takes 0.477041 s in total.
+[  10.794] Warning: Net ionet402 expands 9 iterations, which takes 2.25603 s in total.
+[  10.794] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.798] Warning: Net ionet748 expands 4 iterations, which takes 0.340503 s in total.
+[  10.822] Warning: Net ionet752 expands 4 iterations, which takes 0.246885 s in total.
+[  10.823] Warning: Net ionet778 expands 3 iterations, which takes 0.0290624 s in total.
+[  10.877] Warning: Net ionet563 expands 9 iterations, which takes 1.76368 s in total.
+[  10.877] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.879] Warning: Net ionet705 expands 5 iterations, which takes 0.711086 s in total.
+[  10.889] Warning: Net ionet237 expands 9 iterations, which takes 2.46215 s in total.
+[  10.889] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  10.889] Warning: Net ionet809 expands 1 iterations, which takes 0.00894098 s in total.
+[  10.901] Warning: Net ionet783 expands 2 iterations, which takes 0.102379 s in total.
+[  10.910] Warning: Net ionet777 expands 2 iterations, which takes 0.109786 s in total.
+[  10.916] Warning: Net ionet818 expands 1 iterations, which takes 0.00449682 s in total.
+[  10.917] Warning: Net ionet814 expands 1 iterations, which takes 0.0110106 s in total.
+[  10.942] Warning: Net ionet824 expands 1 iterations, which takes 0.0233968 s in total.
+[  10.943] Warning: Net ionet804 expands 4 iterations, which takes 0.119476 s in total.
+[  10.944] Warning: Net ionet811 expands 4 iterations, which takes 0.054707 s in total.
+[  10.946] Warning: Net ionet832 expands 1 iterations, which takes 0.00187345 s in total.
+[  10.948] Warning: Net ionet760 expands 3 iterations, which takes 0.267421 s in total.
+[  10.950] Warning: Net ionet827 expands 1 iterations, which takes 0.00668311 s in total.
+[  10.955] Warning: Net ionet750 expands 4 iterations, which takes 0.481749 s in total.
+[  10.965] Warning: Net ionet833 expands 2 iterations, which takes 0.0183892 s in total.
+[  10.969] Warning: Net ionet822 expands 2 iterations, which takes 0.0582647 s in total.
+[  10.977] Warning: Net ionet825 expands 2 iterations, which takes 0.0336266 s in total.
+[  11.002] Warning: Net ionet841 expands 2 iterations, which takes 0.0250199 s in total.
+[  11.011] Warning: Net ionet789 expands 3 iterations, which takes 0.188555 s in total.
+[  11.057] Warning: Net ionet806 expands 3 iterations, which takes 0.178946 s in total.
+[  11.075] Warning: Net ionet835 expands 4 iterations, which takes 0.124207 s in total.
+[  11.091] Warning: Net ionet840 expands 4 iterations, which takes 0.12143 s in total.
+[  11.091] Warning: Net ionet834 expands 3 iterations, which takes 0.143428 s in total.
+[  11.116] Warning: Net ionet843 expands 3 iterations, which takes 0.108281 s in total.
+[  11.120] Warning: Net ionet838 expands 4 iterations, which takes 0.164642 s in total.
+[  11.142] Warning: Net ionet839 expands 6 iterations, which takes 0.176938 s in total.
+[  11.169] Warning: Net ionet594 expands 9 iterations, which takes 1.91215 s in total.
+[  11.169] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  11.221] Warning: Net ionet844 expands 3 iterations, which takes 0.210038 s in total.
+[  11.226] Warning: Net ionet861 expands 1 iterations, which takes 0.00496896 s in total.
+[  11.243] Warning: Net ionet848 expands 3 iterations, which takes 0.178304 s in total.
+[  11.248] Warning: Net ionet859 expands 3 iterations, which takes 0.105814 s in total.
+[  11.250] Warning: Net ionet894 expands 1 iterations, which takes 0.00191173 s in total.
+[  11.258] Warning: Net ionet854 expands 3 iterations, which takes 0.141912 s in total.
+[  11.264] Warning: Net ionet853 expands 3 iterations, which takes 0.162915 s in total.
+[  11.266] Warning: Net ionet873 expands 2 iterations, which takes 0.0229467 s in total.
+[  11.281] Warning: Net ionet856 expands 3 iterations, which takes 0.161092 s in total.
+[  11.300] Warning: Net ionet761 expands 5 iterations, which takes 0.606315 s in total.
+[  11.313] Warning: Net ionet771 expands 5 iterations, which takes 0.530859 s in total.
+[  11.397] Warning: Net ionet588 expands 9 iterations, which takes 2.17947 s in total.
+[  11.397] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  11.399] Warning: Net ionet916 expands 1 iterations, which takes 0.00173482 s in total.
+[  11.403] Warning: Net ionet918 expands 2 iterations, which takes 0.00379922 s in total.
+[  11.416] Warning: Net ionet919 expands 3 iterations, which takes 0.0128129 s in total.
+[  11.429] Warning: Net ionet896 expands 4 iterations, which takes 0.176297 s in total.
+[  11.438] Warning: Net ionet898 expands 3 iterations, which takes 0.179689 s in total.
+[  11.459] Warning: Net ionet860 expands 7 iterations, which takes 0.290258 s in total.
+[  11.460] Warning: Net ionet925 expands 1 iterations, which takes 0.000815907 s in total.
+[  11.463] Warning: Net ionet921 expands 3 iterations, which takes 0.0466051 s in total.
+[  11.464] Warning: Net ionet927 expands 1 iterations, which takes 0.000775608 s in total.
+[  11.475] Warning: Net ionet823 expands 4 iterations, which takes 0.555409 s in total.
+[  11.476] Warning: Net ionet929 expands 1 iterations, which takes 0.00115986 s in total.
+[  11.498] Warning: Net ionet862 expands 5 iterations, which takes 0.271627 s in total.
+[  11.502] Warning: Net ionet931 expands 1 iterations, which takes 0.00352974 s in total.
+[  11.533] Warning: Net ionet902 expands 3 iterations, which takes 0.250706 s in total.
+[  11.537] Warning: Net ionet899 expands 4 iterations, which takes 0.272749 s in total.
+[  11.538] Warning: Net ionet764 expands 9 iterations, which takes 0.816428 s in total.
+[  11.544] Warning: Net ionet934 expands 1 iterations, which takes 0.011345 s in total.
+[  11.560] Warning: Net ionet926 expands 3 iterations, which takes 0.0992359 s in total.
+[  11.564] Warning: Net ionet936 expands 1 iterations, which takes 0.0265081 s in total.
+[  11.569] Warning: Net ionet940 expands 1 iterations, which takes 0.00733125 s in total.
+[  11.569] Warning: Net ionet914 expands 3 iterations, which takes 0.249889 s in total.
+[  11.587] Warning: Net ionet937 expands 2 iterations, which takes 0.0483269 s in total.
+[  11.598] Warning: Net ionet942 expands 1 iterations, which takes 0.0255583 s in total.
+[  11.631] Warning: Net ionet938 expands 3 iterations, which takes 0.0846224 s in total.
+[  11.633] Warning: Net ionet943 expands 2 iterations, which takes 0.0636958 s in total.
+[  11.643] Warning: Net ionet928 expands 4 iterations, which takes 0.177904 s in total.
+[  11.665] Warning: Net ionet951 expands 2 iterations, which takes 0.0319115 s in total.
+[  11.666] Warning: Net ionet924 expands 4 iterations, which takes 0.227355 s in total.
+[  11.743] Warning: Net ionet945 expands 4 iterations, which takes 0.144862 s in total.
+[  11.819] Warning: Net ionet762 expands 9 iterations, which takes 1.11839 s in total.
+[  11.833] Warning: Net ionet980 expands 3 iterations, which takes 0.166628 s in total.
+[  11.872] Warning: Net ionet907 expands 4 iterations, which takes 0.571403 s in total.
+[  11.874] Warning: Net ionet959 expands 3 iterations, which takes 0.224378 s in total.
+[  11.882] Warning: Net ionet991 expands 1 iterations, which takes 0.00950211 s in total.
+[  11.998] Warning: Net ionet993 expands 3 iterations, which takes 0.123578 s in total.
+[  12.018] Warning: Net ionet982 expands 9 iterations, which takes 0.351979 s in total.
+[  12.018] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  12.019] Warning: Net ionet986 expands 3 iterations, which takes 0.200058 s in total.
+[  12.019] Warning: Net ionet984 expands 4 iterations, which takes 0.275391 s in total.
+[  12.033] Warning: Net ionet1002 expands 3 iterations, which takes 0.0147242 s in total.
+[  12.034] Warning: Net ionet1005 expands 1 iterations, which takes 0.00081812 s in total.
+[  12.035] Warning: Net ionet1006 expands 1 iterations, which takes 0.000967078 s in total.
+[  12.036] Warning: Net ionet1007 expands 1 iterations, which takes 0.00082338 s in total.
+[  12.040] Warning: Net ionet1008 expands 2 iterations, which takes 0.00411003 s in total.
+[  12.041] Warning: Net ionet1009 expands 1 iterations, which takes 0.000820008 s in total.
+[  12.042] Warning: Net ionet1010 expands 1 iterations, which takes 0.00081295 s in total.
+[  12.055] Warning: Net ionet1012 expands 3 iterations, which takes 0.0119411 s in total.
+[  12.056] Warning: Net ionet1014 expands 1 iterations, which takes 0.00115786 s in total.
+[  12.058] Warning: Net ionet1015 expands 1 iterations, which takes 0.00124409 s in total.
+[  12.068] Warning: Net ionet1017 expands 3 iterations, which takes 0.0101142 s in total.
+[  12.069] Warning: Net ionet1019 expands 1 iterations, which takes 0.000688266 s in total.
+[  12.121] Warning: Net ionet999 expands 4 iterations, which takes 0.230708 s in total.
+[  12.139] Warning: Net ionet1003 expands 3 iterations, which takes 0.12005 s in total.
+[  12.171] Warning: Net ionet923 expands 5 iterations, which takes 0.741752 s in total.
+[  12.179] Warning: Net ionet1023 expands 1 iterations, which takes 0.00698173 s in total.
+[  12.190] Warning: Net ionet987 expands 5 iterations, which takes 0.357019 s in total.
+[  12.191] Warning: Net ionet1021 expands 2 iterations, which takes 0.0703446 s in total.
+[  12.200] Warning: Net ionet1026 expands 1 iterations, which takes 0.00808183 s in total.
+[  12.227] Warning: Net ionet930 expands 5 iterations, which takes 0.750216 s in total.
+[  12.355] Warning: Net ionet1022 expands 3 iterations, which takes 0.214314 s in total.
+[  12.387] Warning: Net ionet1024 expands 3 iterations, which takes 0.206163 s in total.
+[  12.446] Warning: Net ionet1030 expands 3 iterations, which takes 0.218979 s in total.
+[  12.453] Warning: Net ionet849 expands 9 iterations, which takes 1.37786 s in total.
+[  12.454] Warning: Net ionet1119 expands 1 iterations, which takes 0.000571702 s in total.
+[  12.455] Warning: Net ionet1124 expands 1 iterations, which takes 0.000818002 s in total.
+[  12.467] Warning: Net ionet1128 expands 1 iterations, which takes 0.00751167 s in total.
+[  12.471] Warning: Net ionet1004 expands 4 iterations, which takes 0.451027 s in total.
+[  12.488] Warning: Net ionet944 expands 6 iterations, which takes 0.900426 s in total.
+[  12.491] Warning: Net ionet1132 expands 2 iterations, which takes 0.00341978 s in total.
+[  12.520] Warning: Net ionet1001 expands 4 iterations, which takes 0.518383 s in total.
+[  12.528] Warning: Net ionet1126 expands 3 iterations, which takes 0.0719708 s in total.
+[  12.536] Warning: Net ionet1139 expands 1 iterations, which takes 0.00695681 s in total.
+[  12.557] Warning: Net ionet1127 expands 3 iterations, which takes 0.0997014 s in total.
+[  12.616] Warning: Net ionet1137 expands 3 iterations, which takes 0.0959631 s in total.
+[  12.623] Warning: Net ionet1141 expands 3 iterations, which takes 0.0739522 s in total.
+[  12.626] Warning: Net ionet1147 expands 1 iterations, which takes 0.00355601 s in total.
+[  12.632] Warning: Net ionet1142 expands 3 iterations, which takes 0.0746726 s in total.
+[  12.633] Warning: Net ionet1149 expands 1 iterations, which takes 0.00792308 s in total.
+[  12.646] Warning: Net ionet1151 expands 1 iterations, which takes 0.0131488 s in total.
+[  12.676] Warning: Net ionet900 expands 9 iterations, which takes 1.40827 s in total.
+[  12.677] Warning: Net ionet1131 expands 4 iterations, which takes 0.206318 s in total.
+[  12.678] Warning: Net ionet1161 expands 1 iterations, which takes 0.00137868 s in total.
+[  12.714] Warning: Net ionet1130 expands 4 iterations, which takes 0.241659 s in total.
+[  12.728] Warning: Net ionet1165 expands 2 iterations, which takes 0.0457708 s in total.
+[  12.741] Warning: Net ionet1170 expands 1 iterations, which takes 0.0124487 s in total.
+[  12.750] Warning: Net ionet979 expands 6 iterations, which takes 1.1067 s in total.
+[  12.782] Warning: Net ionet1175 expands 2 iterations, which takes 0.0310909 s in total.
+[  12.787] Warning: Net ionet1169 expands 2 iterations, which takes 0.071913 s in total.
+[  12.801] Warning: Net ionet1152 expands 3 iterations, which takes 0.168235 s in total.
+[  12.801] Warning: Net ionet1177 expands 1 iterations, which takes 0.0143041 s in total.
+[  12.809] Warning: Net ionet1176 expands 1 iterations, which takes 0.0211214 s in total.
+[  12.816] Warning: Net ionet1029 expands 5 iterations, which takes 0.608985 s in total.
+[  12.822] Warning: Net ionet1183 expands 1 iterations, which takes 0.0083185 s in total.
+[  12.827] Warning: Net ionet1167 expands 3 iterations, which takes 0.143936 s in total.
+[  12.831] Warning: Net ionet1181 expands 1 iterations, which takes 0.0208582 s in total.
+[  12.836] Warning: Net ionet850 expands 8 iterations, which takes 1.74481 s in total.
+[  12.848] Warning: Net ionet1180 expands 1 iterations, which takes 0.0380285 s in total.
+[  12.862] Warning: Net ionet1189 expands 4 iterations, which takes 0.0264874 s in total.
+[  12.868] Warning: Net ionet1192 expands 2 iterations, which takes 0.00459397 s in total.
+[  12.890] Warning: Net ionet1172 expands 3 iterations, which takes 0.135522 s in total.
+[  12.919] Warning: Net ionet1136 expands 5 iterations, which takes 0.422425 s in total.
+[  12.962] Warning: Net ionet1194 expands 3 iterations, which takes 0.071701 s in total.
+[  13.048] Warning: Net ionet1166 expands 4 iterations, which takes 0.369784 s in total.
+[  13.108] Warning: Net ionet1185 expands 4 iterations, which takes 0.291117 s in total.
+[  13.120] Warning: Net ionet1025 expands 5 iterations, which takes 0.929836 s in total.
+[  13.154] Warning: Net ionet1186 expands 4 iterations, which takes 0.324745 s in total.
+[  13.193] Warning: Net ionet1196 expands 9 iterations, which takes 0.273437 s in total.
+[  13.193] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.200] Warning: Net ionet1202 expands 9 iterations, which takes 0.235444 s in total.
+[  13.205] Warning: Net ionet1208 expands 9 iterations, which takes 0.011903 s in total.
+[  13.205] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.219] Warning: Net ionet1210 expands 9 iterations, which takes 0.0141688 s in total.
+[  13.219] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.250] Warning: Net ionet1205 expands 9 iterations, which takes 0.142347 s in total.
+[  13.250] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.257] Warning: Net ionet1209 expands 9 iterations, which takes 0.0566156 s in total.
+[  13.257] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.333] Warning: Net ionet1204 expands 9 iterations, which takes 0.284431 s in total.
+[  13.333] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.338] Warning: Net ionet933 expands 9 iterations, which takes 1.83424 s in total.
+[  13.338] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.344] Warning: Net ionet1206 expands 9 iterations, which takes 0.223525 s in total.
+[  13.344] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.438] Warning: Net ionet1207 expands 9 iterations, which takes 0.284103 s in total.
+[  13.438] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.740] Warning: Net ionet1120 expands 7 iterations, which takes 1.28529 s in total.
+[  13.892] Warning: Net ionet643 expands 9 iterations, which takes 4.31647 s in total.
+[  13.892] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  13.992] Warning: Net ionet686 expands 9 iterations, which takes 3.89707 s in total.
+[  13.992] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  14.301] Warning: Net ionet730 expands 9 iterations, which takes 4.06911 s in total.
+[  14.301] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  14.441] Warning: Net ionet1153 expands 9 iterations, which takes 1.80727 s in total.
+[  14.441] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  14.446] Warning: Net ionet598 expands 9 iterations, which takes 5.15234 s in total.
+[  14.446] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  14.602] Warning: Net ionet649 expands 9 iterations, which takes 5.00223 s in total.
+[  14.602] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  15.890] Warning: Net ionet941 expands 9 iterations, which takes 4.32357 s in total.
+[  15.890] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  15.895] Warning: Net ionet735 expands 9 iterations, which takes 5.48366 s in total.
+[  15.896] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  16.401] Warning: Net net3659 expands 1 iterations, which takes 0.00385911 s in total.
+[  16.424] Warning: Net net3714 expands 1 iterations, which takes 0.010984 s in total.
+[  16.655] Warning: Net net5739 expands 1 iterations, which takes 0.00184485 s in total.
+[  16.932] Warning: Net ionet773 expands 9 iterations, which takes 6.14121 s in total.
+[  16.932] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  17.147] Warning: Net net10160 expands 1 iterations, which takes 0.00154924 s in total.
+[  17.187] Warning: Net ionet726 expands 9 iterations, which takes 6.98317 s in total.
+[  17.188] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  17.310] Warning: Net ionet678 expands 9 iterations, which takes 7.28968 s in total.
+[  17.310] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  17.443] Warning: Net ionet1020 expands 9 iterations, which takes 5.37442 s in total.
+[  17.444] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  18.177] Warning: Net ionet1187 expands 9 iterations, which takes 5.34931 s in total.
+[  18.177] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  18.254] Warning: Net net18956 expands 1 iterations, which takes 0.00360685 s in total.
+[  18.321] Warning: Net net19345 expands 1 iterations, which takes 0.0341094 s in total.
+[  18.451] Warning: Net ionet1193 expands 9 iterations, which takes 5.58319 s in total.
+[  18.451] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  19.371] Warning: Net ionet1190 expands 9 iterations, which takes 6.52194 s in total.
+[  19.372] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  19.616] Warning: Net net28155 expands 1 iterations, which takes 0.040623 s in total.
+[  20.812] Warning: Net ionet1188 expands 9 iterations, which takes 7.96708 s in total.
+[  20.812] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  21.827] Warning: Net ionet3 expands 9 iterations, which takes 17.7023 s in total.
+[  21.827] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  27.136] Warning: Net ionet2 expands 9 iterations, which takes 22.9841 s in total.
+[  27.136] Error: Exceed the guideExpandIterLimit, but still FAIL_DETACHED_GUIDE
+[  27.137] preMT #threads=26 (dur: min=16.3875, max=23.0147, avg=16.7101) 
+[  27.137] 
+[  27.137] ----------------------------------------------------------------
+[  27.137] Stage PRE: #nets = 36834
+[  27.137] 	#succ = 18307 (#SUCC_NORMAL = 17847 #SUCC_ONE_PIN = 460 )
+[  27.137] 	#fail = 18527 (#FAIL_DETACHED_GUIDE = 110 #FAIL_DETACHED_PIN = 18417 )
+[  27.137] 	misc (#FIX_DETACHED_PIN = 781 )
+[  27.137] ----------------------------------------------------------------
+[  27.137] 
+[  27.137] Start multi-thread scheduling. There are 36834 nets to route.
+[  31.246] Finish multi-thread scheduling. There will be 327 batches.
+[  31.246] 
+[4230.229] allMazeMT #threads=26 (dur: min=66.9609, max=4193.38, avg=314.354) 
+[4230.229] allCommitMT #threads=26 (dur: min=0.418077, max=1.15385, avg=0.659506) 
+[4230.229] allGetViaTypesMT #threads=26 (dur: min=0.955634, max=1.81586, avg=1.22698) 
+[4230.229] allCommitViaTypesMT #threads=26 (dur: min=1.08333, max=1.93004, avg=1.39966) 
+[4230.514] 
+[4230.514] Finish RRR iteration 0
+[4230.515] MEM: cur=6571.46MB, peak=8866MB
+[4230.515] 
+[4230.515] ----------------------------------------------------------------
+[4230.515] Stage PRE: #nets = 36834
+[4230.515] 	#succ = 18307 (#SUCC_NORMAL = 17847 #SUCC_ONE_PIN = 460 )
+[4230.515] 	#fail = 18527 (#FAIL_DETACHED_GUIDE = 110 #FAIL_DETACHED_PIN = 18417 )
+[4230.515] 	misc (#FIX_DETACHED_PIN = 781 )
+[4230.515] Stage MAZE: #nets = 17524
+[4230.515] 	#succ = 17524 (#SUCC_NORMAL = 17524 )
+[4230.515] Stage POST_MAZE: #nets = 0
+[4230.515] 	#succ = 0 ()
+[4230.515] 	misc (#MIN_AREA_SHADOWED_VIO = 1 #REMOVE_TRACK_SWITCH_NORMAL = 1963 #REMOVE_TRACK_SWITCH_HORSESHOE = 1997 )
+[4230.515] Stage POST: #nets = 0
+[4230.515] 	#succ = 0 ()
+[4230.515] 	misc (#LINK_PIN_VIO = 37 )
+[4230.515] ----------------------------------------------------------------
+[4230.515] 
+[4230.515] 
+[4230.515] ################################################################
+[4230.515] Start RRR iteration 1
+[4230.515] 
+[4234.623] defaultGuideExpand = 4 
+[4234.623] wrongWayPointDensity = 0.2 
+[4234.623] addDiffLayerGuides = true 
+[4234.642] Warning: Net ionet497 expands 1 iterations, which takes 0.00301746 s in total.
+[4234.646] Warning: Net ionet581 expands 1 iterations, which takes 0.00129959 s in total.
+[4234.650] Warning: Net ionet609 expands 1 iterations, which takes 0.00305358 s in total.
+[4234.655] Warning: Net ionet682 expands 1 iterations, which takes 0.00432501 s in total.
+[4234.655] Warning: Net ionet642 expands 1 iterations, which takes 0.00738782 s in total.
+[4234.659] Warning: Net ionet925 expands 1 iterations, which takes 0.00104431 s in total.
+[4234.659] Warning: Net ionet832 expands 1 iterations, which takes 0.00302616 s in total.
+[4234.662] Warning: Net ionet1019 expands 1 iterations, which takes 0.00177521 s in total.
+[4234.664] Warning: Net ionet490 expands 1 iterations, which takes 0.00186159 s in total.
+[4234.664] Warning: Net ionet916 expands 1 iterations, which takes 0.00618694 s in total.
+[4234.666] Warning: Net ionet1023 expands 1 iterations, which takes 0.00274545 s in total.
+[4234.666] Warning: Net ionet1026 expands 1 iterations, which takes 0.00263192 s in total.
+[4234.666] Warning: Net ionet1119 expands 1 iterations, which takes 0.00208302 s in total.
+[4234.668] Warning: Net ionet758 expands 1 iterations, which takes 0.0128765 s in total.
+[4234.669] Warning: Net ionet1177 expands 1 iterations, which takes 0.000910791 s in total.
+[4234.670] Warning: Net ionet1170 expands 1 iterations, which takes 0.0013091 s in total.
+[4234.672] Warning: Net ionet1007 expands 1 iterations, which takes 0.00263147 s in total.
+[4234.674] Warning: Net ionet1127 expands 2 iterations, which takes 0.00950033 s in total.
+[4234.677] Warning: Net ionet595 expands 1 iterations, which takes 0.0298322 s in total.
+[4234.680] Warning: Net ionet1128 expands 1 iterations, which takes 0.0137911 s in total.
+[4234.684] Warning: Net ionet655 expands 1 iterations, which takes 0.0364409 s in total.
+[4234.684] Warning: Net ionet1192 expands 2 iterations, which takes 0.0145114 s in total.
+[4234.684] Warning: Net ionet1151 expands 1 iterations, which takes 0.0171149 s in total.
+[4234.688] Warning: Net ionet676 expands 1 iterations, which takes 0.00227519 s in total.
+[4234.698] Warning: Net ionet307 expands 2 iterations, which takes 0.038145 s in total.
+[4234.701] Warning: Net ionet292 expands 3 iterations, which takes 0.0339098 s in total.
+[4234.726] Warning: Net ionet728 expands 2 iterations, which takes 0.0370544 s in total.
+[4234.748] Warning: Net ionet987 expands 4 iterations, which takes 0.088745 s in total.
+[4234.863] Warning: Net ionet733 expands 3 iterations, which takes 0.210615 s in total.
+[4235.139] Warning: Net ionet928 expands 4 iterations, which takes 0.480831 s in total.
+[4235.736] Warning: Net ionet571 expands 5 iterations, which takes 1.09192 s in total.
+[4236.309] Warning: Net ionet979 expands 6 iterations, which takes 1.65086 s in total.
+[4237.481] Warning: Net ionet305 expands 8 iterations, which takes 2.82727 s in total.
+[4237.488] preMT #threads=26 (dur: min=0.676758, max=2.84761, avg=0.819718) 
+[4237.488] 
+[4237.488] ----------------------------------------------------------------
+[4237.488] Stage PRE: #nets = 3565
+[4237.488] 	#succ = 3565 (#SUCC_NORMAL = 3565 )
+[4237.488] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 6274 #ADD_DIFF_LAYER_GUIDE_2 = 5790 #FIX_DETACHED_PIN = 67 )
+[4237.488] ----------------------------------------------------------------
+[4237.488] 
+[4237.488] Start multi-thread scheduling. There are 3565 nets to route.
+[4238.234] Finish multi-thread scheduling. There will be 152 batches.
+[4238.234] 
+[4497.746] allMazeMT #threads=26 (dur: min=18.0416, max=256.975, avg=58.8253) 
+[4497.746] allCommitMT #threads=26 (dur: min=0.120409, max=0.391835, avg=0.212224) 
+[4497.746] allGetViaTypesMT #threads=26 (dur: min=0.312997, max=0.956451, avg=0.505911) 
+[4497.746] allCommitViaTypesMT #threads=26 (dur: min=0.351999, max=0.973872, avg=0.609124) 
+[4497.843] 
+[4497.843] Finish RRR iteration 1
+[4497.844] MEM: cur=7170.74MB, peak=8866MB
+[4497.844] 
+[4497.844] ----------------------------------------------------------------
+[4497.844] Stage PRE: #nets = 3565
+[4497.844] 	#succ = 3565 (#SUCC_NORMAL = 3565 )
+[4497.844] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 6274 #ADD_DIFF_LAYER_GUIDE_2 = 5790 #FIX_DETACHED_PIN = 67 )
+[4497.844] Stage MAZE: #nets = 3565
+[4497.844] 	#succ = 3565 (#SUCC_NORMAL = 3565 )
+[4497.844] Stage POST_MAZE: #nets = 0
+[4497.844] 	#succ = 0 ()
+[4497.844] 	misc (#REMOVE_TRACK_SWITCH_NORMAL = 532 #REMOVE_TRACK_SWITCH_HORSESHOE = 1367 )
+[4497.844] ----------------------------------------------------------------
+[4497.844] 
+[4497.844] 
+[4497.844] ################################################################
+[4497.844] Start RRR iteration 2
+[4497.844] 
+[4502.059] defaultGuideExpand = 8 
+[4502.059] wrongWayPointDensity = 0.3 
+[4502.059] addDiffLayerGuides = true 
+[4502.075] Warning: Net ionet993 expands 1 iterations, which takes 0.00236815 s in total.
+[4502.076] Warning: Net ionet636 expands 1 iterations, which takes 0.00408372 s in total.
+[4502.076] Warning: Net ionet502 expands 2 iterations, which takes 0.00709266 s in total.
+[4502.090] Warning: Net ionet1127 expands 1 iterations, which takes 0.0155838 s in total.
+[4502.254] Warning: Net ionet622 expands 3 iterations, which takes 0.180568 s in total.
+[4502.279] preMT #threads=26 (dur: min=0.208723, max=0.214081, avg=0.210584) 
+[4502.279] 
+[4502.279] ----------------------------------------------------------------
+[4502.279] Stage PRE: #nets = 1643
+[4502.279] 	#succ = 1643 (#SUCC_NORMAL = 1643 )
+[4502.279] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 574 #ADD_DIFF_LAYER_GUIDE_2 = 129 #FIX_DETACHED_PIN = 38 )
+[4502.279] ----------------------------------------------------------------
+[4502.279] 
+[4502.279] Start multi-thread scheduling. There are 1643 nets to route.
+[4502.462] Finish multi-thread scheduling. There will be 161 batches.
+[4502.462] 
+[4659.312] allMazeMT #threads=26 (dur: min=3.36636, max=155.097, avg=28.2614) 
+[4659.312] allCommitMT #threads=26 (dur: min=0.0369572, max=0.297039, avg=0.102171) 
+[4659.312] allGetViaTypesMT #threads=26 (dur: min=0.0889864, max=0.737516, avg=0.227235) 
+[4659.312] allCommitViaTypesMT #threads=26 (dur: min=0.069965, max=0.577149, avg=0.235126) 
+[4659.391] 
+[4659.391] Finish RRR iteration 2
+[4659.391] MEM: cur=7230.57MB, peak=8866MB
+[4659.391] 
+[4659.391] ----------------------------------------------------------------
+[4659.391] Stage PRE: #nets = 1643
+[4659.391] 	#succ = 1643 (#SUCC_NORMAL = 1643 )
+[4659.391] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 574 #ADD_DIFF_LAYER_GUIDE_2 = 129 #FIX_DETACHED_PIN = 38 )
+[4659.391] Stage MAZE: #nets = 1643
+[4659.391] 	#succ = 1643 (#SUCC_NORMAL = 1643 )
+[4659.391] Stage POST_MAZE: #nets = 0
+[4659.391] 	#succ = 0 ()
+[4659.391] 	misc (#REMOVE_TRACK_SWITCH_NORMAL = 186 #REMOVE_TRACK_SWITCH_HORSESHOE = 390 )
+[4659.391] ----------------------------------------------------------------
+[4659.391] 
+[4659.391] 
+[4659.391] ################################################################
+[4659.391] Start RRR iteration 3
+[4659.391] 
+[4663.394] defaultGuideExpand = 14 
+[4663.394] wrongWayPointDensity = 0.4 
+[4663.394] addDiffLayerGuides = true 
+[4663.405] Warning: Net ionet292 expands 1 iterations, which takes 0.00188219 s in total.
+[4663.639] preMT #threads=26 (dur: min=0.231505, max=0.241462, avg=0.23595) 
+[4663.639] 
+[4663.639] ----------------------------------------------------------------
+[4663.639] Stage PRE: #nets = 902
+[4663.639] 	#succ = 902 (#SUCC_NORMAL = 902 )
+[4663.639] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 461 #ADD_DIFF_LAYER_GUIDE_2 = 84 #FIX_DETACHED_PIN = 25 )
+[4663.639] ----------------------------------------------------------------
+[4663.639] 
+[4663.639] Start multi-thread scheduling. There are 902 nets to route.
+[4663.790] Finish multi-thread scheduling. There will be 120 batches.
+[4663.790] 
+[4798.507] allMazeMT #threads=26 (dur: min=1.28626, max=133.49, avg=19.8674) 
+[4798.507] allCommitMT #threads=26 (dur: min=0.0125973, max=0.213241, avg=0.0557133) 
+[4798.507] allGetViaTypesMT #threads=26 (dur: min=0.0275207, max=0.564556, avg=0.119369) 
+[4798.507] allCommitViaTypesMT #threads=26 (dur: min=0.0205686, max=0.363217, avg=0.11192) 
+[4798.578] 
+[4798.578] Finish RRR iteration 3
+[4798.578] MEM: cur=7598.93MB, peak=8866MB
+[4798.578] 
+[4798.578] ----------------------------------------------------------------
+[4798.578] Stage PRE: #nets = 902
+[4798.578] 	#succ = 902 (#SUCC_NORMAL = 902 )
+[4798.578] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 461 #ADD_DIFF_LAYER_GUIDE_2 = 84 #FIX_DETACHED_PIN = 25 )
+[4798.578] Stage MAZE: #nets = 902
+[4798.578] 	#succ = 902 (#SUCC_NORMAL = 902 )
+[4798.578] Stage POST_MAZE: #nets = 0
+[4798.578] 	#succ = 0 ()
+[4798.578] 	misc (#MIN_AREA_VIO = 2 #REMOVE_TRACK_SWITCH_NORMAL = 203 #REMOVE_TRACK_SWITCH_HORSESHOE = 237 )
+[4798.578] Stage POST: #nets = 0
+[4798.578] 	#succ = 0 ()
+[4798.578] 	misc (#LINK_PIN_VIO = 2 )
+[4798.578] ----------------------------------------------------------------
+[4798.578] 
+[4807.391] There will be 62 batches for getting via types. 
+[4807.861] allPostMaze2MT #threads=26 (dur: min=0.0782246, max=0.1612, avg=0.1062) 
+[4809.337] allGetViaTypesMT #threads=26 (dur: min=0.274568, max=0.373398, avg=0.315414) 
+[4809.337] allCommitViaTypesMT #threads=26 (dur: min=0.879253, max=1.07991, avg=0.985444) 
+[4810.999] allGetViaTypesMT #threads=26 (dur: min=0.434631, max=0.600699, avg=0.495349) 
+[4810.999] allCommitViaTypesMT #threads=26 (dur: min=0.84919, max=1.04264, avg=0.951136) 
+[4812.671] allGetViaTypesMT #threads=26 (dur: min=0.439964, max=0.60787, avg=0.502131) 
+[4812.671] allCommitViaTypesMT #threads=26 (dur: min=0.848599, max=1.04519, avg=0.953887) 
+[4812.907] postMT #threads=26 (dur: min=0.233879, max=0.236537, avg=0.234376) 
+[4812.972] #nets connected by STT: 18850
+[4812.972] 
+[4812.972] ################################################################
+[4812.972] Finish all RRR iterations and PostRoute
+[4812.972] MEM: cur=7599MB, peak=8866MB
+[4812.972] 
+[4812.972] ----------------------------------------------------------------
+[4812.972] Stage PRE: #nets = 902
+[4812.972] 	#succ = 902 (#SUCC_NORMAL = 902 )
+[4812.972] 	misc (#ADD_DIFF_LAYER_GUIDE_1 = 461 #ADD_DIFF_LAYER_GUIDE_2 = 84 #FIX_DETACHED_PIN = 25 )
+[4812.972] Stage MAZE: #nets = 902
+[4812.972] 	#succ = 902 (#SUCC_NORMAL = 902 )
+[4812.972] Stage POST_MAZE: #nets = 0
+[4812.972] 	#succ = 0 ()
+[4812.972] 	misc (#MIN_AREA_VIO = 4 #REMOVE_TRACK_SWITCH_NORMAL = 203 #REMOVE_TRACK_SWITCH_HORSESHOE = 237 )
+[4812.972] Stage POST: #nets = 17524
+[4812.972] 	#succ = 17524 (#SUCC_NORMAL = 655 #SUCC_CONN_EXT_PIN = 16869 )
+[4812.972] 	misc (#LINK_PIN_VIO = 10 #FILL_SAME_NET_SPACE = 35263 )
+[4813.041] --- Wire Usage ---
+[4813.041] Among 0 grid points and 0-long tracks (length is normalized by M2 pitch): 
+[4813.041] usage      |    grid    |   length  
+[4813.041] 1          | 6594054    | 6.42302e+06
+[4813.041] 2          | 403        | 394.05    
+[4813.123] --- Via Usage ---
+[4813.123] Among 0 via candidates --- 
+[4813.123] usage      | routed    
+[4813.123] 1          | 331909    
+[4813.387] --- Wire-Wire Short/Spacing Vios Vios ---
+[4813.387] usage      | # space    |        # short          |       short area       
+[4813.387] layer      | wire-wire  | wire-wire  | wire-fixed | wire-wire  | wire-fixed
+[4813.387] Metal1     | 0          | 50         | 146        | 58.2       | 51.9      
+[4813.387] Metal2     | 0          | 137        | 0          | 58.8525    | 0         
+[4813.387] Metal3     | 0          | 30         | 0          | 10.5       | 0         
+[4813.387] Metal4     | 0          | 2          | 0          | 0.665      | 0         
+[4813.387] SumW       | 0          | 219        | 146        | 128.218    | 51.9      
+[4813.387] BigSumW    | 0          | 365                     | 180.118                
+[4814.551] --- Via-Via/Wire Short/Spacing Vios ---
+[4814.551] layer      |      via-via            |      via-wire           | via-fixed 
+[4814.551]            | same       | top        | bot        | top        | 
+[4814.551] Via1       | 0          | 2          | 19         | 43         | 0         
+[4814.551] Via2       | 3          | 1          | 1          | 2          | 0         
+[4814.551] SumV       | 3          | 3          | 20         | 45         | 0         
+[4814.551] BigSumV    | 6                       | 65                      | 0         
+[4814.551] --- Estimated Scores ---
+[4814.551] item       | metric     | weight     | score      | %         
+[4814.551] wirelength | 6.42381e+06 | 0.5        | 3.21191e+06 | 0.802719  
+[4814.551] # vias     | 331909     | 2          | 663818     | 0.165901  
+[4814.551] short      | 180.118    | 500        | 90058.8    | 0.0225075 
+[4814.551] space      | 71         | 500        | 35500      | 0.00887215
+[4814.551] total score = 4.00128e+06
+[4814.551] ----------------------------------------------------------------
+[4814.551] 
+[4817.524] Finish writing def
+[4817.526] MEM: cur=7590.12MB, peak=8866MB
+[4817.526] 
+[4817.548] --------------------------------------------------------------------------- 
+[4817.548]                                Terminated...                                
+[4817.548] --------------------------------------------------------------------------- 
