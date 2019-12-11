@@ -23,6 +23,7 @@
 #include "lefdef/salt.h"
 #include "lefdef/fady_flute.h"
 
+
 using namespace std;
 void show_banner();
 void show_usage();
@@ -453,7 +454,6 @@ void putObstructions()
 
             int xl, yl, xh, yh;
 
-            cout << "putObstructions(1)" << endl;
             //getting the coordinates of the obstruction after placement
             if (orientation == "N")
             {
@@ -526,7 +526,6 @@ void putObstructions()
             pair<int, int> temp = pMin;
             pMin = {min(pMin.first, pMax.first), min(pMin.second, pMax.second)};
             pMax = {max(temp.first, pMax.first), max(temp.second, pMax.second)};
-            cout << "putObstructions(2)" << endl;
             int startX, startY, endX, endY;
             for (int i = pMin.first; i <= pMax.first; i++)
             {
@@ -565,13 +564,8 @@ void putObstructions()
 
                     int capacity = gcellGrid[k - 1][i][j].capacity * (1 - utilization);
                     gcellGrid[k - 1][i][j].setCapacity(capacity);
-                    if (gcellGrid[k-1][i][j].capacity == 0 && k==1 && i == 0 && j ==0)
-                    {
-                        cout << gcellGrid[k-1][i][j].capacity << endl;
-                    }
                     gcellGrid[k-1][i][j].setWireCap(capacity * 1- ((-2*pow(utilization,2))+2*utilization+0.25));
                     gcellGrid[k-1][i][j].setViaCap(capacity * ((-2*pow(utilization,2))+2*utilization+0.25));
-                    cout << "DONE WITH putObstructions()" << endl;
                 }
             }
         }
@@ -723,7 +717,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
         SearchSteps++;
         if (SearchSteps>10000)
         {
-            cout<<"!!!"<<endl;
             SearchState = AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED;
         }
 
@@ -731,7 +724,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 
     if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_SUCCEEDED)
     {
-        cout << "SUCCEEDED" << endl;
         MapSearchNode *node = astarsearch.GetSolutionStart();
         int steps = 0;
         count = 0;
@@ -806,7 +798,7 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
     }
     else if (SearchState == AStarSearch<MapSearchNode>::SEARCH_STATE_FAILED)
     {
-        cout << "Search terminated. will Ripup and reroute\n";
+        cout << "Search terminated. will reroute\n";
 
         undoChanges = true;
         int zz = gcellGrid.size();
@@ -825,19 +817,6 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
             }
         }
         goto REROUTE;
-
-//        astarsearch.CancelSearch();
-//        astarsearch.EnsureMemoryFreed();
-//        astarsearch.FreeSolutionNodes();
-//        MapSearchNode *node = astarsearch.GetSolutionStart();
-//        //failedNetName = name;
-//        cout << name << endl;
-//        failed = true;
-//        //cout << "FAILED GOA: " << failed << endl;
-//        cout << source.z<<","<<source.x<<","<<source.y<< endl;
-//        cout << target.z<<","<<target.x<<","<<target.y<<","<< endl;
-//        cout<<"b.";
-//        return;
     }
 
     astarsearch.EnsureMemoryFreed();
@@ -847,6 +826,10 @@ void routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string n
 
 
 ThreadPool tp(1);
+bool readnets()
+{
+
+}
 
 void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map<string, vector<triplet>> &allNetsPathCopy, vector<vector<vector<my_lefdef::gCellGridGlobal>>> &gcellGridCopy)
 {
@@ -855,7 +838,6 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
     int nn = route_nodes.size();
     for (int ii = 0; ii<nn;ii++)
     {
-        cout<<counter<<",";
         MapSearchNode start;
         //ii++;
         start.z = route_nodes[ii].first.z;
@@ -865,19 +847,15 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
         goal.z = route_nodes[ii].second.z;
         goal.x = route_nodes[ii].second.x;
         goal.y = route_nodes[ii].second.y;
-        cout<<name<<endl;
         //
         // SCHEDULE JOBS FOR 2-PIN NETS
         //
         //routeTwoPoints(MapSearchNode source, MapSearchNode target, int id, string name, bool &failed);
         failed = false;
-        cout<<"def here"<<endl;
         routeTwoPoints(start, goal, bufferId, name, failed);
         //tp.enqueue(routeTwoPoints, start, goal, bufferId, name, std::ref(failed));
-        cout<<"failed is --> "<<failed<<endl;
         if (failed)
         {
-            cout << "d5alt aho" << endl;
             gcellGrid = gcellGridCopy;
 //            gcellGrid.clear();
 //            for (int j=0;j<gcellGridCopy.size();j++)
@@ -885,7 +863,6 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
 //                gcellGrid.push_back()
 //            }
             allNetsPath.clear();
-            cout<<"reached failed"<<endl;
 //            for (auto it = route_nodes.begin(); it != route_nodes.end(); ++it)
 //            {
 //                cout<<"inside?"<<endl;
@@ -900,11 +877,9 @@ void Route(bool failed,string name,int threadsCounter,int&bufferId,unordered_map
             Route(failed,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy);
             return;
         }
-        cout<<"before end"<<endl;
         //++bufferId;
         //bufferId %= threadsCounter;
         counter++;
-        cout <<"ok"<<endl;
     }
 }
 
@@ -968,7 +943,6 @@ int main(int argc, char *argv[])
     putObstructions();
 
     puts("Starting to Route!");
-    cout <<"Hello"<<endl;
     printf("nets size: %d\n", (int)ordered_nets.size());
     int net_id = 0;
     int bufferId = 0;
@@ -1057,7 +1031,8 @@ void show_banner()
     cout << endl;
     cout << string(79, '=') << endl;
     cout << "\t\t\tISPD - Global Routing Contest" << endl;
-    cout << "\t\tAuthors: Ali El-Said, Fady Mohamed, Habiba Gamal" << endl;
+    cout << "\t\tAuthors: Ali El-Said, Fady Mohamed, Habiba Gamal," << endl;
+    cout << "\t\tAhmed Fahmy, Aya Farag, Ahmed Ragab, Noha Abulfadle" << endl;
     cout << "\t\tAffiliation: The American University in Cairo" << endl;
     cout << string(79, '=') << endl;
 }
