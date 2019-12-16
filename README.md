@@ -5,11 +5,11 @@ This Global Router was built for ICCAD 2019 contest. VLSI circuit layout is when
 # Table of Contents
 
 * [Getting Started](#get-started)
-        * [Prequisites](#prequisites)
+     * [Prequisites](#prequisites)
       * [Installing](#installing)
 * [Running Tests](#get-started)
 * [Getting Started with OGRE](#getting-started-with-ogre)
-     * [Parsing](#parsing)
+
      * [Outputs](#output)
      * [Building the  G-Cell Grid ](#building-g-cell-grid)
      * [Setting Capacitance](#setting-capacitance)
