@@ -97,7 +97,7 @@ make all
 
 <img src="Images/via.png" width="400" height="300">
 
-### Space violation
+### Space violations
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
@@ -119,7 +119,7 @@ make all
 
 <img src="Images/Overall.png" width="400" height="300">
 
-### Avg. Score
+### Average Scores
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
