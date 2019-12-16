@@ -6,7 +6,7 @@ This Global Router was built for ICCAD 2019 contest. VLSI circuit layout is when
 
 * [Getting Started](#get-started)
      * [Prequisites](#prequisites)
-      * [Installing](#installing)
+     * [Installing](#installing)
 * [Running Tests](#get-started)
 * [Getting Started with OGRE](#getting-started-with-ogre)
 
