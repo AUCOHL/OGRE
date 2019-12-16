@@ -491,11 +491,59 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | [subflow.cpp](./GlobalRouter/util/ThreadPool)| Includes the threads used and which functionalities to perform |
 ### Results
 
-Wirelength
+# Wirelength
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
 | ispd18_test1 | 444323 | 466586 | 429184.7 | 475770 |
+| ispd18_test2 | 6423810 | 8276470 | 7801281.98 | 7287680 |
+| ispd19_test1 | 653582 | 684564 | 641959.56 | 693784 |
+| ispd19_test3 | 781311 | 896482 | 833475.12 | 910578 |
+
+# Short
+
+| testcase | New OGRE | Fast Route | CUHK | Old OGRE |
+| -------- | -------- | ---------- | ---- | -------- |
+| ispd18_test1 | 0.3325 | 5.41 | 0 | 0.3 |
+| ispd18_test2 | 180.118 | 427.14 | 1.02 | 140.83 |
+| ispd19_test1 | 981 | 1109 | 6.8 | 1186.5|
+| ispd19_test3 | 1227.75 | 150.32| 23.71 | 6776.88 |
+
+# Vias
+
+| testcase | New OGRE | Fast Route | CUHK | Old OGRE |
+| -------- | -------- | ---------- | ---- | -------- |
+| ispd18_test1 | 31616 | 31976 | 31734 | 36563 |
+| ispd18_test2 | 331909 | 346712 | 315968 | 396200 |
+| ispd19_test1 | 33681 | 37599 | 38511 | 39363 |
+| ispd19_test3 | 48130 | 59771 | 66603 | 67347 |
+
+# Space
+
+| testcase | New OGRE | Fast Route | CUHK | Old OGRE |
+| -------- | -------- | ---------- | ---- | -------- |
+| ispd18_test1 | 1 | 2 | 2 | 0 |
+| ispd18_test2 | 71 | 189 | 38 | 32 |
+| ispd19_test1 | 273 | 193 | 0 | 147 |
+| ispd19_test3 | 176 | 373 | 0 | 222 |
+
+# Overall
+
+| testcase | New OGRE | Fast Route | CUHK | Old OGRE |
+| -------- | -------- | ---------- | ---- | -------- |
+| ispd18_test1 | 286060 | 300950 | 279060.35| 311161 |
+| ispd18_test2 | 4001280 | 5139729 | 4552086.99 | 4522655 |
+| ispd19_test1 | 1021150 | 1068480 | 401401.78 | 1092368 |
+| ispd19_test3 | 1063760 | 829443 | 561798.56 | 4089423 |
+
+# Avg. Score
+
+| testcase | New OGRE | Fast Route | CUHK | Old OGRE |
+| -------- | -------- | ---------- | ---- | -------- |
+| ispd18_test1 | 1624320 | 1834650.5 | 1448586.92| 2503901.75 |
+
+
+
 
 ## Authors
 
