@@ -472,9 +472,10 @@ return;
 ```
 ### Main functions
 The table below summarizes a  list of the mainly used methods.
+
 | Method |  Argument |Return |  Description |
-| ------- |  ----------- | ------- |  ----------- | 
-| putObstructions | none | void | Adds obstructions to the g-cell |
+| ------ |  ------- | ------ |  ----------- | 
+| putObstructions| none | void | Adds obstructions to the g-cell |
 | routeTwoPoints | source,target,id,name,failed | void | takes a source point and a target  and attempts to route them |
 | Route | failed,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy | void | recurssive function that attempts to route two points |
 
@@ -488,7 +489,13 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | [salt.cpp](./GlobalRouter/lefdef/salt.cpp)| Decomposes nets into subnets |
 | [MapSearchNode.cpp](./GlobalRouter/util/MapSearchNode)| Searches for the states of each node, and the distance between source and distance |
 | [subflow.cpp](./GlobalRouter/util/ThreadPool)| Includes the threads used and which functionalities to perform |
+### Results
 
+Wirelength
+
+| testcase | New OGRE | Fast Route | CUHK | Old OGRE |
+| -------- | -------- | ---------- | ---- | -------- |
+| ispd18_test1 | 444323 | 466586 | 429184.7 | 475770 |
 
 ## Authors
 
