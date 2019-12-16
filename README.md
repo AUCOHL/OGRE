@@ -558,7 +558,7 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | [ArgParser.cpp](./GlobalRouter/util/ArgParser.cpp)| Parses the provided  arguments |
 | [salt.cpp](./GlobalRouter/lefdef/salt.cpp)| Decomposes nets into subnets |
 | [MapSearchNode.cpp](./GlobalRouter/util/MapSearchNode)| Searches for the states of each node, and the distance between source and distance |
-| [subflow.cpp](./GlobalRouter/util/ThreadPool)| Includes the threads used and which functionalities to perform |
+| [ThreadPool.cpp](./GlobalRouter/util/ThreadPool)| Includes the threads used and which functionalities to perform |
 
 
 
