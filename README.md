@@ -489,9 +489,9 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | [salt.cpp](./GlobalRouter/lefdef/salt.cpp)| Decomposes nets into subnets |
 | [MapSearchNode.cpp](./GlobalRouter/util/MapSearchNode)| Searches for the states of each node, and the distance between source and distance |
 | [subflow.cpp](./GlobalRouter/util/ThreadPool)| Includes the threads used and which functionalities to perform |
-### Results
+# Results
 
-# Wirelength
+### Wirelength
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
@@ -500,7 +500,9 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | ispd19_test1 | 653582 | 684564 | 641959.56 | 693784 |
 | ispd19_test3 | 781311 | 896482 | 833475.12 | 910578 |
 
-# Short
+<img src="Images/Wirelength.png" width="400" height="300">
+
+### Short
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
@@ -509,7 +511,9 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | ispd19_test1 | 981 | 1109 | 6.8 | 1186.5|
 | ispd19_test3 | 1227.75 | 150.32| 23.71 | 6776.88 |
 
-# Vias
+<img src="Images/Short.png" width="400" height="300">
+
+### Vias
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
@@ -518,7 +522,9 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | ispd19_test1 | 33681 | 37599 | 38511 | 39363 |
 | ispd19_test3 | 48130 | 59771 | 66603 | 67347 |
 
-# Space
+<img src="Images/via.png" width="400" height="300">
+
+### Space
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
@@ -527,7 +533,9 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | ispd19_test1 | 273 | 193 | 0 | 147 |
 | ispd19_test3 | 176 | 373 | 0 | 222 |
 
-# Overall
+<img src="Images/Space.png" width="400" height="300">
+
+### Overall
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
@@ -536,7 +544,7 @@ The folder `GlobalRouter/` contains all the main classes used in this project.
 | ispd19_test1 | 1021150 | 1068480 | 401401.78 | 1092368 |
 | ispd19_test3 | 1063760 | 829443 | 561798.56 | 4089423 |
 
-# Avg. Score
+### Avg. Score
 
 | testcase | New OGRE | Fast Route | CUHK | Old OGRE |
 | -------- | -------- | ---------- | ---- | -------- |
