@@ -475,8 +475,8 @@ The table below summarizes a  list of the mainly used methods.
 | Method |  Argument |Return |  Description |
 | ------- |  ----------- | ------- |  ----------- | 
 | putObstructions  | none | void   | Adds obstructions to the g-cell |
-| routeTwoPoints  | source,target,id,name,failed | void |takes a source point and a target  and attempts to route them |
-| Route |failed,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy| void |recurssive function that attempts to route two points |
+| routeTwoPoints  | source,target,id,name,failed | void | takes a source point and a target  and attempts to route them |
+| Route | failed,name,threadsCounter,bufferId,allNetsPathCopy,gcellGridCopy | void | recurssive function that attempts to route two points |
 
 ### Main Classes Used
 The folder `GlobalRouter/` contains all the main classes used in this project.
